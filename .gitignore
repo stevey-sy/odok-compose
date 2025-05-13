@@ -1,0 +1,48 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+
+# Kotlin
+*.class
+*.log
+*.jar
+*.war
+*.ear
+*.iml
+.gradle
+/build/
+out/
+captures/
+.externalNativeBuild
+.cxx
+local.properties
+
+# IDE
+.idea
+*.iws
+*.iml
+*.ipr
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sign key (중요)
+*.jks
+
+# Keystore 및 Firebase key
+*.keystore
+google-services.json
+firebase.json
