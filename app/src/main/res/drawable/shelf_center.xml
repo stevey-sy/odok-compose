@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 상단 경계선 (책과 선반의 접점) -->
+    <item>
+        <vector
+            android:width="100dp"
+            android:height="30dp"
+            android:viewportWidth="100"
+            android:viewportHeight="30">
+        <path
+            android:fillColor="@color/book_shelf"
+            android:pathData="M 0,0 L100,0 L100,60 L0,70 Z" /> <!-- 높이 조정 -->
+    </vector>
+</item>
+
+    <!-- 흰색 선반 -->
+    <item android:top="10dp"> <!-- 빨간색 바로 아래 -->
+        <shape android:shape="rectangle">
+            <solid android:color="@color/book_shelf_center" /> <!-- 흰색 선반 -->
+            <size android:height="12dp" /> <!-- 선반 두께 -->
+        </shape>
+    </item>
+
+    <!-- 선반 그림자 -->
+    <item android:top="16dp"> <!-- 흰색 아래 그림자 -->
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#FFFFFF"
+                android:endColor="@color/book_shelf_shadow"
+                android:angle="90" />
+        </shape>
+    </item>
+
+</layer-list>

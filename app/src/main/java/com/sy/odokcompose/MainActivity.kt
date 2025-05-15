@@ -19,7 +19,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -30,6 +32,7 @@ import com.sy.odokcompose.navigation.BottomNavItem
 import com.sy.odokcompose.screens.HomeScreen
 import com.sy.odokcompose.screens.LibraryScreen
 import com.sy.odokcompose.screens.ProfileScreen
+import com.sy.odokcompose.ui.theme.DashiFont
 import com.sy.odokcompose.ui.theme.OdokComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,12 +59,14 @@ fun MainScreen() {
                 title = { 
                     Text(
                         text = "오독오독", 
-                        fontWeight = FontWeight.Bold
+                        fontFamily = DashiFont,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.Normal
                     ) 
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    containerColor = Color.Transparent,
+                    titleContentColor = MaterialTheme.colorScheme.onBackground
                 )
             )
         },

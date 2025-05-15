@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 상단 경계선 (책과 선반의 접점) -->
+    <item>
+        <vector
+            android:width="100dp"
+            android:height="50dp"
+            android:viewportWidth="100"
+            android:viewportHeight="50">
+            <path
+                android:fillColor="#adb5db"
+                android:pathData="M 0,0 L100,0 L100,40 L0,50 Z" />
+        </vector>
+    </item>
+
+    <!-- 흰색 선반 -->
+    <item android:top="8dp"> <!-- 빨간색 바로 아래 -->
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" /> <!-- 흰색 선반 -->
+            <size android:height="8dp" /> <!-- 선반 두께 -->
+        </shape>
+    </item>
+
+    <!-- 선반 그림자 -->
+    <item android:top="16dp"> <!-- 흰색 아래 그림자 -->
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#00000000"
+                android:endColor="#adb5db"
+                android:angle="90" />
+        </shape>
+    </item>
+
+</layer-list>

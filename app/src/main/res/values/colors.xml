@@ -1,10 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="red">#FFFF0000</color>
+    <color name="blue">#FF0000FF</color>
+    <color name="sky">#FF82C8E5</color>
+    <color name="gray">#BEBEBE</color>
+    <color name="mint">#98FB98</color>
+    <color name="yellow_highlight">#FFFF00</color>
+    <color name="purple">#8A2BE2</color>
+    <color name="linen">#FAF0E6</color>
+    <color name="light_gray">#E5E4E2</color>
+    <color name="steal_gray">#71797E</color>
+    <color name="dim">#80000000</color>
+    <color name="yellow">#FFDE21</color>
+    <color name="book_shelf">#BEBEBE</color>
+    <color name="book_shelf_shadow">#c5c5c5</color>
+    <color name="book_shelf_center">#F5F5F5</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="activity_background">#F5F5F5</color>
+    <color name="nav_item_selected_color">#FF000000</color> <!-- 선택된 항목의 색상 -->
+    <color name="nav_item_unselected_color">#808080</color> <!-- 선택되지 않은 항목의 색상 -->
+
+    <color name="red_pallet">#F1948A</color>
+    <color name="orange_pallet">#ffb833</color>
+    <color name="green_pallet">#33ff8d</color>
+    <color name="blue_pallet">#3380ff</color>
+    <color name="purple_pallet">#c133ff</color>
+    <color name="pink_pallet">#ff33a8</color>
 </resources>
