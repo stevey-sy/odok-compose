@@ -13,6 +13,9 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
@@ -25,6 +28,25 @@ private val LightColorScheme = lightColorScheme(
     primary = OdokColors.Purple40,
     secondary = OdokColors.PurpleGray40,
     tertiary = OdokColors.Pink40
+)
+
+// 커스텀 타이포그래피 정의
+private val OdokTypography = Typography.copy(
+    displayLarge = TextStyle(
+        fontFamily = MaruBuriFont,
+        fontWeight = FontWeight.Normal,
+        fontSize = 36.sp
+    ),
+    titleLarge = TextStyle(
+        fontFamily = MaruBuriFont,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 22.sp
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = MaruBuriFont,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
 )
 
 @Composable
@@ -53,7 +75,7 @@ fun OdokTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = OdokTypography,
         content = content
     )
 } 

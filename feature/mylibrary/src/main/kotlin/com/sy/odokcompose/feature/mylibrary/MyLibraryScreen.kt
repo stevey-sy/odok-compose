@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sy.odokcompose.core.designsystem.DashiFont
 import com.sy.odokcompose.core.designsystem.OdokTheme
-//import com.sy.odokcompose.ui.theme.DashiFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,7 +41,7 @@ fun MyLibraryScreen(
                     title = { 
                         Text(
                             text = "오독오독", 
-//                            fontFamily = DashiFont,
+                            fontFamily = DashiFont,
                             fontSize = 36.sp,
                             fontWeight = FontWeight.Normal
                         ) 
