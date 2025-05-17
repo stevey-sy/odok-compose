@@ -47,6 +47,7 @@ android {
 
 dependencies {
     implementation(project(":feature:mylibrary"))
+    implementation(project(":feature:search"))
     implementation(project(":core:designsystem"))
 
     implementation(libs.androidx.core.ktx)

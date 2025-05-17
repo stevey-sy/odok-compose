@@ -7,9 +7,11 @@ import com.sy.odokcompose.feature.mylibrary.MyLibraryScreen
 
 const val MY_LIBRARY_ROUTE = "my_library"
 
-fun NavGraphBuilder.myLibraryScreen() {
+fun NavGraphBuilder.myLibraryScreen(
+    onNavigateToSearch: () -> Unit
+) {
     composable(route = MY_LIBRARY_ROUTE) {
-        MyLibraryScreen()
+        MyLibraryScreen(onNavigateToSearch = onNavigateToSearch)
     }
 }
 
