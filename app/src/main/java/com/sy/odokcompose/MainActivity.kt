@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -33,7 +35,13 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // 시스템 UI가 앱 콘텐츠 위에 그려지도록 설정
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        
+        // Edge-to-Edge 설정
         enableEdgeToEdge()
+        
         setContent {
             OdokComposeTheme {
                 MainScreen()
@@ -48,7 +56,8 @@ fun MainScreen() {
     
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        bottomBar = { BottomNavigationBar(navController = navController) }
+        bottomBar = { BottomNavigationBar(navController = navController) },
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             NavigationGraph(navController = navController)
