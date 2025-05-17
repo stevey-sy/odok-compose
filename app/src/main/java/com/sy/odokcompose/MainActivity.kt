@@ -7,8 +7,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,11 +33,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sy.odokcompose.navigation.BottomNavItem
+import com.sy.odokcompose.navigation.NavRoutes
 import com.sy.odokcompose.screens.HomeScreen
 import com.sy.odokcompose.screens.LibraryScreen
 import com.sy.odokcompose.screens.ProfileScreen
 import com.sy.odokcompose.ui.theme.DashiFont
 import com.sy.odokcompose.ui.theme.OdokComposeTheme
+import com.sy.odokcompose.feature.mylibrary.navigation.myLibraryScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +70,16 @@ fun MainScreen() {
                         fontWeight = FontWeight.Normal
                     ) 
                 },
+                actions = {
+                    IconButton(onClick = { 
+
+                    }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_plus_24),
+                            contentDescription = "추가"
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color.Transparent,
                     titleContentColor = MaterialTheme.colorScheme.onBackground
@@ -81,6 +97,7 @@ fun MainScreen() {
 @Composable
 fun BottomNavigationBar(navController: NavHostController) {
     val items = listOf(
+        BottomNavItem.MyLibrary,
         BottomNavItem.Home,
         BottomNavItem.Library,
         BottomNavItem.Profile
@@ -113,8 +130,9 @@ fun BottomNavigationBar(navController: NavHostController) {
 fun NavigationGraph(navController: NavHostController) {
     NavHost(
         navController = navController, 
-        startDestination = BottomNavItem.Home.route
+        startDestination = BottomNavItem.MyLibrary.route
     ) {
+        myLibraryScreen()
         composable(BottomNavItem.Home.route) {
             HomeScreen()
         }
