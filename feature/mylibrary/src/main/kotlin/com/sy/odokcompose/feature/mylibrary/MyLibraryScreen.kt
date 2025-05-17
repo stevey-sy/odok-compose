@@ -22,6 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sy.odokcompose.core.designsystem.OdokTheme
 //import com.sy.odokcompose.ui.theme.DashiFont
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,45 +34,47 @@ fun MyLibraryScreen(
     val context = LocalContext.current
     val drawableId = context.resources.getIdentifier("ic_plus_24", "drawable", context.packageName)
     
-    Scaffold(
-        topBar = { 
-            TopAppBar(
-                title = { 
-                    Text(
-                        text = "오독오독", 
-//                        fontFamily = DashiFont,
-                        fontSize = 36.sp,
-                        fontWeight = FontWeight.Normal
-                    ) 
-                },
-                actions = {
-                    IconButton(onClick = { 
-                        // 버튼 액션
-                    }) {
-                        Icon(
-                            painter = painterResource(id = drawableId),
-                            contentDescription = "추가"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent,
-                    titleContentColor = MaterialTheme.colorScheme.onBackground
+    OdokTheme {
+        Scaffold(
+            topBar = { 
+                TopAppBar(
+                    title = { 
+                        Text(
+                            text = "오독오독", 
+//                            fontFamily = DashiFont,
+                            fontSize = 36.sp,
+                            fontWeight = FontWeight.Normal
+                        ) 
+                    },
+                    actions = {
+                        IconButton(onClick = { 
+                            // 버튼 액션
+                        }) {
+                            Icon(
+                                painter = painterResource(id = drawableId),
+                                contentDescription = "추가"
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onBackground
+                    )
                 )
-            )
-        }
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "내 서재",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            )
+            }
+        ) { innerPadding ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "내 서재",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
         }
     }
 }

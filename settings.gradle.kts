@@ -23,3 +23,4 @@ rootProject.name = "OdokCompose"
 include(":app")
 include(":feature:mylibrary")
 include(":feature:search")
+include(":core:designsystem")
