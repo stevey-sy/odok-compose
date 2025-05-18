@@ -1,0 +1,31 @@
+package com.sy.odokcompose.core.database
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.sy.odokcompose.core.database.entity.BookEntity
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface BookDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertBook(book: BookEntity): Long
+    
+    @Update
+    suspend fun updateBook(book: BookEntity)
+    
+    @Delete
+    suspend fun deleteBook(book: BookEntity)
+    
+    @Query("SELECT * FROM books")
+    fun getAllBooks(): Flow<List<BookEntity>>
+    
+    @Query("SELECT * FROM books WHERE itemId = :itemId")
+    fun getBookById(itemId: Int): Flow<BookEntity?>
+    
+    @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%' OR author LIKE '%' || :query || '%'")
+    fun searchBooks(query: String): Flow<List<BookEntity>>
+} 
