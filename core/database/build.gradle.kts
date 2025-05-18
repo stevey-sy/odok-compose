@@ -1,8 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt.plugin)
 }
 
 android {
@@ -43,10 +43,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    // For Hilt
-    kapt {
-        correctErrorTypes = true
-    }
 }
 
 dependencies {
@@ -58,22 +54,22 @@ dependencies {
     implementation(project(":core:model"))
     
     // Room
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:${libs.versions.androidxRoom.get()}")
+    implementation("androidx.room:room-ktx:${libs.versions.androidxRoom.get()}")
+    ksp("androidx.room:room-compiler:${libs.versions.androidxRoom.get()}")
     
     // Hilt
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     
     // Moshi
-    implementation("com.squareup.moshi:moshi:1.15.0")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.0")
-    kapt("com.squareup.moshi:moshi-kotlin-codegen:1.15.0")
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:${libs.versions.moshi.get()}")
     
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${libs.versions.coroutines.get()}")
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
