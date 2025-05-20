@@ -8,10 +8,11 @@ import com.sy.odokcompose.core.network.BuildConfig
 import dagger.Lazy
 import okhttp3.Call
 import okhttp3.MediaType.Companion.toMediaType
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import com.squareup.moshi.Moshi
 import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import javax.inject.Inject
@@ -38,14 +39,14 @@ private interface RetrofitOdokNetworkApi {
  * Wrapper for data provided from the [NIA_BASE_URL]
  */
 
-@Serializable
-private data class NetworkResponse<T>(
-    val data: T,
+@JsonClass(generateAdapter = true)
+internal data class NetworkResponse<T>(
+    @Json(name = "data") val data: T,
 )
 
 @Singleton
-internal class RetrofitOdokNetwork @Inject constructor(
-    networkJson: Json,
+class RetrofitOdokNetwork @Inject constructor(
+    moshi: Moshi,
     okhttpCallFactory: dagger.Lazy<Call.Factory>,
 ) : OdokNetworkDataSource {
 
@@ -56,7 +57,7 @@ internal class RetrofitOdokNetwork @Inject constructor(
                 okhttpCallFactory.get().newCall(it)
             }
             .addConverterFactory(
-                networkJson.asConverterFactory("application/json".toMediaType())
+                MoshiConverterFactory.create(moshi)
             )
             .build()
             .create(RetrofitOdokNetworkApi::class.java)

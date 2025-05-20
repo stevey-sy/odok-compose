@@ -64,8 +64,7 @@ dependencies {
     
     // Moshi
     implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:${libs.versions.moshi.get()}")
+    ksp(libs.moshi.codegen)
     
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")

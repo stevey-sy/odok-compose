@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.plugin)
-    kotlin("plugin.serialization") version libs.versions.kotlin.get()
 }
 
 android {
@@ -58,12 +57,8 @@ dependencies {
     
     // Moshi
     implementation(libs.moshi)
-    implementation(libs.moshi.kotlin)
-    
-    // Kotlinx Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${libs.versions.coroutines.get()}")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    
+    ksp(libs.moshi.codegen)
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:${libs.versions.coroutines.get()}")

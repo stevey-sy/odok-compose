@@ -1,6 +1,10 @@
 package com.sy.odokcompose.core.network.model
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class SubInfo(
-    val itemPage: Int,
-    val ratingInfo: RatingInfo?, // 평점 정보
+    @Json(name = "itemPage") val itemPage: Int,
+    @Json(name = "ratingInfo") val ratingInfo: RatingInfo?, // 평점 정보
 )
