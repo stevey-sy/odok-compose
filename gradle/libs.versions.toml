@@ -1,5 +1,7 @@
 [versions]
+accompanistPlaceholderMaterial = "0.34.0"
 agp = "8.9.0"
+coil = "2.7.0"
 kotlin = "2.1.20"
 coreKtx = "1.16.0"
 junit = "4.13.2"
@@ -15,6 +17,7 @@ hiltNavigationCompose = "1.2.0"
 moshi = "1.15.2"
 moshiKotlin = "1.15.2"
 coroutines = "1.10.1"
+navigationCompose = "2.9.0"
 retrofit = "2.11.0"
 okHttp = "4.12.0"
 androidxRoom = "2.6.1"
@@ -22,7 +25,11 @@ ksp = "2.1.20-1.0.31"
 glide = "4.16.0"
 
 [libraries]
+accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanistPlaceholderMaterial" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
