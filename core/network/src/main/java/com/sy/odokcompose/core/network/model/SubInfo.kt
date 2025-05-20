@@ -5,6 +5,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class SubInfo(
-    @Json(name = "itemPage") val itemPage: Int,
+    @Json(name = "itemPage") val itemPage: Int = 0,
     @Json(name = "ratingInfo") val ratingInfo: RatingInfo?, // 평점 정보
 )

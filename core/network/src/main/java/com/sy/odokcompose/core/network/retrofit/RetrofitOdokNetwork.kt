@@ -32,17 +32,8 @@ private interface RetrofitOdokNetworkApi {
         @Query("Cover") cover: String = "Big",
         @Query("Output") output: String = "JS",
         @Query("Version") version: String = "20131101"
-    ): NetworkResponse<AladinBookSearchResponse>
+    ): AladinBookSearchResponse
 }
-
-/**
- * Wrapper for data provided from the [NIA_BASE_URL]
- */
-
-@JsonClass(generateAdapter = true)
-internal data class NetworkResponse<T>(
-    @Json(name = "data") val data: T,
-)
 
 @Singleton
 class RetrofitOdokNetwork @Inject constructor(
@@ -68,7 +59,11 @@ class RetrofitOdokNetwork @Inject constructor(
         start: Int,
         maxResults: Int
     ): AladinBookSearchResponse {
-        return networkApi.getSearchedBooks(query, start.toString(), maxResults.toString()).data
+        return networkApi.getSearchedBooks(
+            query = query, 
+            start = start, 
+            maxResults = maxResults
+        )
     }
 
 }
