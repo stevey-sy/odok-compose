@@ -1,18 +1,8 @@
-package com.sy.odokcompose.core.network.retrofit
+package com.sy.odokcompose.core.network.service
 
-import androidx.core.os.trace
 import com.sy.odokcompose.core.network.OdokNetworkDataSource
-import com.sy.odokcompose.core.network.model.AladinBookItem
 import com.sy.odokcompose.core.network.model.AladinBookSearchResponse
 import com.sy.odokcompose.core.network.BuildConfig
-import dagger.Lazy
-import okhttp3.Call
-import okhttp3.MediaType.Companion.toMediaType
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
-import retrofit2.Retrofit
-import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 import javax.inject.Inject
@@ -37,21 +27,14 @@ private interface RetrofitOdokNetworkApi {
 
 @Singleton
 class RetrofitOdokNetwork @Inject constructor(
-    moshi: Moshi,
-    okhttpCallFactory: dagger.Lazy<Call.Factory>,
+    private val retrofitClient: RetrofitClient
 ) : OdokNetworkDataSource {
 
-    private val networkApi = trace("RetrofitOdokNetwork") {
-        Retrofit.Builder()
-            .baseUrl("https://www.aladin.co.kr/ttb/api/")
-            .callFactory{
-                okhttpCallFactory.get().newCall(it)
-            }
-            .addConverterFactory(
-                MoshiConverterFactory.create(moshi)
-            )
-            .build()
-            .create(RetrofitOdokNetworkApi::class.java)
+    private val apiService: AladinApiService by lazy {
+        retrofitClient.createService(
+            AladinApiService::class.java,
+            AladinApiService.BASE_URL
+        )
     }
 
     override suspend fun getSearchedBooks(
@@ -59,7 +42,7 @@ class RetrofitOdokNetwork @Inject constructor(
         start: Int,
         maxResults: Int
     ): AladinBookSearchResponse {
-        return networkApi.getSearchedBooks(
+        return apiService.getSearchedBooks(
             query = query, 
             start = start, 
             maxResults = maxResults
