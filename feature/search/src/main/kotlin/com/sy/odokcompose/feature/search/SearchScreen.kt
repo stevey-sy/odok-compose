@@ -182,7 +182,9 @@ fun SearchResultsList(
     onBookClick: (SearchBookUiModel) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.background(OdokColors.LightGray)
+        modifier = Modifier
+            .padding(horizontal = 12.dp)
+            .background(OdokColors.LightGray)
     ) {
         items(searchResults) { book ->
             BookItem(book = book)
@@ -211,13 +213,15 @@ fun BookItem(book: SearchBookUiModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 100.dp, end = 8.dp) // 이미지 너비 + 여유 padding
+                    .padding(start = 108.dp, end = 8.dp) // 이미지 너비 + 여유 padding
                     .align(Alignment.TopStart),
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Text(
                     text = book.title,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        lineHeight = 16.sp // 원하는 행간 값으로 설정 (예: 텍스트 크기보다 약간 크거나 동일하게)
+                    ),
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     maxLines = 2,
@@ -272,7 +276,7 @@ fun BookItem(book: SearchBookUiModel) {
             error = {
                 Box(
                     modifier = Modifier
-                        .size(width = 90.dp, height = 140.dp)
+                        .size(width = 100.dp, height = 135.dp)
                         .background(Color.LightGray),
                     contentAlignment = Alignment.Center
                 ) {

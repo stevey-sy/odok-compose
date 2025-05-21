@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
@@ -34,17 +35,20 @@ private val LightColorScheme = lightColorScheme(
 // 커스텀 타이포그래피 정의
 private val OdokTypography = Typography.copy(
     displayLarge = TextStyle(
-        fontFamily = MaruBuriFont,
+        //fontFamily = MaruBuriFont,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 36.sp
     ),
     titleLarge = TextStyle(
-        fontFamily = MaruBuriFont,
+//        fontFamily = MaruBuriFont,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp
     ),
     bodyLarge = TextStyle(
-        fontFamily = MaruBuriFont,
+//        fontFamily = MaruBuriFont,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp
     )

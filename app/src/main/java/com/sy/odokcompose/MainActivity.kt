@@ -43,6 +43,8 @@ import com.sy.odokcompose.screens.HomeScreen
 import com.sy.odokcompose.screens.LibraryScreen
 import com.sy.odokcompose.screens.ProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.sp
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -117,7 +119,10 @@ fun MainScreen(
                     // 검색 화면일 때는 뒤로가기 버튼이 있는 TopAppBar 표시
                     if (currentRoute == SEARCH_ROUTE) {
                         OdokTopAppBar(
+                            title = "도서검색",
                             showBackButton = true,
+                            fontFamily = FontFamily.Default,
+                            fontSize = 22.sp,
                             onBackClick = { navController.popBackStack() }
                         )
                     } else {
@@ -141,7 +146,7 @@ fun MainScreen(
                         OdokBottomNavigationBar(navController = navController, items = navigationItems)
                     }
                 },
-                contentWindowInsets = WindowInsets(0, 0, 0, 0)
+//                contentWindowInsets = WindowInsets(0, 0, 0, 0)
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
                     NavigationGraph(navController = navController)
