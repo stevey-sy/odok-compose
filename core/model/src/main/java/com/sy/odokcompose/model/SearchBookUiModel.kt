@@ -1,6 +1,7 @@
 package com.sy.odokcompose.model
 
 data class SearchBookUiModel(
+    val id: Int = 0,
     val title: String = "",
     var author: String = "",
     val publisher: String = "",
