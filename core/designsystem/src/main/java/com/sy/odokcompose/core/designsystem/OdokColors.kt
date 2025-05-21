@@ -13,4 +13,5 @@ object OdokColors {
     val Pink40 = Color(0xFF7D5260)
     
     val LightGray = Color(0xFFF5F5F5)
+    val Black = Color(0xFF000000)
 } 

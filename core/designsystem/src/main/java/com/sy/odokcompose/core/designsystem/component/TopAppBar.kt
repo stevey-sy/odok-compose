@@ -17,8 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.DashiFont
 
@@ -30,16 +32,19 @@ import com.sy.odokcompose.core.designsystem.DashiFont
 fun OdokTopAppBar(
     title: String = "",
     fontSize: TextUnit = 36.sp,
+     fontFamily: FontFamily = DashiFont,
+//    fontFamily: FontFamily = FontFamily.Default,
     showBackButton: Boolean = false,
     onBackClick: () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
+//        modifier = Modifier.height(56.dp), // 원하는 높이
         title = { 
             if (title.isNotEmpty()) {
                 Text(
-                    text = title, 
-                    fontFamily = DashiFont,
+                    text = title,
+                    fontFamily = fontFamily,
                     fontSize = fontSize,
                     fontWeight = FontWeight.Normal
                 ) 
