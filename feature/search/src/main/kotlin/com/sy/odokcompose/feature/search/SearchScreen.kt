@@ -181,7 +181,7 @@ fun BookItem(book: SearchBookUiModel) {
                 .height(100.dp)
                 .align(Alignment.BottomStart)
                 .clip(RoundedCornerShape(4.dp)) // 👈 radius 적용
-                .background(Color.Black)
+                .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
