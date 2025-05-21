@@ -2,12 +2,18 @@ package com.sy.odokcompose.feature.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.sy.odokcompose.core.data.repository.BookRepository
 import com.sy.odokcompose.model.SearchBookUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,14 +28,18 @@ class SearchViewModel @Inject constructor(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
     
+    private var _searchPagingData = MutableStateFlow<Flow<PagingData<SearchBookUiModel>>>(emptyFlow())
+    val searchPagingData: StateFlow<Flow<PagingData<SearchBookUiModel>>> = _searchPagingData.asStateFlow()
+    
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
         // 검색어가 비어있을 경우 결과 초기화
         if (query.isBlank()) {
             _uiState.value = _uiState.value.copy(
-                searchResults = emptyList(),
-                hasSearched = false
+                hasSearched = false,
+                errorMessage = null
             )
+            _searchPagingData.value = emptyFlow()
         }
     }
     
@@ -47,21 +57,29 @@ class SearchViewModel @Inject constructor(
             errorMessage = null
         )
         
-        viewModelScope.launch {
-            try {
-                val results = bookRepository.searchBooks(query)
-                _uiState.value = _uiState.value.copy(
-                    isSearching = false,
-                    searchResults = results,
-                    hasSearched = true
+        try {
+            val pagingData = Pager(
+                config = PagingConfig(
+                    pageSize = 10,
+                    enablePlaceholders = false,
+                    initialLoadSize = 10
                 )
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    isSearching = false,
-                    errorMessage = e.message,
-                    hasSearched = true
-                )
-            }
+            ) {
+                SearchPagingSource(bookRepository, query)
+            }.flow.cachedIn(viewModelScope)
+            
+            _searchPagingData.value = pagingData
+            
+            _uiState.value = _uiState.value.copy(
+                isSearching = false,
+                hasSearched = true
+            )
+        } catch (e: Exception) {
+            _uiState.value = _uiState.value.copy(
+                isSearching = false,
+                errorMessage = e.message,
+                hasSearched = true
+            )
         }
     }
 }
@@ -69,6 +87,5 @@ class SearchViewModel @Inject constructor(
 data class SearchUiState(
     val isSearching: Boolean = false,
     val errorMessage: String? = null,
-    val searchResults: List<SearchBookUiModel> = emptyList(),
     val hasSearched: Boolean = false
 ) 
