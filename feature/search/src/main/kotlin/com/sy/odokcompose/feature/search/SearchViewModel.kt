@@ -24,10 +24,22 @@ class SearchViewModel @Inject constructor(
     
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
+        // 검색어가 비어있을 경우 결과 초기화
+        if (query.isBlank()) {
+            _uiState.value = _uiState.value.copy(
+                searchResults = emptyList(),
+                hasSearched = false
+            )
+        }
     }
     
+    // 현재 검색어로 검색
     fun search() {
-        val query = _searchQuery.value
+        search(_searchQuery.value)
+    }
+    
+    // 주어진 검색어로 검색
+    fun search(query: String) {
         if (query.isBlank()) return
         
         _uiState.value = _uiState.value.copy(
@@ -40,12 +52,14 @@ class SearchViewModel @Inject constructor(
                 val results = bookRepository.searchBooks(query)
                 _uiState.value = _uiState.value.copy(
                     isSearching = false,
-                    searchResults = results
+                    searchResults = results,
+                    hasSearched = true
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isSearching = false,
-                    errorMessage = e.message
+                    errorMessage = e.message,
+                    hasSearched = true
                 )
             }
         }
@@ -55,5 +69,6 @@ class SearchViewModel @Inject constructor(
 data class SearchUiState(
     val isSearching: Boolean = false,
     val errorMessage: String? = null,
-    val searchResults: List<SearchBookUiModel> = emptyList()
+    val searchResults: List<SearchBookUiModel> = emptyList(),
+    val hasSearched: Boolean = false
 ) 

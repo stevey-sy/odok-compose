@@ -32,8 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,16 +57,32 @@ import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.model.SearchBookUiModel
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun SearchScreen(
     onNavigateBack: () -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState()
+    val query by viewModel.searchQuery.collectAsState()
     val focusManager = LocalFocusManager.current
+
+    // 검색어 입력 후 0.5초 후 자동 검색
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }
+            .debounce(500)
+            .distinctUntilChanged()
+            .collectLatest { searchText ->
+                if (searchText.isNotBlank()) {
+                    viewModel.search(searchText)
+                }
+            }
+    }
     
     OdokTheme {
         Scaffold { innerPadding ->
@@ -72,8 +93,10 @@ fun SearchScreen(
                     .background(OdokColors.LightGray)
             ) {
                 TextField(
-                    value = searchQuery,
-                    onValueChange = { viewModel.updateSearchQuery(it) },
+                    value = query,
+                    onValueChange = {
+                        viewModel.updateSearchQuery(it) 
+                    },
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
@@ -85,8 +108,10 @@ fun SearchScreen(
                         )
                     },
                     trailingIcon = {
-                        if (searchQuery.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.updateSearchQuery("") }) {
+                        if (query.isNotEmpty()) {
+                            IconButton(onClick = {
+                                viewModel.updateSearchQuery("") 
+                            }) {
                                 Icon(
                                     imageVector = Icons.Default.Clear,
                                     contentDescription = "지우기"
@@ -98,7 +123,7 @@ fun SearchScreen(
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                     keyboardActions = KeyboardActions(
                         onSearch = {
-                            viewModel.search()
+                            viewModel.search(query)
                             focusManager.clearFocus()
                         }
                     ),
@@ -125,14 +150,14 @@ fun SearchScreen(
                     ) {
                         Text("오류: ${uiState.errorMessage}")
                     }
-                } else if (uiState.searchResults.isEmpty() && searchQuery.isNotEmpty()) {
+                } else if (uiState.hasSearched && uiState.searchResults.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         Text("검색 결과가 없습니다")
                     }
-                } else if (searchQuery.isEmpty()) {
+                } else if (query.isEmpty()) {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -181,7 +206,7 @@ fun BookItem(book: SearchBookUiModel) {
                 .height(100.dp)
                 .align(Alignment.BottomStart)
                 .clip(RoundedCornerShape(4.dp)) // 👈 radius 적용
-                .background(Color.Green)
+                .background(Color.White)
         ) {
             Column(
                 modifier = Modifier
