@@ -26,7 +26,7 @@ class BookRepositoryImpl @Inject constructor(
         try {
             // 네트워크에서 책 검색 결과를 가져옵니다
             val searchResponse = networkDataSource.getSearchedBooks(query, start, maxResults)
-            
+
             // 매퍼를 사용하여 네트워크 모델을 UI 모델로 변환하고 고유 ID 할당
             return searchResponse.item.mapIndexed { index, bookItem ->
                 val uiModel = searchBookNetworkMapper.mapToUiModel(bookItem)
@@ -37,6 +37,24 @@ class BookRepositoryImpl @Inject constructor(
             // 오류 발생 시 빈 리스트 반환
             e.printStackTrace()
             return emptyList()
+        }
+    }
+
+    override suspend fun getBookDetail(itemId: String): SearchBookUiModel {
+        return try {
+            val response = networkDataSource.getBookDetail(itemId)
+            val aladinBookItem = response.item.firstOrNull()
+
+            // null 이 아니면 매핑, 아니면 기본값 반환
+            if (aladinBookItem != null) {
+                searchBookNetworkMapper.mapToUiModel(aladinBookItem)
+            } else {
+                SearchBookUiModel()
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            SearchBookUiModel()
         }
     }
 } 

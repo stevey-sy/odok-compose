@@ -16,4 +16,13 @@ interface BookRepository {
      * @return 검색된 책 목록
      */
     suspend fun searchBooks(query: String, start: Int = 1, maxResults: Int = 10): List<SearchBookUiModel>
+
+    /**
+     * 검색된 책의 상세 정보를 가져옵니다.
+     *
+     * @param itemId isbn
+     * @return 검색된 책 상세 정보
+     */
+    suspend fun getBookDetail(itemId: String): SearchBookUiModel
+
 } 
