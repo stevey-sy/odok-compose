@@ -273,7 +273,7 @@ fun BookItem(book: SearchBookUiModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 108.dp, end = 8.dp) // 이미지 너비 + 여유 padding
+                    .padding(start = 108.dp, top = 10.dp, end = 8.dp) // 이미지 너비 + 여유 padding
                     .align(Alignment.TopStart),
                 verticalArrangement = Arrangement.Bottom
             ) {
