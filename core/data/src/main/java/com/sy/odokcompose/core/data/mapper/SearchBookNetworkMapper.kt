@@ -16,7 +16,7 @@ class SearchBookNetworkMapper @Inject constructor() {
             title = bookItem.title,
             author = bookItem.author,
             publisher = bookItem.publisher,
-            isbn = bookItem.isbn,
+            isbn = bookItem.isbn13,
             cover = bookItem.cover,
             page = bookItem.subInfo?.itemPage ?: 0,
             description = bookItem.description.toString(),

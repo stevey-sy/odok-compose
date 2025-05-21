@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     
+    // Paging
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+    
     // Core modules
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))

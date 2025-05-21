@@ -52,6 +52,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokColors
@@ -70,6 +74,8 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
+    val searchPagingFlow by viewModel.searchPagingData.collectAsState()
+    val searchResults = searchPagingFlow.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
 
     // 검색어 입력 후 0.5초 후 자동 검색
@@ -136,39 +142,54 @@ fun SearchScreen(
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                if (uiState.isSearching) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+                when {
+                    uiState.isSearching -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
                     }
-                } else if (uiState.errorMessage != null) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("오류: ${uiState.errorMessage}")
+                    uiState.errorMessage != null -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("오류: ${uiState.errorMessage}")
+                        }
                     }
-                } else if (uiState.hasSearched && uiState.searchResults.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("검색 결과가 없습니다")
+                    searchResults.loadState.refresh is LoadState.Error -> {
+                        val error = searchResults.loadState.refresh as LoadState.Error
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("검색 실패: ${error.error.localizedMessage}")
+                        }
                     }
-                } else if (query.isEmpty()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("검색어를 입력하세요")
+                    query.isEmpty() -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("검색어를 입력하세요")
+                        }
                     }
-                } else {
-                    SearchResultsList(
-                        searchResults = uiState.searchResults,
-                        onBookClick = { /* TODO: 책 상세 페이지로 이동 */ }
-                    )
+                    uiState.hasSearched && searchResults.itemCount == 0 && searchResults.loadState.refresh !is LoadState.Loading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("검색 결과가 없습니다")
+                        }
+                    }
+                    uiState.hasSearched -> {
+                        SearchResultsList(
+                            searchResults = searchResults,
+                            onBookClick = { /* TODO: 책 상세 페이지로 이동 */ }
+                        )
+                    }
                 }
             }
         }
@@ -178,7 +199,7 @@ fun SearchScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchResultsList(
-    searchResults: List<SearchBookUiModel>,
+    searchResults: LazyPagingItems<SearchBookUiModel>,
     onBookClick: (SearchBookUiModel) -> Unit
 ) {
     LazyColumn(
@@ -186,9 +207,45 @@ fun SearchResultsList(
             .padding(horizontal = 12.dp)
             .background(OdokColors.LightGray)
     ) {
-        items(searchResults) { book ->
-            BookItem(book = book)
-            Spacer(modifier = Modifier.height(10.dp))
+        items(
+            count = searchResults.itemCount,
+            key = searchResults.itemKey { it.isbn }
+        ) { index ->
+            val book = searchResults[index]
+            book?.let {
+                BookItem(book = it)
+                Spacer(modifier = Modifier.height(10.dp))
+            }
+        }
+        
+        item {
+            when (searchResults.loadState.append) {
+                is LoadState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                }
+                is LoadState.Error -> {
+                    val error = searchResults.loadState.append as LoadState.Error
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("추가 데이터 로드 실패: ${error.error.localizedMessage}")
+                    }
+                }
+                else -> {}
+            }
         }
     }
 }
