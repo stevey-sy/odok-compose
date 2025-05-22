@@ -33,8 +33,8 @@ interface AladinApiService {
         @Query("Cover") cover: String = "Big",
         @Query("Output") output: String = "JS",
         @Query("Version") version: String = "20131101"
-    ): Response<AladinBookDetailResponse>
-    
+    ): AladinBookDetailResponse
+  
     companion object {
         const val BASE_URL = "https://www.aladin.co.kr/ttb/api/"
     }
