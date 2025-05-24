@@ -44,6 +44,7 @@ import com.sy.odokcompose.screens.ProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
+import com.sy.odokcompose.feature.search.navigation.SEARCH_BOOK_DETAIL_ROUTE
 import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 
@@ -118,7 +119,7 @@ fun MainScreen(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     // 검색 화면일 때는 뒤로가기 버튼이 있는 TopAppBar 표시
-                    if (currentRoute == SEARCH_ROUTE) {
+                    if (currentRoute == SEARCH_ROUTE || currentRoute?.contains(SEARCH_BOOK_DETAIL_ROUTE) == true) {
                         OdokTopAppBar(
                             title = "도서검색",
                             showBackButton = true,
@@ -126,7 +127,8 @@ fun MainScreen(
                             fontSize = 22.sp,
                             onBackClick = { navController.popBackStack() }
                         )
-                    } else {
+                    }
+                    else {
                         // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
                         val drawableId = context.resources.getIdentifier("ic_plus_24", "drawable", context.packageName)
                         OdokTopAppBar(
@@ -143,11 +145,10 @@ fun MainScreen(
                 },
                 bottomBar = {
                     // 현재 경로가 검색 화면이 아닐 때만 바텀 네비게이션 표시
-                    if (currentRoute != SEARCH_ROUTE) {
+                    if (currentRoute == MY_LIBRARY_ROUTE) {
                         OdokBottomNavigationBar(navController = navController, items = navigationItems)
                     }
                 },
-//                contentWindowInsets = WindowInsets(0, 0, 0, 0)
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
                     NavigationGraph(navController = navController)
@@ -175,15 +176,5 @@ fun NavigationGraph(navController: NavHostController) {
         searchBookDetailScreen(
             onNavigateBack = { navController.popBackStack() }
         )
-
-        composable(BottomNavItem.Home.route) {
-            HomeScreen()
-        }
-        composable(BottomNavItem.Library.route) {
-            LibraryScreen()
-        }
-        composable(BottomNavItem.Profile.route) {
-            ProfileScreen()
-        }
     }
 }

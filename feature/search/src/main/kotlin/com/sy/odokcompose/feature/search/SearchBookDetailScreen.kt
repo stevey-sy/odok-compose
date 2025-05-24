@@ -56,19 +56,6 @@ fun SearchBookDetailScreen(
 
     OdokTheme {
         Scaffold(
-//            topBar = {
-//                TopAppBar(
-//                    title = { Text("책 상세 정보") },
-//                    navigationIcon = {
-//                        IconButton(onClick = onNavigateBack) {
-//                            Icon(
-//                                imageVector = Icons.Default.ArrowBack,
-//                                contentDescription = "뒤로 가기"
-//                            )
-//                        }
-//                    }
-//                )
-//            }
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
             Box(
