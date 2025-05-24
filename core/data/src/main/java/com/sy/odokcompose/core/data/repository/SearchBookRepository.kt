@@ -1,12 +1,11 @@
 package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.model.SearchBookUiModel
-import kotlinx.coroutines.flow.Flow
 
 /**
  * 책 정보에 대한 액세스를 제공하는 Repository 인터페이스
  */
-interface BookRepository {
+interface SearchBookRepository {
     /**
      * 책을 검색합니다
      * 

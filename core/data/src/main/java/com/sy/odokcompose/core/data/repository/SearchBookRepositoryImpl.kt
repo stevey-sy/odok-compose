@@ -1,7 +1,6 @@
 package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.core.database.BookDao
-import com.sy.odokcompose.core.database.entity.mapper.SearchBookEntityMapper
 import com.sy.odokcompose.core.data.mapper.SearchBookNetworkMapper
 import com.sy.odokcompose.core.network.OdokNetworkDataSource
 import com.sy.odokcompose.model.SearchBookUiModel
@@ -13,11 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger
  * BookRepository 인터페이스 구현체
  */
 @Singleton
-class BookRepositoryImpl @Inject constructor(
+class SearchBookRepositoryImpl @Inject constructor(
     private val networkDataSource: OdokNetworkDataSource,
     private val bookDao: BookDao,
     private val searchBookNetworkMapper: SearchBookNetworkMapper
-) : BookRepository {
+) : SearchBookRepository {
     
     // 고유한 ID를 생성하기 위한 카운터
     private val idCounter = AtomicInteger(0)

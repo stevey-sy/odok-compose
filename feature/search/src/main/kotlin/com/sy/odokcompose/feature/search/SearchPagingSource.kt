@@ -2,11 +2,11 @@ package com.sy.odokcompose.feature.search
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.sy.odokcompose.core.data.repository.BookRepository
+import com.sy.odokcompose.core.data.repository.SearchBookRepository
 import com.sy.odokcompose.model.SearchBookUiModel
 
 class SearchPagingSource(
-    private val bookRepository: BookRepository,
+    private val searchBookRepository: SearchBookRepository,
     private val query: String
 ) : PagingSource<Int, SearchBookUiModel>() {
 
@@ -22,7 +22,7 @@ class SearchPagingSource(
             val page = params.key ?: 1
             val pageSize = params.loadSize
             
-            val response = bookRepository.searchBooks(query, page, pageSize)
+            val response = searchBookRepository.searchBooks(query, page, pageSize)
             
             LoadResult.Page(
                 data = response,

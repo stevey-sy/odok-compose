@@ -5,6 +5,7 @@ import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.sy.odokcompose.feature.mylibrary.MyLibraryScreen
 import com.sy.odokcompose.feature.search.SearchScreen
+import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 
 @Composable
 fun AppNavGraph(navController: NavController) {
@@ -17,9 +18,10 @@ fun AppNavGraph(navController: NavController) {
             )
         }
         composable("search") {
-            SearchScreen(onNavigateBack = {
-                navController.popBackStack()
-            })
+            SearchScreen(onNavigateBack = { navController.popBackStack() },
+                onNavigateToDetail = { isbn, cover ->
+                    navController.navigateToSearchBookDetail(isbn, cover)
+                })
         }
     }
 }
