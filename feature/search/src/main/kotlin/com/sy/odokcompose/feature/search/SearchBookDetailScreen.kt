@@ -3,6 +3,7 @@ package com.sy.odokcompose.feature.search
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,19 +56,20 @@ fun SearchBookDetailScreen(
 
     OdokTheme {
         Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("책 상세 정보") },
-                    navigationIcon = {
-                        IconButton(onClick = onNavigateBack) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowBack,
-                                contentDescription = "뒤로 가기"
-                            )
-                        }
-                    }
-                )
-            }
+//            topBar = {
+//                TopAppBar(
+//                    title = { Text("책 상세 정보") },
+//                    navigationIcon = {
+//                        IconButton(onClick = onNavigateBack) {
+//                            Icon(
+//                                imageVector = Icons.Default.ArrowBack,
+//                                contentDescription = "뒤로 가기"
+//                            )
+//                        }
+//                    }
+//                )
+//            }
+            contentWindowInsets = WindowInsets(0, 0, 0, 0)
         ) { innerPadding ->
             Box(
                 modifier = Modifier
