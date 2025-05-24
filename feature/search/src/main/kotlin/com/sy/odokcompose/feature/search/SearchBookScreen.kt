@@ -1,6 +1,7 @@
 package com.sy.odokcompose.feature.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -62,6 +64,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SearchScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToDetail: (isbn: String, cover: String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -181,7 +184,9 @@ fun SearchScreen(
                     uiState.hasSearched -> {
                         SearchResultsList(
                             searchResults = searchResults,
-                            onBookClick = { /* TODO: 책 상세 페이지로 이동 */ }
+                            onBookClick = { book ->
+                                onNavigateToDetail(book.isbn, book.cover)
+                            }
                         )
                     }
                 }
@@ -207,7 +212,10 @@ fun SearchResultsList(
         ) { index ->
             val book = searchResults[index]
             book?.let {
-                BookItem(book = it)
+                BookItem(
+                    book = it,
+                    onClick = { onBookClick(it) }
+                )
                 Spacer(modifier = Modifier.height(10.dp))
             }
         }
@@ -246,19 +254,23 @@ fun SearchResultsList(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BookItem(book: SearchBookUiModel) {
+fun BookItem(
+    book: SearchBookUiModel,
+    onClick: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .height(140.dp)
+            .clickable(onClick = onClick)
     ) {
         // 전체 초록색 배경
         Box(
             modifier = Modifier
                 .height(100.dp)
                 .align(Alignment.BottomStart)
-                .clip(RoundedCornerShape(4.dp)) // 👈 radius 적용
+                .clip(RoundedCornerShape(4.dp))
                 .background(Color.White)
         ) {
             Column(

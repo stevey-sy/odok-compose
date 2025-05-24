@@ -1,7 +1,7 @@
 package com.sy.odokcompose.core.data.di
 
-import com.sy.odokcompose.core.data.repository.BookRepository
-import com.sy.odokcompose.core.data.repository.BookRepositoryImpl
+import com.sy.odokcompose.core.data.repository.SearchBookRepository
+import com.sy.odokcompose.core.data.repository.SearchBookRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,6 +15,6 @@ interface DataModule {
     @Binds
     @Singleton
     fun bindBookRepository(
-        bookRepositoryImpl: BookRepositoryImpl
-    ): BookRepository
+        bookRepositoryImpl: SearchBookRepositoryImpl
+    ): SearchBookRepository
 } 

@@ -6,7 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.sy.odokcompose.core.data.repository.BookRepository
+import com.sy.odokcompose.core.data.repository.SearchBookRepository
 import com.sy.odokcompose.model.SearchBookUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -14,12 +14,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val bookRepository: BookRepository
+    private val searchBookRepository: SearchBookRepository
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(SearchUiState())
@@ -65,7 +64,7 @@ class SearchViewModel @Inject constructor(
                     initialLoadSize = 10
                 )
             ) {
-                SearchPagingSource(bookRepository, query)
+                SearchPagingSource(searchBookRepository, query)
             }.flow.cachedIn(viewModelScope)
             
             _searchPagingData.value = pagingData

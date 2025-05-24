@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -45,6 +44,8 @@ import com.sy.odokcompose.screens.ProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
+import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
+import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -166,8 +167,15 @@ fun NavigationGraph(navController: NavHostController) {
             onNavigateToSearch = { navController.navigateToSearch() }
         )
         searchScreen(
+            onNavigateBack = { navController.popBackStack()},
+            onNavigateToDetail = { isbn, cover ->
+               navController.navigateToSearchBookDetail(isbn, cover)
+            }
+        )
+        searchBookDetailScreen(
             onNavigateBack = { navController.popBackStack() }
         )
+
         composable(BottomNavItem.Home.route) {
             HomeScreen()
         }
