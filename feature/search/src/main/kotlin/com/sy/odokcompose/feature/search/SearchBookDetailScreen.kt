@@ -2,6 +2,8 @@ package com.sy.odokcompose.feature.search
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,14 +17,16 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,11 +37,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokTheme
+import com.sy.odokcompose.core.designsystem.component.OdokTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +63,26 @@ fun SearchBookDetailScreen(
 
     OdokTheme {
         Scaffold(
-            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            bottomBar = {
+                Button(
+                    onClick = { /* TODO: 저장 로직 구현 */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(80.dp)
+                        .padding(16.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color.Black
+                    )
+                ) {
+                    Text(
+                        text = "저장하기",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color.White
+                    )
+                }
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -77,8 +103,8 @@ fun SearchBookDetailScreen(
                                 .padding(16.dp)
                         )
                     }
-                    uiState.bookDetail != null -> {
-                        val bookDetail = uiState.bookDetail!!
+                    uiState.getBookDetailSuccess != null -> {
+                        val bookDetail = uiState.getBookDetailSuccess!!
                         
                         Column(
                             modifier = Modifier
@@ -97,7 +123,7 @@ fun SearchBookDetailScreen(
                                     model = cover,
                                     contentDescription = "책 표지",
                                     modifier = Modifier
-                                        .size(width = 160.dp, height = 240.dp)
+                                        .size(width = 130.dp, height = 190.dp)
                                         .shadow(
                                             elevation = 8.dp,
                                             shape = RoundedCornerShape(4.dp),
@@ -118,58 +144,69 @@ fun SearchBookDetailScreen(
                                     }
                                 )
                             }
-                            
-                            // 책 제목
+
+                            // 별점
                             Text(
-                                text = bookDetail.title,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            
-                            Spacer(modifier = Modifier.height(8.dp))
-                            
-                            // 저자
-                            Text(
-                                text = "저자: ${bookDetail.author}",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            
-                            Spacer(modifier = Modifier.height(4.dp))
-                            
-                            // 출판사
-                            Text(
-                                text = "출판사: ${bookDetail.publisher}",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            
-                            Spacer(modifier = Modifier.height(4.dp))
-                            
-                            // ISBN
-                            Text(
-                                text = "ISBN: $isbn",
+                                text = "별점",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color.Gray
                             )
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // 책 설명
-                            Text(
-                                text = "책 소개",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            
                             Spacer(modifier = Modifier.height(8.dp))
-                            
-                            Text(
-                                text = bookDetail.description,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
+                            Box(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Row {
+                                    repeat(5) { index ->
+                                        Icon(
+                                            imageVector = Icons.Filled.Star,
+                                            contentDescription = "별점",
+                                            tint = Color.Black,
+                                            modifier = Modifier.size(32.dp)
+                                        )
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(10.dp))
+                            androidx.compose.material3.Divider()
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // 책 제목
+                            BookDetailItem(header = "책 제목", content = bookDetail.title)
+                            // 저자
+                            BookDetailItem(header = "저자", content = bookDetail.author)
+                            // 출판사
+                            BookDetailItem(header = "출판사", content = bookDetail.publisher)
+                            // ISBN
+                            BookDetailItem(header = "ISBN", content = bookDetail.isbn)
+                            // 전체 페이지 수
+                            BookDetailItem(header = "전체 페이지 수", content = bookDetail.page.toString())
+                            // 책 설명
+                            BookDetailItem(header = "책 소개", content = bookDetail.description)
+
                         }
                     }
+                }
+            }
         }
     }
-        }
-    }
+}
+
+@Composable
+fun BookDetailItem(header: String, content: String) {
+    Text(
+        text = header,
+        style = MaterialTheme.typography.bodyMedium,
+        color = Color.Gray
+    )
+    Spacer(modifier = Modifier.height(10.dp))
+    Text(
+        text = content,
+        style = MaterialTheme.typography.bodyMedium,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(start = 16.dp)
+    )
+    Spacer(modifier = Modifier.height(4.dp))
+    androidx.compose.material3.Divider()
+    Spacer(modifier = Modifier.height(16.dp))
 }

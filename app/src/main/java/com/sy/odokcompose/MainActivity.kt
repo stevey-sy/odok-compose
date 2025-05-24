@@ -119,7 +119,7 @@ fun MainScreen(
                 modifier = Modifier.fillMaxSize(),
                 topBar = {
                     // 검색 화면일 때는 뒤로가기 버튼이 있는 TopAppBar 표시
-                    if (currentRoute == SEARCH_ROUTE || currentRoute?.contains(SEARCH_BOOK_DETAIL_ROUTE) == true) {
+                    if (currentRoute == SEARCH_ROUTE) {
                         OdokTopAppBar(
                             title = "도서검색",
                             showBackButton = true,
@@ -128,7 +128,16 @@ fun MainScreen(
                             onBackClick = { navController.popBackStack() }
                         )
                     }
-                    else {
+                    else if (currentRoute?.contains(SEARCH_BOOK_DETAIL_ROUTE) == true) {
+                        OdokTopAppBar(
+                            title = "서재 등록",
+                            showBackButton = true,
+                            fontFamily = FontFamily.Default,
+                            fontSize = 22.sp,
+                            onBackClick = { navController.popBackStack() }
+                        )
+                    }
+                    else if (currentRoute == MY_LIBRARY_ROUTE) {
                         // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
                         val drawableId = context.resources.getIdentifier("ic_plus_24", "drawable", context.packageName)
                         OdokTopAppBar(
