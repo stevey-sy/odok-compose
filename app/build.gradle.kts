@@ -57,6 +57,9 @@ dependencies {
     
     // Navigation Compose
     implementation("androidx.navigation:navigation-compose:2.7.7")
+
+    // transition animation
+    implementation(libs.androidx.animation)
     
     // Hilt
     implementation(libs.hilt.android)
