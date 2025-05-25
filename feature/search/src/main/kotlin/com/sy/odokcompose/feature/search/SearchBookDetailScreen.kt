@@ -133,7 +133,7 @@ fun SearchBookDetailScreen(
                                             .sharedElement(
                                                 rememberSharedContentState(key = "image/$cover"),
                                                 animatedVisibilityScope = animatedVisibilityScope,
-//                                                boundsTransform = {initial, taget -> tween(durationMillis = 5000)}
+                                                boundsTransform = {initial, taget -> tween(durationMillis = 1000)}
                                             )
                                             .size(width = 130.dp, height = 190.dp)
                                             .shadow(

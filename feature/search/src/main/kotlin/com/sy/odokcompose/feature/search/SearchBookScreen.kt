@@ -336,7 +336,7 @@ fun BookItem(
                     .sharedElement(
                         rememberSharedContentState(key = "image/${book.cover}"),
                         animatedVisibilityScope = animatedVisibilityScope,
-//                        boundsTransform = {initial, taget -> tween(durationMillis = 1000)}
+                        boundsTransform = {initial, taget -> tween(durationMillis = 1000)}
                     )
                     .size(width = 90.dp, height = 140.dp)
                     .padding(start= 10.dp, bottom= 10.dp)
