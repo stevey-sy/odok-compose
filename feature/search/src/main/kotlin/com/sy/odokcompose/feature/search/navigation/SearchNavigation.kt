@@ -1,11 +1,19 @@
 package com.sy.odokcompose.feature.search.navigation
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import com.sy.odokcompose.feature.search.SearchScreen
+import androidx.navigation.navArgument
+import com.sy.odokcompose.feature.search.SearchBookScreen
 import com.sy.odokcompose.feature.search.SearchBookDetailScreen
+import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -22,19 +30,28 @@ fun NavController.navigateToSearchBookDetail(isbn: String, cover: String, navOpt
     this.navigate("$SEARCH_BOOK_DETAIL_ROUTE/$isbn/$encodedCover", navOptions)
 }
 
-fun NavGraphBuilder.searchScreen(
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+fun NavGraphBuilder.searchBookScreen(
+    sharedTransitionScope: SharedTransitionScope,
     onNavigateBack: () -> Unit,
-    onNavigateToDetail: (isbn: String, cover: String) -> Unit
+    onNavigateToDetail: (isbn: String, cover: String) -> Unit,
 ) {
-    composable(route = SEARCH_ROUTE) {
-        SearchScreen(
+    composable(SEARCH_ROUTE) {
+        SearchBookScreen(
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this,
             onNavigateBack = onNavigateBack,
-            onNavigateToDetail = onNavigateToDetail
+            onNavigateToDetail = onNavigateToDetail,
         )
     }
 }
 
+
+@SuppressLint("ComposableDestinationInComposeScope")
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.searchBookDetailScreen(
+    sharedTransitionScope: SharedTransitionScope,
     onNavigateBack: () -> Unit,
     route: String = "$SEARCH_BOOK_DETAIL_ROUTE/{isbn}/{cover}"
 ) {
@@ -42,16 +59,25 @@ fun NavGraphBuilder.searchBookDetailScreen(
         route = route,
         arguments = listOf(
             // 필요한 경우 NavType 지정 가능
+            navArgument("isbn"){
+                type = NavType.StringType
+            },
+            navArgument("cover"){
+                type = NavType.StringType
+            }
         )
     ) { backStackEntry ->
         val isbn = backStackEntry.arguments?.getString("isbn") ?: ""
         val encodedCover = backStackEntry.arguments?.getString("cover") ?: ""
-        val cover = java.net.URLDecoder.decode(encodedCover, StandardCharsets.UTF_8.toString())
-        
+        val cover = URLDecoder.decode(encodedCover, StandardCharsets.UTF_8.toString())
+
         SearchBookDetailScreen(
             isbn = isbn,
             cover = cover,
-            onNavigateBack = onNavigateBack
+            onNavigateBack = onNavigateBack,
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this
         )
     }
+
 }

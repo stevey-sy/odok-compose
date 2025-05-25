@@ -1,5 +1,9 @@
 package com.sy.odokcompose.feature.search
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,13 +50,15 @@ import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.component.OdokTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchBookDetailScreen(
     isbn: String,
     cover: String,
     onNavigateBack: () -> Unit,
-    viewModel: SearchDetailViewModel = hiltViewModel()
+    viewModel: SearchDetailViewModel = hiltViewModel(),
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     // 책 상세 정보를 로드하기 위해 isbn 전달
     LaunchedEffect(isbn) {
@@ -119,30 +125,37 @@ fun SearchBookDetailScreen(
                                     .padding(bottom = 16.dp),
                                 contentAlignment = Alignment.Center
                             ) {
-                                SubcomposeAsyncImage(
-                                    model = cover,
-                                    contentDescription = "책 표지",
-                                    modifier = Modifier
-                                        .size(width = 130.dp, height = 190.dp)
-                                        .shadow(
-                                            elevation = 8.dp,
-                                            shape = RoundedCornerShape(4.dp),
-                                            clip = false
-                                        )
-                                        .clip(RoundedCornerShape(4.dp)),
-                                    contentScale = ContentScale.Crop,
-                                    loading = {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(24.dp)
-                                        )
-                                    },
-                                    error = {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = "이미지 로드 실패"
-                                        )
-                                    }
-                                )
+                                with(sharedTransitionScope) {
+                                    SubcomposeAsyncImage(
+                                        model = cover,
+                                        contentDescription = "책 표지",
+                                        modifier = Modifier
+                                            .sharedElement(
+                                                rememberSharedContentState(key = "image/$cover"),
+                                                animatedVisibilityScope = animatedVisibilityScope,
+//                                                boundsTransform = {initial, taget -> tween(durationMillis = 5000)}
+                                            )
+                                            .size(width = 130.dp, height = 190.dp)
+                                            .shadow(
+                                                elevation = 8.dp,
+                                                shape = RoundedCornerShape(4.dp),
+                                                clip = false
+                                            )
+                                            .clip(RoundedCornerShape(4.dp)),
+                                        contentScale = ContentScale.Crop,
+                                        loading = {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        },
+                                        error = {
+                                            Icon(
+                                                imageVector = Icons.Default.Clear,
+                                                contentDescription = "이미지 로드 실패"
+                                            )
+                                        }
+                                    )
+                                }
                             }
 
                             // 별점
