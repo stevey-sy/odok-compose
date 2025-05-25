@@ -9,7 +9,7 @@ import javax.inject.Singleton
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * BookRepository 인터페이스 구현체
+ * SearchBookRepository 인터페이스 구현체
  */
 @Singleton
 class SearchBookRepositoryImpl @Inject constructor(
