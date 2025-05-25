@@ -1,5 +1,9 @@
 package com.sy.odokcompose.feature.search
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -33,6 +36,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,12 +66,14 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
+@OptIn(ExperimentalMaterial3Api::class, FlowPreview::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun SearchScreen(
+fun SearchBookScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (isbn: String, cover: String) -> Unit,
-    viewModel: SearchViewModel = hiltViewModel()
+    viewModel: SearchViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val query by viewModel.searchQuery.collectAsState()
@@ -74,14 +82,17 @@ fun SearchScreen(
     val focusManager = LocalFocusManager.current
 
     // 검색어 입력 후 0.5초 후 자동 검색
+    var isFirstLaunch by remember { mutableStateOf(true) }
+    
     LaunchedEffect(Unit) {
         snapshotFlow { query }
             .debounce(500)
             .distinctUntilChanged()
             .collectLatest { searchText ->
-                if (searchText.isNotBlank()) {
+                if (searchText.isNotBlank() && !isFirstLaunch) {
                     viewModel.search(searchText)
                 }
+                isFirstLaunch = false
             }
     }
     
@@ -183,10 +194,13 @@ fun SearchScreen(
                     }
                     uiState.hasSearched -> {
                         SearchResultsList(
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
                             searchResults = searchResults,
                             onBookClick = { book ->
                                 onNavigateToDetail(book.isbn, book.cover)
-                            }
+                            },
+
                         )
                     }
                 }
@@ -195,11 +209,14 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun SearchResultsList(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     searchResults: LazyPagingItems<SearchBookUiModel>,
-    onBookClick: (SearchBookUiModel) -> Unit
+    onBookClick: (SearchBookUiModel) -> Unit,
+
 ) {
     LazyColumn(
         modifier = Modifier
@@ -213,6 +230,8 @@ fun SearchResultsList(
             val book = searchResults[index]
             book?.let {
                 BookItem(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
                     book = it,
                     onClick = { onBookClick(it) }
                 )
@@ -252,11 +271,13 @@ fun SearchResultsList(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookItem(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     book: SearchBookUiModel,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -307,48 +328,53 @@ fun BookItem(
                 )
             }
         }
-
-        // 이미지 (좌측)
-        SubcomposeAsyncImage(
-            model = book.cover,
-            contentDescription = null,
-            modifier = Modifier
-                .size(width = 90.dp, height = 140.dp)
-                .padding(start= 10.dp, bottom= 10.dp)
-                .shadow(
-                    elevation = 8.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    clip = false
-                )
-                .align(Alignment.TopStart)
-                .clip(RoundedCornerShape(4.dp)),
-            contentScale = ContentScale.Crop,
-            loading = {
-                Box(
-                    modifier = Modifier
-                        .size(width = 90.dp, height = 140.dp)
-                        .background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        strokeWidth = 2.dp
+        with(sharedTransitionScope) {
+            SubcomposeAsyncImage(
+                model = book.cover,
+                contentDescription = null,
+                modifier = Modifier
+                    .sharedElement(
+                        rememberSharedContentState(key = "image/${book.cover}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+//                        boundsTransform = {initial, taget -> tween(durationMillis = 1000)}
                     )
-                }
-            },
-            error = {
-                Box(
-                    modifier = Modifier
-                        .size(width = 100.dp, height = 135.dp)
-                        .background(Color.LightGray),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Clear,
-                        contentDescription = "이미지 로드 실패"
+                    .size(width = 90.dp, height = 140.dp)
+                    .padding(start= 10.dp, bottom= 10.dp)
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        clip = false
                     )
+                    .align(Alignment.TopStart)
+                    .clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop,
+                loading = {
+                    Box(
+                        modifier = Modifier
+                            .size(width = 90.dp, height = 140.dp)
+                            .background(Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            strokeWidth = 2.dp
+                        )
+                    }
+                },
+                error = {
+                    Box(
+                        modifier = Modifier
+                            .size(width = 100.dp, height = 135.dp)
+                            .background(Color.LightGray),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Clear,
+                            contentDescription = "이미지 로드 실패"
+                        )
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }

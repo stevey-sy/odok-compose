@@ -1,9 +1,14 @@
 package com.sy.odokcompose
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -36,17 +41,14 @@ import com.sy.odokcompose.feature.mylibrary.navigation.MY_LIBRARY_ROUTE
 import com.sy.odokcompose.feature.mylibrary.navigation.myLibraryScreen
 import com.sy.odokcompose.feature.search.navigation.SEARCH_ROUTE
 import com.sy.odokcompose.feature.search.navigation.navigateToSearch
-import com.sy.odokcompose.feature.search.navigation.searchScreen
 import com.sy.odokcompose.navigation.BottomNavItem
-import com.sy.odokcompose.screens.HomeScreen
-import com.sy.odokcompose.screens.LibraryScreen
-import com.sy.odokcompose.screens.ProfileScreen
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.feature.search.navigation.SEARCH_BOOK_DETAIL_ROUTE
-import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
+import com.sy.odokcompose.feature.search.navigation.searchBookScreen
+import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -67,14 +69,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val navController = rememberNavController()
     val context = LocalContext.current
+    val navController = rememberNavController()
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry.value?.destination?.route
     
@@ -112,7 +114,6 @@ fun MainScreen(
                 CircularProgressIndicator()
             }
         }
-        
         is MainUiState.Success -> {
             // 로딩 완료 후 메인 UI 표시
             Scaffold(
@@ -160,29 +161,37 @@ fun MainScreen(
                 },
             ) { innerPadding ->
                 Box(modifier = Modifier.padding(innerPadding)) {
-                    NavigationGraph(navController = navController)
+                    SharedTransitionLayout {
+                        NavigationGraph(navController = navController, sharedTransitionScope = this)
+                    }
                 }
             }
         }
     }
 }
 
+@SuppressLint("UnusedSharedTransitionModifierParameter")
+@OptIn(ExperimentalAnimationApi::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun NavigationGraph(navController: NavHostController) {
+fun NavigationGraph(navController: NavHostController, sharedTransitionScope: SharedTransitionScope) {
     NavHost(
-        navController = navController, 
+        navController = navController,
         startDestination = MY_LIBRARY_ROUTE
     ) {
         myLibraryScreen(
             onNavigateToSearch = { navController.navigateToSearch() }
         )
-        searchScreen(
+
+        searchBookScreen(
+            sharedTransitionScope = sharedTransitionScope,
             onNavigateBack = { navController.popBackStack()},
             onNavigateToDetail = { isbn, cover ->
-               navController.navigateToSearchBookDetail(isbn, cover)
+                navController.navigateToSearchBookDetail(isbn, cover)
             }
         )
+
         searchBookDetailScreen(
+            sharedTransitionScope = sharedTransitionScope,
             onNavigateBack = { navController.popBackStack() }
         )
     }
