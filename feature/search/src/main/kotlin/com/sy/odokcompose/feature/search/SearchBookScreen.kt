@@ -200,7 +200,6 @@ fun SearchBookScreen(
                             onBookClick = { book ->
                                 onNavigateToDetail(book.isbn, book.cover)
                             },
-
                         )
                     }
                 }
@@ -216,56 +215,66 @@ fun SearchResultsList(
     animatedVisibilityScope: AnimatedVisibilityScope,
     searchResults: LazyPagingItems<SearchBookUiModel>,
     onBookClick: (SearchBookUiModel) -> Unit,
-
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .padding(horizontal = 12.dp)
-            .background(OdokColors.LightGray)
-    ) {
-        items(
-            count = searchResults.itemCount,
-            key = searchResults.itemKey { it.id }
-        ) { index ->
-            val book = searchResults[index]
-            book?.let {
-                BookItem(
-                    sharedTransitionScope = sharedTransitionScope,
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    book = it,
-                    onClick = { onBookClick(it) }
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+    when (searchResults.loadState.refresh) {
+        is LoadState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
             }
         }
-        
-        item {
-            when (searchResults.loadState.append) {
-                is LoadState.Loading -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            strokeWidth = 2.dp
+        else -> {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+            ) {
+                items(
+                    count = searchResults.itemCount,
+                    key = searchResults.itemKey { it.id }
+                ) { index ->
+                    val book = searchResults[index]
+                    book?.let {
+                        BookItem(
+                            sharedTransitionScope = sharedTransitionScope,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            book = it,
+                            onClick = { onBookClick(it) }
                         )
+                        Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
-                is LoadState.Error -> {
-                    val error = searchResults.loadState.append as LoadState.Error
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text("추가 데이터 로드 실패: ${error.error.localizedMessage}")
+                
+                item {
+                    when (searchResults.loadState.append) {
+                        is LoadState.Loading -> {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    strokeWidth = 2.dp
+                                )
+                            }
+                        }
+                        is LoadState.Error -> {
+                            val error = searchResults.loadState.append as LoadState.Error
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text("추가 데이터 로드 실패: ${error.error.localizedMessage}")
+                            }
+                        }
+                        else -> {}
                     }
                 }
-                else -> {}
             }
         }
     }
