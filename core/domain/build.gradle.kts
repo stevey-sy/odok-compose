@@ -42,6 +42,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.javax.inject)
+    implementation(project(":core:database"))
     implementation(project(":core:data"))
     implementation(project(":core:model"))
+
 }

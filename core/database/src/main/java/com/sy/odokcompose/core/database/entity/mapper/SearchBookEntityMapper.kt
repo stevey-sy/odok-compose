@@ -4,7 +4,7 @@ import com.sy.odokcompose.core.database.entity.BookEntity
 import com.sy.odokcompose.model.SearchBookUiModel
 
 object SearchBookEntityMapper : EntityMapper<List<BookEntity>, List<SearchBookUiModel>> {
-    override fun mapFromEntity(entity: List<BookEntity>): List<SearchBookUiModel> {
+    override fun entityToModel(entity: List<BookEntity>): List<SearchBookUiModel> {
         return entity.map { bookEntity ->
             SearchBookUiModel(
                 title = bookEntity.title,
@@ -19,7 +19,7 @@ object SearchBookEntityMapper : EntityMapper<List<BookEntity>, List<SearchBookUi
         }
     }
 
-    override fun mapToEntity(model: List<SearchBookUiModel>): List<BookEntity> {
+    override fun modelToEntity(model: List<SearchBookUiModel>): List<BookEntity> {
         return model.map { uiModel ->
             BookEntity(
                 title = uiModel.title,
