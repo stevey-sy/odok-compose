@@ -9,5 +9,5 @@ interface LocalDataSource<T> {
     suspend fun delete(item: T)
     suspend fun deleteAll()
     fun observeAll(): Flow<List<T>>
-    fun observeById(id: String): Flow<T?>
+    fun observeById(id: Int): Flow<T?>
 }

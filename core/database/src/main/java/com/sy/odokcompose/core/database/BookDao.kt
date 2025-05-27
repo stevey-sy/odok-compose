@@ -20,12 +20,27 @@ interface BookDao {
     @Delete
     suspend fun deleteBook(book: BookEntity)
     
-    @Query("SELECT * FROM books")
-    fun getAllBooks(): Flow<List<BookEntity>>
-    
     @Query("SELECT * FROM books WHERE itemId = :itemId")
     fun getBookById(itemId: Int): Flow<BookEntity?>
     
     @Query("SELECT * FROM books WHERE title LIKE '%' || :query || '%' OR author LIKE '%' || :query || '%'")
     fun searchBooks(query: String): Flow<List<BookEntity>>
+
+    @Query("SELECT * FROM books ORDER BY itemId DESC")
+    fun getAllBooks(): Flow<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE currentPageCnt < totalPageCnt ORDER BY itemId DESC")
+    fun getReadingBooks(): Flow<List<BookEntity>>
+
+    @Query("SELECT * FROM books WHERE currentPageCnt = totalPageCnt ORDER BY itemId DESC")
+    fun getFinishedBooks(): Flow<List<BookEntity>>
+
+    @Query("""
+        UPDATE books 
+        SET currentPageCnt = :currentPage, 
+            elapsedTimeInSeconds = elapsedTimeInSeconds + :elapsedTime 
+        WHERE itemId = :itemId
+    """)
+    suspend fun updateReadingProgress(itemId: Int, currentPage: Int, elapsedTime: Int): Int
+
 } 

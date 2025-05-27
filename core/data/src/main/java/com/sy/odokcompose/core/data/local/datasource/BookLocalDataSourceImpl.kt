@@ -4,20 +4,21 @@ import com.sy.odokcompose.core.database.BookDao
 import com.sy.odokcompose.core.database.entity.BookEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import kotlin.compareTo
 
 class BookLocalDataSourceImpl @Inject constructor(
     private val bookDao: BookDao
 ) : BookLocalDataSource {
     override fun getReadingBooks(): Flow<List<BookEntity>> {
-        TODO("Not yet implemented")
+        return bookDao.getReadingBooks()
     }
 
     override fun getFinishedBooks(): Flow<List<BookEntity>> {
-        TODO("Not yet implemented")
+        return bookDao.getFinishedBooks()
     }
 
     override fun getAllBooks(): Flow<List<BookEntity>> {
-        TODO("Not yet implemented")
+        return bookDao.getAllBooks()
     }
 
     override suspend fun updateReadingProgress(
@@ -25,11 +26,11 @@ class BookLocalDataSourceImpl @Inject constructor(
         page: Int,
         elapsedTime: Int
     ): Boolean {
-        TODO("Not yet implemented")
+        return bookDao.updateReadingProgress(itemId, page, elapsedTime) > 0
     }
 
     override suspend fun insert(item: BookEntity) {
-        TODO("Not yet implemented")
+        bookDao.insertBook(item)
     }
 
     override suspend fun insertAll(items: List<BookEntity>) {
@@ -41,7 +42,7 @@ class BookLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun delete(item: BookEntity) {
-        TODO("Not yet implemented")
+        bookDao.deleteBook(item)
     }
 
     override suspend fun deleteAll() {
@@ -52,7 +53,7 @@ class BookLocalDataSourceImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun observeById(id: String): Flow<BookEntity?> {
-        TODO("Not yet implemented")
+    override fun observeById(id: Int): Flow<BookEntity?> {
+        return  bookDao.getBookById(id)
     }
 }
