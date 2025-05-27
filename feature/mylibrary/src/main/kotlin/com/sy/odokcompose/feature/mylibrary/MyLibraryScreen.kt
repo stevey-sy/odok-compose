@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,9 +52,10 @@ fun MyLibraryScreen(
                                 .fillMaxWidth()
                                 .aspectRatio(0.7f)
                         ) {
-                            Text(
-                                text = book.title,
-                                modifier = Modifier.align(Alignment.Center)
+                            SubcomposeAsyncImage(
+                                model = book.coverImageUrl,
+                                contentDescription = book.title,
+                                modifier = Modifier.fillMaxSize()
                             )
                         }
                     }
