@@ -192,7 +192,13 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
 
         searchBookDetailScreen(
             sharedTransitionScope = sharedTransitionScope,
-            onNavigateBack = { navController.popBackStack() }
+            onNavigateBack = { navController.popBackStack() },
+            onNavigateToMain = {
+                // 모든 백스택을 지우고 메인 화면으로 이동
+                navController.navigate(MY_LIBRARY_ROUTE) {
+                    popUpTo(MY_LIBRARY_ROUTE) { inclusive = true }
+                }
+            }
         )
     }
 }

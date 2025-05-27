@@ -53,6 +53,7 @@ fun NavGraphBuilder.searchBookScreen(
 fun NavGraphBuilder.searchBookDetailScreen(
     sharedTransitionScope: SharedTransitionScope,
     onNavigateBack: () -> Unit,
+    onNavigateToMain: () -> Unit,
     route: String = "$SEARCH_BOOK_DETAIL_ROUTE/{isbn}/{cover}"
 ) {
     composable(
@@ -76,6 +77,7 @@ fun NavGraphBuilder.searchBookDetailScreen(
             cover = cover,
             onNavigateBack = onNavigateBack,
             sharedTransitionScope = sharedTransitionScope,
+            onNavigateToMain = onNavigateToMain,
             animatedVisibilityScope = this
         )
     }
