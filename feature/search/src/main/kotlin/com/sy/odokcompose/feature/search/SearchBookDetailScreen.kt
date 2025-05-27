@@ -116,7 +116,6 @@ fun SearchBookDetailScreen(
                     }
                     uiState.getBookDetailSuccess != null -> {
                         val bookDetail = uiState.getBookDetailSuccess!!
-                        
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()

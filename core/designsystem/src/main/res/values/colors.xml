@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="book_shelf">#BEBEBE</color>
+    <color name="book_shelf_shadow">#c5c5c5</color>
+    <color name="book_shelf_center">#F5F5F5</color>
+</resources>
