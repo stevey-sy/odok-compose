@@ -43,4 +43,7 @@ interface BookDao {
     """)
     suspend fun updateReadingProgress(itemId: Int, currentPage: Int, elapsedTime: Int): Int
 
+    @Query("SELECT * FROM books WHERE isbn = :isbn LIMIT 1")
+    suspend fun getBookByIsbn(isbn: String): BookEntity?
+
 } 

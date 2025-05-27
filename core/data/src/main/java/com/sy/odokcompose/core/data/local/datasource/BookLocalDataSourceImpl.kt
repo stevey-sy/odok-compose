@@ -53,4 +53,8 @@ class BookLocalDataSourceImpl @Inject constructor(
     override fun observeById(id: Int): Flow<BookEntity?> {
         return  bookDao.getBookById(id)
     }
+
+    override suspend fun getBookByIsbn(isbn: String): BookEntity? {
+        return bookDao.getBookByIsbn(isbn)
+    }
 }

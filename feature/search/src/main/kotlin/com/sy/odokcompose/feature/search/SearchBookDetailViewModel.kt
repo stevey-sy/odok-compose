@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sy.odokcompose.core.domain.GetSearchBookDetailUseCase
 import com.sy.odokcompose.core.domain.SaveBookUseCase
+import com.sy.odokcompose.core.domain.SaveBookResult
 import com.sy.odokcompose.model.SearchBookUiModel
 import com.sy.odokcompose.core.database.entity.BookEntity
 import com.sy.odokcompose.core.database.entity.mapper.SearchBookItemMapper
@@ -20,7 +21,8 @@ data class SearchDetailUiState(
     val getBookDetailSuccess: SearchBookUiModel? = null,
     val error: String? = null,
     val isSaving: Boolean = false,
-    val saveSuccess: Boolean = false
+    val saveSuccess: Boolean = false,
+    val isDuplicate: Boolean = false
 )
 
 @HiltViewModel
@@ -59,16 +61,35 @@ class SearchDetailViewModel @Inject constructor(
         val bookDetail = uiState.value.getBookDetailSuccess ?: return
         viewModelScope.launch {
             try {
-                _uiState.update { it.copy(isSaving = true, error = null) }
+                _uiState.update { it.copy(isSaving = true, error = null, isDuplicate = false) }
                 
                 val bookEntity = SearchBookItemMapper.modelToEntity(bookDetail)
-                saveBookUseCase(bookEntity)
-                
-                _uiState.update { 
-                    it.copy(
-                        isSaving = false,
-                        saveSuccess = true
-                    ) 
+                when (val result = saveBookUseCase(bookEntity)) {
+                    is SaveBookResult.Success -> {
+                        _uiState.update { 
+                            it.copy(
+                                isSaving = false,
+                                saveSuccess = true
+                            ) 
+                        }
+                    }
+                    is SaveBookResult.DuplicateBook -> {
+                        _uiState.update { 
+                            it.copy(
+                                isSaving = false,
+                                isDuplicate = true,
+                                error = "이미 저장된 책입니다."
+                            ) 
+                        }
+                    }
+                    is SaveBookResult.Error -> {
+                        _uiState.update { 
+                            it.copy(
+                                isSaving = false,
+                                error = result.message
+                            ) 
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update { 

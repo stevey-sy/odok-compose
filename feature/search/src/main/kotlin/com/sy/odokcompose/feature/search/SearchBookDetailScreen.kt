@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -60,6 +61,7 @@ fun SearchBookDetailScreen(
     isbn: String,
     cover: String,
     onNavigateBack: () -> Unit,
+    onNavigateToMain: () -> Unit,
     viewModel: SearchDetailViewModel = hiltViewModel(),
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope
@@ -72,13 +74,24 @@ fun SearchBookDetailScreen(
         viewModel.loadBookDetail(isbn)
     }
 
-    // 저장 성공 시 Snackbar 표시
-    LaunchedEffect(uiState.saveSuccess) {
-        if (uiState.saveSuccess) {
+    // 에러 메시지 표시
+    LaunchedEffect(uiState.error) {
+        uiState.error?.let { error ->
             snackbarHostState.showSnackbar(
-                message = "책이 저장되었습니다",
+                message = error,
                 duration = androidx.compose.material3.SnackbarDuration.Short
             )
+        }
+    }
+
+    // 저장 성공 시 Snackbar 표시 및 메인 화면으로 이동
+    LaunchedEffect(uiState.saveSuccess) {
+        if (uiState.saveSuccess) {
+//            snackbarHostState.showSnackbar(
+//                message = "책이 서재에 저장되었습니다.",
+//                duration = androidx.compose.material3.SnackbarDuration.Short
+//            )
+            onNavigateToMain()
         }
     }
 
@@ -87,23 +100,7 @@ fun SearchBookDetailScreen(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             bottomBar = {
-                Button(
-                    onClick = { viewModel.saveBook() },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
-                        containerColor = Color.Black
-                    )
-                ) {
-                    Text(
-                        text = "저장하기",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White
-                    )
-                }
+                BuildBottomBar(viewModel)
             }
         ) { innerPadding ->
             Box(
@@ -115,14 +112,6 @@ fun SearchBookDetailScreen(
                     uiState.isLoading -> {
                         CircularProgressIndicator(
                             modifier = Modifier.align(Alignment.Center)
-                        )
-                    }
-                    uiState.error != null -> {
-                        Text(
-                            text = "오류가 발생했습니다: ${uiState.error}",
-                            modifier = Modifier
-                                .align(Alignment.Center)
-                                .padding(16.dp)
                         )
                     }
                     uiState.getBookDetailSuccess != null -> {
@@ -218,6 +207,27 @@ fun SearchBookDetailScreen(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BuildBottomBar(viewModel: SearchDetailViewModel) {
+    Button(
+        onClick = { viewModel.saveBook() },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .padding(16.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.Black
+        )
+    ) {
+        Text(
+            text = "저장하기",
+            style = MaterialTheme.typography.titleMedium,
+            color = Color.White
+        )
     }
 }
 
