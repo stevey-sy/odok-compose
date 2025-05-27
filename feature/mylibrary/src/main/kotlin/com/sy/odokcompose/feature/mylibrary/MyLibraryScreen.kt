@@ -97,22 +97,24 @@ fun MyLibraryScreen(
                                     )
                                 }
 
-                                // 책 표지 이미지 + 그림자
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(140.dp)
-                                        .align(Alignment.BottomCenter)
-                                        .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 25.dp)
-                                        .shadow(10.dp, RectangleShape)
-                                        .background(Color.White)
-                                ) {
-                                    SubcomposeAsyncImage(
-                                        model = book.coverImageUrl,
-                                        contentDescription = book.title,
-                                        modifier = Modifier.fillMaxSize(),
-                                        contentScale = ContentScale.Crop
-                                    )
+                                // 더미 데이터가 아닌 경우에만 책 표지 표시
+                                if (book.itemId > 0) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .height(140.dp)
+                                            .align(Alignment.BottomCenter)
+                                            .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 25.dp)
+                                            .shadow(10.dp, RectangleShape)
+                                            .background(Color.White)
+                                    ) {
+                                        SubcomposeAsyncImage(
+                                            model = book.coverImageUrl,
+                                            contentDescription = book.title,
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                    }
                                 }
                             }
                         }

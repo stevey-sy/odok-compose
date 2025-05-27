@@ -29,8 +29,34 @@ class MyLibraryViewModel @Inject constructor(
     private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE) {
         viewModelScope.launch {
             getMyBooksUseCase(filter).collect { books ->
-                _shelfItems.value = books
+                val updatedBooks = updateShelfPosition(books)
+                val paddedBooks = addDummyItems(updatedBooks)
+                _shelfItems.value = paddedBooks
             }
+        }
+    }
+
+    private fun updateShelfPosition(originalList: List<BookUiModel>): List<BookUiModel> {
+        return originalList.mapIndexed { index, book ->
+            book.copy(shelfPosition = index % 3)
+        }
+    }
+
+    private fun addDummyItems(originalList: List<BookUiModel>): List<BookUiModel> {
+        val remainder = originalList.size % 3
+        return if (remainder == 0) {
+            originalList
+        } else {
+            val paddingCount = 3 - remainder
+            val padded = originalList.toMutableList()
+            repeat(paddingCount) {
+                padded.add(
+                    BookUiModel(
+                        itemId = -1 * (it + 1),
+                    )
+                )
+            }
+            padded
         }
     }
 }
