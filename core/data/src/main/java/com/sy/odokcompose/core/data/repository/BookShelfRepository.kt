@@ -1,13 +1,14 @@
 package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.model.BookUiModel
+import com.sy.odokcompose.model.type.ShelfFilterType
 import kotlinx.coroutines.flow.Flow
 
 interface BookShelfRepository {
     /**
      *  나의 서재의 책들을 조회합니다.
      */
-    suspend fun getShelfItems(): Flow<List<BookUiModel>>
+    suspend fun getShelfItems(filterBy: ShelfFilterType): Flow<List<BookUiModel>>
 
     /**
      *  itemId 로 책 데이터를 가져옵니다.

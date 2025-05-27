@@ -1,20 +1,26 @@
 package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSource
+import com.sy.odokcompose.core.database.entity.mapper.BookEntityMapper
 import com.sy.odokcompose.model.BookUiModel
+import com.sy.odokcompose.model.type.ShelfFilterType
 import jakarta.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
  * BookShelfRepository 인터페이스 구현체
  */
-@Singleton
+
 class BookShelfRepositoryImpl @Inject constructor(
     private val bookLocalDataSource: BookLocalDataSource
 ) : BookShelfRepository {
-    override suspend fun getShelfItems(): Flow<List<BookUiModel>> {
-        TODO("Not yet implemented")
+    override suspend fun getShelfItems(filterBy: ShelfFilterType): Flow<List<BookUiModel>> {
+        return bookLocalDataSource.getBooksByFilterType(filterBy)
+            .map { entityList ->
+                entityList.map { BookEntityMapper.entityToModel(it) }
+            }
     }
 
     override suspend fun getBookById(itemId: Int): Flow<BookUiModel> {

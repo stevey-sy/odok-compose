@@ -2,23 +2,20 @@ package com.sy.odokcompose.core.data.local.datasource
 
 import com.sy.odokcompose.core.database.BookDao
 import com.sy.odokcompose.core.database.entity.BookEntity
+import com.sy.odokcompose.model.type.ShelfFilterType
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-import kotlin.compareTo
 
 class BookLocalDataSourceImpl @Inject constructor(
     private val bookDao: BookDao
 ) : BookLocalDataSource {
-    override fun getReadingBooks(): Flow<List<BookEntity>> {
-        return bookDao.getReadingBooks()
-    }
 
-    override fun getFinishedBooks(): Flow<List<BookEntity>> {
-        return bookDao.getFinishedBooks()
-    }
-
-    override fun getAllBooks(): Flow<List<BookEntity>> {
-        return bookDao.getAllBooks()
+    override fun getBooksByFilterType(filterType: ShelfFilterType): Flow<List<BookEntity>> {
+        return when (filterType) {
+            ShelfFilterType.READING -> bookDao.getReadingBooks()
+            ShelfFilterType.FINISHED -> bookDao.getFinishedBooks()
+            ShelfFilterType.NONE -> bookDao.getAllBooks()
+        }
     }
 
     override suspend fun updateReadingProgress(

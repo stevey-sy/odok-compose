@@ -59,6 +59,8 @@ dependencies {
     
     // Core modules
     implementation(project(":core:designsystem"))
+    implementation(project(":core:domain"))
+    implementation(project(":core:model"))
     
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
