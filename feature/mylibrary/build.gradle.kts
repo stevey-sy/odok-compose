@@ -56,6 +56,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+
+    // Coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
     
     // Core modules
     implementation(project(":core:designsystem"))
