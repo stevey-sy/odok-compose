@@ -9,6 +9,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -49,6 +50,7 @@ import com.sy.odokcompose.feature.search.navigation.SEARCH_BOOK_DETAIL_ROUTE
 import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 import com.sy.odokcompose.feature.search.navigation.searchBookScreen
 import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
+import androidx.compose.ui.graphics.Color
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -117,7 +119,9 @@ fun MainScreen(
         is MainUiState.Success -> {
             // 로딩 완료 후 메인 UI 표시
             Scaffold(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .background(Color.White),
+                containerColor = Color.White,
                 topBar = {
                     // 검색 화면일 때는 뒤로가기 버튼이 있는 TopAppBar 표시
                     if (currentRoute == SEARCH_ROUTE) {
