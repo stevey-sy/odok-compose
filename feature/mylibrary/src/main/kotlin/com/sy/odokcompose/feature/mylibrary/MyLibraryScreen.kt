@@ -1,5 +1,6 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -18,9 +20,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.odokcompose.core.designsystem.OdokTheme
+import com.sy.odokcompose.core.designsystem.R
 import com.sy.odokcompose.feature.mylibrary.components.BookCover
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfBase
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfLeft
@@ -54,7 +58,8 @@ fun MyLibraryScreen(
                         itemsIndexed(shelfItems) { index, book ->
                             BookShelfItem(
                                 index = index,
-                                book = book
+                                book = book,
+                                isLastItem = index == shelfItems.lastIndex
                             )
                         }
                     }
@@ -68,7 +73,8 @@ fun MyLibraryScreen(
 @Composable
 private fun BookShelfItem(
     index: Int,
-    book: BookUiModel
+    book: BookUiModel,
+    isLastItem: Boolean = false
 ) {
     Box(
         modifier = Modifier
@@ -87,6 +93,15 @@ private fun BookShelfItem(
             BookCover(
                 book = book,
                 modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        } else if (isLastItem) {
+            Image(
+                painter = painterResource(id = R.drawable.plant),
+                contentDescription = "식물",
+                modifier = Modifier
+                    .width(70.dp)
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 19.dp)
             )
         }
     }

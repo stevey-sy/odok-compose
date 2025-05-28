@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -25,7 +26,11 @@ fun BookCover(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp)
-            .padding(start = 18.dp, end = 18.dp, top = 10.dp, bottom = 25.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
+            .shadow(
+                elevation = 8.dp,
+                shape = RectangleShape
+            )
             .background(Color.White)
     ) {
         SubcomposeAsyncImage(
