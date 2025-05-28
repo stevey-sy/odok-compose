@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.model.BookUiModel
 
+
 @Composable
 fun BookCover(
     book: BookUiModel,

@@ -1,7 +1,6 @@
 package com.sy.odokcompose.feature.mylibrary
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -26,6 +25,7 @@ import com.sy.odokcompose.feature.mylibrary.components.BookCover
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfBase
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfLeft
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfRight
+import com.sy.odokcompose.model.BookUiModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,20 +52,10 @@ fun MyLibraryScreen(
                         .padding(horizontal = 16.dp),
                     content = {
                         itemsIndexed(shelfItems) { index, book ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .aspectRatio(0.7f)
-                            ) {
-                                BookShelf(index)
-                                // 더미 데이터가 아닌 경우에만 책 표지 표시
-                                if (book.itemId > 0) {
-                                    BookCover(
-                                        book = book,
-                                        modifier = Modifier.align(Alignment.BottomCenter)
-                                    )
-                                }
-                            }
+                            BookShelfItem(
+                                index = index,
+                                book = book
+                            )
                         }
                     }
                 )
@@ -74,29 +64,42 @@ fun MyLibraryScreen(
     }
 }
 
+
 @Composable
-private fun BoxScope.BookShelf(index: Int) {
-    // BookShelfBase 분기 처리
+private fun BookShelfItem(
+    index: Int,
+    book: BookUiModel
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(0.7f)
+    ) {
+        BookShelfComponent(
+            index = index,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(30.dp)
+                .align(Alignment.BottomCenter)
+        )
+
+        if (book.itemId > 0) {
+            BookCover(
+                book = book,
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
+        }
+    }
+}
+
+@Composable
+private fun BookShelfComponent(
+    index: Int,
+    modifier: Modifier = Modifier
+) {
     when (index % 3) {
-        0 -> BookShelfLeft(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(30.dp)
-                .align(Alignment.BottomCenter)
-        )
-
-        1 -> BookShelfBase(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(30.dp)
-                .align(Alignment.BottomCenter)
-        )
-
-        2 -> BookShelfRight(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(30.dp)
-                .align(Alignment.BottomCenter)
-        )
+        0 -> BookShelfLeft(modifier = modifier)
+        1 -> BookShelfBase(modifier = modifier)
+        2 -> BookShelfRight(modifier = modifier)
     }
 }
