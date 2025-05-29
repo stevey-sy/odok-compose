@@ -2,6 +2,7 @@ package com.sy.odokcompose.feature.mylibrary
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,9 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
-import com.sy.odokcompose.core.designsystem.R
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.feature.mylibrary.components.BookCover
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfBase
@@ -46,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 @Composable
 fun MyLibraryScreen(
     onNavigateToSearch: () -> Unit,
+    onBookItemClicked: (itemId: Int) -> Unit,
     viewModel: MyLibraryViewModel = hiltViewModel()
 ) {
     val shelfItems by viewModel.shelfItems.collectAsState()
@@ -74,7 +74,8 @@ fun MyLibraryScreen(
                                 BookShelfItem(
                                     index = index,
                                     book = book,
-                                    isLastItem = index == shelfItems.lastIndex
+                                    isLastItem = index == shelfItems.lastIndex,
+                                    onClick = onBookItemClicked
                                 )
                             }
                         }
@@ -90,7 +91,8 @@ fun MyLibraryScreen(
 private fun BookShelfItem(
     index: Int,
     book: BookUiModel,
-    isLastItem: Boolean = false
+    isLastItem: Boolean = false,
+    onClick: ((itemId:Int) -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -108,7 +110,9 @@ private fun BookShelfItem(
         if (book.itemId > 0) {
             BookCover(
                 book = book,
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .clickable(enabled = onClick != null) { onClick?.invoke(book.itemId) } // 클릭 처리
             )
         } else if (isLastItem) {
             Image(

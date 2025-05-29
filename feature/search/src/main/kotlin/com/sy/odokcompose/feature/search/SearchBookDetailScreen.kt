@@ -71,7 +71,15 @@ fun SearchBookDetailScreen(
 
     // 책 상세 정보를 로드하기 위해 isbn 전달
     LaunchedEffect(isbn) {
-        viewModel.loadBookDetail(isbn)
+        try {
+            viewModel.loadBookDetail(isbn)
+        } catch (e: Exception) {
+            // 에러 처리
+            snackbarHostState.showSnackbar(
+                message = "책 정보를 불러오는데 실패했습니다.",
+                duration = androidx.compose.material3.SnackbarDuration.Short
+            )
+        }
     }
 
     // 에러 메시지 표시

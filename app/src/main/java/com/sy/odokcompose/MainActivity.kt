@@ -51,6 +51,8 @@ import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 import com.sy.odokcompose.feature.search.navigation.searchBookScreen
 import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 import androidx.compose.ui.graphics.Color
+import com.sy.odokcompose.feature.mylibrary.navigation.bookDetailScreen
+import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -183,8 +185,13 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         startDestination = MY_LIBRARY_ROUTE
     ) {
         myLibraryScreen(
-            onNavigateToSearch = { navController.navigateToSearch() }
+            onNavigateToSearch = { navController.navigateToSearch()},
+            onBookItemClicked = { itemId ->
+                navController.navigateToBookDetail(itemId)
+            }
         )
+
+        bookDetailScreen()
 
         searchBookScreen(
             sharedTransitionScope = sharedTransitionScope,

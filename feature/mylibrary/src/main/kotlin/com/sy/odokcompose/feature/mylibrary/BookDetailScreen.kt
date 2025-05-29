@@ -1,7 +1,12 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Button
@@ -17,19 +23,32 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import coil.compose.SubcomposeAsyncImage
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookDetailScreen(
-    // 실제 데이터는 파라미터로 받아오면 됩니다.
+    viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
+    val bookList by viewModel.bookList.collectAsState()
+    val currentPage by viewModel.currentPage.collectAsState()
+    val currentBook by viewModel.currentBook.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -39,8 +58,18 @@ fun BookDetailScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                // 상단 ViewPager (책 표지 여러 장일 경우)
-                val pagerState = rememberPagerState(pageCount = { 1 }) // 표지 여러 장이면 숫자 변경
+
+                val pagerState = rememberPagerState(
+                    initialPage = currentPage,
+                    pageCount = { bookList.size }
+                )
+
+                LaunchedEffect(pagerState.currentPage) {
+                    if (pagerState.currentPage != currentPage) {
+                        viewModel.onPageChanged(pagerState.currentPage)
+                    }
+                }
+
                 HorizontalPager(
                     state = pagerState,
                     modifier = Modifier
@@ -48,25 +77,41 @@ fun BookDetailScreen(
                         .height(300.dp)
                 ) { page ->
                     // 임시로 painterResource 사용, 실제로는 이미지 url 등으로 대체
-                    Image(
-                        painter = painterResource(id = OdokIcons.Plant),
-                        contentDescription = "책 표지",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    val book = bookList.getOrNull(page)
+                    if (book != null) {
+                        Box(
+                            modifier = Modifier
+                                .width(200.dp)
+                                .height(280.dp)
+                                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
+                                .shadow(
+                                    elevation = 8.dp,
+                                    shape = RectangleShape
+                                )
+                                .background(Color.White)
+                        ) {
+                            SubcomposeAsyncImage(
+                                model = book.coverImageUrl,
+                                contentDescription = book.title,
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 // 책 제목
                 Text(
-                    text = "괜찮은 어른이 되고 싶어서",
+                    text = currentBook?.title ?: "",
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 
                 // 지은이
                 Text(
-                    text = "봉태규",
+                    text = currentBook?.author ?: "",
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
 

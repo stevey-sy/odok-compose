@@ -24,7 +24,10 @@ class BookShelfRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getBookById(itemId: Int): Flow<BookUiModel> {
-        TODO("Not yet implemented")
+        return bookLocalDataSource.observeById(itemId).map { entity ->
+            entity?.let { BookEntityMapper.entityToModel(it) }
+                ?: throw IllegalStateException("Book with id $itemId not found")
+        }
     }
 
     override suspend fun deleteBookById(itemId: Int) {
