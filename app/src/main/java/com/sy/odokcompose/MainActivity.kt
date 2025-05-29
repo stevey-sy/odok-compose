@@ -51,6 +51,7 @@ import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 import com.sy.odokcompose.feature.search.navigation.searchBookScreen
 import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 import androidx.compose.ui.graphics.Color
+import com.sy.odokcompose.feature.mylibrary.navigation.BOOK_DETAIL_ROUTE
 import com.sy.odokcompose.feature.mylibrary.navigation.bookDetailScreen
 import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
 
@@ -144,6 +145,11 @@ fun MainScreen(
                             onBackClick = { navController.popBackStack() }
                         )
                     }
+                    else if (currentRoute?.contains(BOOK_DETAIL_ROUTE) == true) {
+                        OdokTopAppBar(
+                            title = "오독오독",
+                        )
+                    }
                     else if (currentRoute == MY_LIBRARY_ROUTE) {
                         // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
                         val drawableId = context.resources.getIdentifier("ic_plus_24", "drawable", context.packageName)
@@ -162,6 +168,8 @@ fun MainScreen(
                 bottomBar = {
                     // 현재 경로가 검색 화면이 아닐 때만 바텀 네비게이션 표시
                     if (currentRoute == MY_LIBRARY_ROUTE) {
+                        OdokBottomNavigationBar(navController = navController, items = navigationItems)
+                    } else if (currentRoute?.contains(BOOK_DETAIL_ROUTE) == true) {
                         OdokBottomNavigationBar(navController = navController, items = navigationItems)
                     }
                 },
