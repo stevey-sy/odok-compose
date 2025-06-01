@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -74,7 +75,8 @@ fun BookDetailScreen(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
+                        .height(300.dp),
+                    contentPadding = PaddingValues(horizontal = 64.dp), // 좌우 여백 추가
                 ) { page ->
                     // 임시로 painterResource 사용, 실제로는 이미지 url 등으로 대체
                     val book = bookList.getOrNull(page)
