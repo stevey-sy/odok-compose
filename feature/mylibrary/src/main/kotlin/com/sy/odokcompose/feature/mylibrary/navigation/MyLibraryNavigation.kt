@@ -22,12 +22,16 @@ fun NavController.navigateToMyLibrary() {
     this.navigate(MY_LIBRARY_ROUTE)
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.myLibraryScreen(
+    sharedTransitionScope: SharedTransitionScope,
     onNavigateToSearch: () -> Unit,
     onBookItemClicked: (itemId: Int) -> Unit,
 ) {
     composable(route = MY_LIBRARY_ROUTE) {
         MyLibraryScreen(
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this,
             onNavigateToSearch = onNavigateToSearch,
             onBookItemClicked = onBookItemClicked)
     }
@@ -37,7 +41,9 @@ fun NavController.navigateToBookDetail(itemId: Int, navOptions: NavOptions? = nu
     this.navigate("$BOOK_DETAIL_ROUTE/$itemId", navOptions)
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.bookDetailScreen(
+    sharedTransitionScope: SharedTransitionScope,
     route: String = "$BOOK_DETAIL_ROUTE/{itemId}"
 ) {
     composable(
@@ -48,6 +54,9 @@ fun NavGraphBuilder.bookDetailScreen(
             }
         )
     ) {
-        BookDetailScreen()
+        BookDetailScreen(
+            sharedTransitionScope = sharedTransitionScope,
+            animatedVisibilityScope = this,
+        )
     }
 }

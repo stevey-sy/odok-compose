@@ -1,5 +1,9 @@
 package com.sy.odokcompose.feature.mylibrary.components
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +21,11 @@ import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.model.BookUiModel
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookCover(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     book: BookUiModel,
     modifier: Modifier = Modifier
 ) {
@@ -33,11 +40,19 @@ fun BookCover(
             )
             .background(Color.White)
     ) {
-        SubcomposeAsyncImage(
-            model = book.coverImageUrl,
-            contentDescription = book.title,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        with(sharedTransitionScope) {
+            SubcomposeAsyncImage(
+                model = book.coverImageUrl,
+                contentDescription = book.title,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .sharedElement(
+                        rememberSharedContentState(key = "bookItem/${book.itemId}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = {initial, taget -> tween(durationMillis = 700)}
+                    ),
+                contentScale = ContentScale.Crop
+            )
+        }
     }
 } 

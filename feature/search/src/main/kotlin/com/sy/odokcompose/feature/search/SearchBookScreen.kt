@@ -44,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
@@ -83,19 +84,9 @@ fun SearchBookScreen(
 
     // 검색어 입력 후 0.5초 후 자동 검색
     var isFirstLaunch by remember { mutableStateOf(true) }
-    
-    LaunchedEffect(Unit) {
-        snapshotFlow { query }
-            .debounce(500)
-            .distinctUntilChanged()
-            .collectLatest { searchText ->
-                if (searchText.isNotBlank() && !isFirstLaunch) {
-                    viewModel.search(searchText)
-                }
-                isFirstLaunch = false
-            }
-    }
-    
+
+    OnKeyInputted(query, isFirstLaunch, viewModel)
+
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0)
@@ -106,50 +97,8 @@ fun SearchBookScreen(
                     .padding(innerPadding)
                     .background(OdokColors.LightGray)
             ) {
-                TextField(
-                    value = query,
-                    onValueChange = {
-                        viewModel.updateSearchQuery(it) 
-                    },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    placeholder = { Text("책 제목이나 작가를 검색하세요") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "검색"
-                        )
-                    },
-                    trailingIcon = {
-                        if (query.isNotEmpty()) {
-                            IconButton(onClick = {
-                                viewModel.updateSearchQuery("") 
-                            }) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "지우기"
-                                )
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            viewModel.search(query)
-                            focusManager.clearFocus()
-                        }
-                    ),
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent
-                    )
-                )
-                
+                SearchTextArea(query, viewModel, focusManager)
                 Spacer(modifier = Modifier.height(8.dp))
-                
                 when {
                     uiState.isSearching -> {
                         Box(
@@ -206,6 +155,76 @@ fun SearchBookScreen(
             }
         }
     }
+}
+
+@Composable
+@OptIn(FlowPreview::class)
+private fun OnKeyInputted(
+    query: String,
+    isFirstLaunch: Boolean,
+    viewModel: SearchViewModel
+) {
+    var isFirstLaunch1 = isFirstLaunch
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }
+            .debounce(500)
+            .distinctUntilChanged()
+            .collectLatest { searchText ->
+                if (searchText.isNotBlank() && !isFirstLaunch1) {
+                    viewModel.search(searchText)
+                }
+                isFirstLaunch1 = false
+            }
+    }
+}
+
+@Composable
+private fun SearchTextArea(
+    query: String,
+    viewModel: SearchViewModel,
+    focusManager: FocusManager
+) {
+    TextField(
+        value = query,
+        onValueChange = {
+            viewModel.updateSearchQuery(it)
+        },
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth(),
+        placeholder = { Text("책 제목이나 작가를 검색하세요") },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "검색"
+            )
+        },
+        trailingIcon = {
+            if (query.isNotEmpty()) {
+                IconButton(onClick = {
+                    viewModel.updateSearchQuery("")
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Clear,
+                        contentDescription = "지우기"
+                    )
+                }
+            }
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+        keyboardActions = KeyboardActions(
+            onSearch = {
+                viewModel.search(query)
+                focusManager.clearFocus()
+            }
+        ),
+        colors = TextFieldDefaults.colors(
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent
+        )
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)

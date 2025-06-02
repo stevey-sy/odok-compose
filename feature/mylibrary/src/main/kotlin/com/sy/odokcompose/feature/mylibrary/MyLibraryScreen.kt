@@ -1,5 +1,8 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,9 +44,11 @@ import com.sy.odokcompose.feature.mylibrary.components.BookShelfRight
 import com.sy.odokcompose.model.BookUiModel
 import androidx.compose.ui.graphics.Color
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MyLibraryScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onNavigateToSearch: () -> Unit,
     onBookItemClicked: (itemId: Int) -> Unit,
     viewModel: MyLibraryViewModel = hiltViewModel()
@@ -72,6 +77,8 @@ fun MyLibraryScreen(
                         content = {
                             itemsIndexed(shelfItems) { index, book ->
                                 BookShelfItem(
+                                    sharedTransitionScope = sharedTransitionScope,
+                                    animatedVisibilityScope = animatedVisibilityScope,
                                     index = index,
                                     book = book,
                                     isLastItem = index == shelfItems.lastIndex,
@@ -87,8 +94,11 @@ fun MyLibraryScreen(
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun BookShelfItem(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     index: Int,
     book: BookUiModel,
     isLastItem: Boolean = false,
@@ -109,6 +119,8 @@ private fun BookShelfItem(
 
         if (book.itemId > 0) {
             BookCover(
+                sharedTransitionScope = sharedTransitionScope,
+                animatedVisibilityScope = animatedVisibilityScope,
                 book = book,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)

@@ -63,6 +63,8 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookDetailScreen(
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
     val bookList by viewModel.bookList.collectAsState()
@@ -134,12 +136,21 @@ fun BookDetailScreen(
                                     shape = RoundedCornerShape(10.dp)   // background도 동일하게 radius를 적용
                                 )
                         ) {
-                            SubcomposeAsyncImage(
-                                model = book.coverImageUrl,
-                                contentDescription = book.title,
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
-                            )
+                            with(sharedTransitionScope) {
+                                SubcomposeAsyncImage(
+                                    model = book.coverImageUrl,
+                                    contentDescription = book.title,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .sharedElement(
+                                            rememberSharedContentState(key = "bookItem/${book.itemId}"),
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            boundsTransform = {initial, taget -> tween(durationMillis = 700)}
+                                        ),
+                                    contentScale = ContentScale.Crop
+                                )
+                            }
+
                         }
                     }
 

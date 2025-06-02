@@ -193,13 +193,16 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         startDestination = MY_LIBRARY_ROUTE
     ) {
         myLibraryScreen(
+            sharedTransitionScope = sharedTransitionScope,
             onNavigateToSearch = { navController.navigateToSearch()},
             onBookItemClicked = { itemId ->
                 navController.navigateToBookDetail(itemId)
             }
         )
 
-        bookDetailScreen()
+        bookDetailScreen(
+            sharedTransitionScope = sharedTransitionScope,
+        )
 
         searchBookScreen(
             sharedTransitionScope = sharedTransitionScope,
