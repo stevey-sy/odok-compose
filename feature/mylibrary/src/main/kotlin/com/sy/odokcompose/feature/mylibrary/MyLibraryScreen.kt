@@ -1,5 +1,6 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -60,6 +61,7 @@ import com.sy.odokcompose.feature.mylibrary.components.BookShelfLeft
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfRight
 import com.sy.odokcompose.model.BookUiModel
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import com.sy.odokcompose.core.designsystem.component.ActionIconButton
 import com.sy.odokcompose.core.designsystem.component.OdokTopAppBar
 import com.sy.odokcompose.core.designsystem.component.SearchTextField
@@ -76,7 +78,17 @@ fun MyLibraryScreen(
 ) {
     val shelfItems by viewModel.shelfItems.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
-    
+    val focusManager = LocalFocusManager.current
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val filteredItems by viewModel.filteredItems.collectAsState()
+
+    // 검색창이 열려있으면 BackHandler 활성화
+    if (uiState.isSearchViewShowing) {
+        BackHandler {
+            viewModel.toggleSearchView(false)  // ViewModel의 검색창 닫기 로직 호출
+        }
+    }
+
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -105,7 +117,10 @@ fun MyLibraryScreen(
                         )
                     ) {
                         SearchTextField(
-                            query = "",
+                            query = searchQuery,
+                            focusManager = focusManager,
+                            onKeyTypes = { viewModel.updateSearchQuery(it) },
+                            onSearchClicked = { viewModel.updateSearchQuery(it) },
                             onClose = { viewModel.toggleSearchView(false) }
                         )
                     }
@@ -119,7 +134,7 @@ fun MyLibraryScreen(
                             animationSpec = tween(300)
                         )
                     ) {
-                        if (shelfItems.isEmpty()) {
+                        if (filteredItems.isEmpty()) {
                             EmptyLibraryView(onNavigateToSearch)
                         } else {
                             LazyVerticalGrid(
@@ -128,13 +143,13 @@ fun MyLibraryScreen(
                                     .fillMaxSize()
                                     .padding(horizontal = 16.dp),
                                 content = {
-                                    itemsIndexed(shelfItems) { index, book ->
+                                    itemsIndexed(filteredItems) { index, book ->
                                         BookShelfItem(
                                             sharedTransitionScope = sharedTransitionScope,
                                             animatedVisibilityScope = animatedVisibilityScope,
                                             index = index,
                                             book = book,
-                                            isLastItem = index == shelfItems.lastIndex,
+                                            isLastItem = index == filteredItems.lastIndex,
                                             onClick = onBookItemClicked
                                         )
                                     }

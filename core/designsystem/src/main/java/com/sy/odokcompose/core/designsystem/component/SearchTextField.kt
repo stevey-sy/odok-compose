@@ -16,6 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -25,12 +26,15 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 fun SearchTextField(
     query: String,
     hint: String = "내 서재에 저장된 책을 검색합니다.",
+    focusManager: FocusManager,
+    onKeyTypes: (query:String) -> Unit = {},
+    onSearchClicked: (query:String) -> Unit = {},
     onClose: () -> Unit = {}
 ) {
     TextField(
         value = query,
         onValueChange = {
-//            viewModel.updateSearchQuery(it)
+            onKeyTypes(it)
         },
         modifier = Modifier
             .padding(horizontal = 16.dp)
@@ -44,16 +48,16 @@ fun SearchTextField(
         },
         trailingIcon = {
             Row {
-                if (query.isNotEmpty()) {
-                    IconButton(onClick = {
-//                        viewModel.updateSearchQuery("")
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Clear,
-                            contentDescription = "지우기"
-                        )
-                    }
-                }
+//                if (query.isNotEmpty()) {
+//                    IconButton(onClick = {
+////                        viewModel.updateSearchQuery("")
+//                    }) {
+//                        Icon(
+//                            imageVector = Icons.Default.Clear,
+//                            contentDescription = "지우기"
+//                        )
+//                    }
+//                }
                 IconButton(onClick = onClose) {
                     Icon(
                         imageVector = Icons.Default.Close,
@@ -66,8 +70,9 @@ fun SearchTextField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
         keyboardActions = KeyboardActions(
             onSearch = {
+                onSearchClicked(query)
 //                viewModel.search(query)
-//                focusManager.clearFocus()
+                focusManager.clearFocus()
             }
         ),
         colors = TextFieldDefaults.colors(

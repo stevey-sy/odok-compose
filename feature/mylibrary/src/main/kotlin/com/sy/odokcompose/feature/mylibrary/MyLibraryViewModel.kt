@@ -25,8 +25,31 @@ class MyLibraryViewModel @Inject constructor(
     private val _currentFilter = MutableStateFlow(ShelfFilterType.NONE)
     val currentFilter: StateFlow<ShelfFilterType> = _currentFilter.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _filteredItems = MutableStateFlow<List<BookUiModel>>(emptyList())
+    val filteredItems: StateFlow<List<BookUiModel>> = _filteredItems.asStateFlow()
+
     init {
         getShelfItems()
+    }
+
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+        filterItems()
+    }
+
+    private fun filterItems() {
+        val query = _searchQuery.value.lowercase()
+        if (query.isEmpty()) {
+            _filteredItems.value = _shelfItems.value
+        } else {
+            _filteredItems.value = _shelfItems.value.filter { book ->
+                book.title.lowercase().contains(query) ||
+                book.author.lowercase().contains(query)
+            }
+        }
     }
 
     fun updateFilter(filter: ShelfFilterType) {
@@ -36,6 +59,10 @@ class MyLibraryViewModel @Inject constructor(
 
     fun toggleSearchView(show: Boolean) {
         _uiState.value = _uiState.value.copy(isSearchViewShowing = show)
+        if (!show) {
+            _searchQuery.value = ""
+            _filteredItems.value = _shelfItems.value
+        }
     }
 
     private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE) {
@@ -44,6 +71,7 @@ class MyLibraryViewModel @Inject constructor(
                 val updatedBooks = updateShelfPosition(books)
                 val paddedBooks = addDummyItems(updatedBooks)
                 _shelfItems.value = paddedBooks
+                _filteredItems.value = paddedBooks
             }
         }
     }
