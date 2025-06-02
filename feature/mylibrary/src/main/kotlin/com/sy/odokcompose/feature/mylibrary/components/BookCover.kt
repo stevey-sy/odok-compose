@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
@@ -29,30 +31,41 @@ fun BookCover(
     book: BookUiModel,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(140.dp)
-            .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
-            .shadow(
-                elevation = 8.dp,
-                shape = RectangleShape
-            )
-            .background(Color.White)
-    ) {
-        with(sharedTransitionScope) {
-            SubcomposeAsyncImage(
-                model = book.coverImageUrl,
-                contentDescription = book.title,
+    with(sharedTransitionScope) {
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(140.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
+                .sharedElement(
+                    rememberSharedContentState(key = "bookItem/${book.itemId}"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = {initial, taget -> tween(durationMillis = 700)}
+                )
+        ) {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .sharedElement(
-                        rememberSharedContentState(key = "bookItem/${book.itemId}"),
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        boundsTransform = {initial, taget -> tween(durationMillis = 700)}
-                    ),
-                contentScale = ContentScale.Crop
-            )
+                    .graphicsLayer{
+                        scaleX = 1f
+                        scaleY = 1f
+                    }
+                    .shadow(
+                        elevation = 8.dp,
+                        shape = RoundedCornerShape(2.dp)
+                    )
+                    .background(
+                        color = Color.White,
+                        shape = RoundedCornerShape(2.dp)
+                    )
+            ) {
+                SubcomposeAsyncImage(
+                    model = book.coverImageUrl,
+                    contentDescription = book.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
     }
 } 

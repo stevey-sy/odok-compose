@@ -1,5 +1,7 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import android.annotation.SuppressLint
+import android.provider.CalendarContract.Colors
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -60,6 +62,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlin.math.absoluteValue
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookDetailScreen(
@@ -79,7 +82,7 @@ fun BookDetailScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(OdokColors.White)
                     .padding(innerPadding)
             ) {
 
@@ -117,40 +120,99 @@ fun BookDetailScreen(
                     val scale = 1f - (pageOffset.absoluteValue * 0.2f).coerceIn(0f, 0.2f)
 
                     val book = bookList.getOrNull(page)
+//                    if (book != null) {
+//                        with(sharedTransitionScope) {
+//                            Box(
+//                                modifier = Modifier
+//                                    .width(200.dp)
+//                                    .height(280.dp)
+//                                    .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
+//                                    .sharedElement(
+//                                        rememberSharedContentState(key = "bookItem/${book.itemId}"),
+//                                        animatedVisibilityScope = animatedVisibilityScope,
+//                                        boundsTransform = {initial, taget -> tween(durationMillis = 700)}
+//                                    )
+//                            ) {
+//                                Box(
+//                                    modifier = Modifier
+//                                        .fillMaxSize()
+//                                        .graphicsLayer{
+//                                            scaleX = scale
+//                                            scaleY = scale
+//                                        }
+//                                        .shadow(
+//                                            elevation = 8.dp,
+//                                            shape = RoundedCornerShape(10.dp)
+//                                        )
+//                                        .background(
+//                                            color = Color.White,
+//                                            shape = RoundedCornerShape(10.dp)
+//                                        )
+//                                ) {
+//                                    SubcomposeAsyncImage(
+//                                        model = book.coverImageUrl,
+//                                        contentDescription = book.title,
+//                                        modifier = Modifier.fillMaxSize(),
+//                                        contentScale = ContentScale.Crop
+//                                    )
+//                                }
+//                            }
+//                        }
+//                    }
                     if (book != null) {
-                        Box(
-                            modifier = Modifier
-                                .graphicsLayer{
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-                                .width(200.dp)
-                                .height(280.dp)
-                                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
-                                .shadow(
-                                    elevation = 8.dp,
-                                    shape = RoundedCornerShape(10.dp)   // 여기서 radius를 16dp로 지정
-                                )
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(10.dp)   // background도 동일하게 radius를 적용
-                                )
-                        ) {
+                        if (page == pagerState.currentPage) {
+                            // 선택된 아이템 (sharedElement 적용)
                             with(sharedTransitionScope) {
-                                SubcomposeAsyncImage(
-                                    model = book.coverImageUrl,
-                                    contentDescription = book.title,
+                                Box(
+                                    modifier = Modifier
+                                        .width(200.dp)
+                                        .height(280.dp)
+                                        .padding(20.dp)
+                                        .sharedElement(
+                                            rememberSharedContentState("bookItem/${book.itemId}"),
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            boundsTransform = { initial, target -> tween(700) }
+                                        )
+                                ) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .graphicsLayer { scaleX = 1f; scaleY = 1f }
+                                            .shadow(8.dp, RoundedCornerShape(10.dp))
+                                            .background(Color.White, RoundedCornerShape(10.dp))
+                                    ) {
+                                        SubcomposeAsyncImage(
+                                            model = book.coverImageUrl,
+                                            contentDescription = book.title,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            // 비선택 아이템 (sharedElement 없이)
+                            Box(
+                                modifier = Modifier
+                                    .width(200.dp)
+                                    .height(280.dp)
+                                    .padding(20.dp)
+                            ) {
+                                Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .sharedElement(
-                                            rememberSharedContentState(key = "bookItem/${book.itemId}"),
-                                            animatedVisibilityScope = animatedVisibilityScope,
-                                            boundsTransform = {initial, taget -> tween(durationMillis = 700)}
-                                        ),
-                                    contentScale = ContentScale.Crop
-                                )
+                                        .graphicsLayer { scaleX = scale; scaleY = scale }
+                                        .shadow(8.dp, RoundedCornerShape(10.dp))
+                                        .background(Color.White, RoundedCornerShape(10.dp))
+                                ) {
+                                    SubcomposeAsyncImage(
+                                        model = book.coverImageUrl,
+                                        contentDescription = book.title,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
                             }
-
                         }
                     }
 
