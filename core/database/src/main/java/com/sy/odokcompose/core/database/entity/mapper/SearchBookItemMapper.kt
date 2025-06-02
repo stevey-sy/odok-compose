@@ -26,7 +26,7 @@ object SearchBookItemMapper : EntityMapper<BookEntity, SearchBookUiModel> {
             coverImageUrl = model.cover,
             totalPageCnt = model.page,
             description = model.description,
-            rate = model.rate
+            rate = model.rate,
         )
     }
 } 

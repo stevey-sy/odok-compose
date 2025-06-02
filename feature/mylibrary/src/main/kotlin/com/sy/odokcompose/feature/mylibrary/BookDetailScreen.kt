@@ -52,6 +52,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokColors
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -160,7 +162,9 @@ fun BookDetailScreen(
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
-                SimpleSpeechBubble("50%", 0.5f)
+                SimpleSpeechBubble(currentBook?.getPercentageStr() ?: "",
+                    (currentBook?.progressPercentage?.times(0.01f)) ?: 0f
+                )
                 // 독서 진행도 progress bar
                 Box(
                     modifier = Modifier
@@ -171,8 +175,8 @@ fun BookDetailScreen(
                     // 배경 (회색)
                     Box(
                         modifier = Modifier
-                            .height(8.dp)
                             .fillMaxWidth()
+                            .height(8.dp)
                             .background(
                                 color = Color.LightGray,
                                 shape = RoundedCornerShape(4.dp)
@@ -180,12 +184,17 @@ fun BookDetailScreen(
                             .align(Alignment.BottomStart)
                     )
 
+                    val animatedProgress by animateFloatAsState(
+                        targetValue = (currentBook?.progressPercentage?.times(0.01f)) ?: 0f,
+                        animationSpec = tween(durationMillis = 700),
+                        label = "progressBar"
+                    )
+
                     // 진행도 (검정색)
                     Box(
                         modifier = Modifier
                             .height(8.dp)
-//                            .fillMaxWidth(currentBook?.progress ?: 0f)  // progress는 0.0 ~ 1.0 사이 값
-                            .fillMaxWidth(0.5f)
+                            .fillMaxWidth(animatedProgress.coerceAtLeast(0.001f))
                             .background(
                                 color = Color.Black,
                                 shape = RoundedCornerShape(4.dp)
@@ -193,6 +202,20 @@ fun BookDetailScreen(
                             .align(Alignment.BottomStart)
                     )
                 }
+
+                // progress Text
+                Text(
+                    text = currentBook?.progressText ?: "",
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top= 6.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    color = OdokColors.StealGray,
+                    fontWeight = FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
 
                 Spacer(modifier = Modifier.height(12.dp))
 
@@ -223,10 +246,16 @@ fun SimpleSpeechBubble(
 ) {
     val boxWidth = LocalConfiguration.current.screenWidthDp.dp - 80.dp // 40.dp padding on each side
     
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(durationMillis = 700),
+        label = "progress"
+    )
+    
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .offset(x = (boxWidth * progress + 20.dp))
+            .offset(x = (boxWidth * animatedProgress + 20.dp))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
