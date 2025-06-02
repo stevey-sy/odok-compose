@@ -19,6 +19,8 @@ object OdokColors {
     val BookShelfShadow = Color(0xFFC5C5C5)
     val BookShelfCenter = Color(0xFFF5F5F5)
 
+    val StealGray = Color(0xFF71797E)
+
 
 
     //    <color name="book_shelf">#BEBEBE</color>
