@@ -57,6 +57,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -109,10 +111,17 @@ fun BookDetailScreen(
                         .height(280.dp),
                     contentPadding = PaddingValues(horizontal = horizontalPadding), // 좌우 여백 추가
                 ) { page ->
+                    val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                    val scale = 1f - (pageOffset.absoluteValue * 0.2f).coerceIn(0f, 0.2f)
+
                     val book = bookList.getOrNull(page)
                     if (book != null) {
                         Box(
                             modifier = Modifier
+                                .graphicsLayer{
+                                    scaleX = scale
+                                    scaleY = scale
+                                }
                                 .width(200.dp)
                                 .height(280.dp)
                                 .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
