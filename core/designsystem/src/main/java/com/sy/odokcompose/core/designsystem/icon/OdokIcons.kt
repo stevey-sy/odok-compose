@@ -12,4 +12,13 @@ object OdokIcons {
 
     @DrawableRes
     val EmptyLibrary = R.drawable.img_reading
+
+    @DrawableRes
+    val StopWatch = R.drawable.ic_stop_watch
+
+    @DrawableRes
+    val Write = R.drawable.ic_write
+
+    @DrawableRes
+    val DoubleDownArrow = R.drawable.ic_down_arrow_gray
 }

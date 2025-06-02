@@ -54,6 +54,9 @@ import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.OdokColors
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
+import androidx.compose.ui.graphics.ColorFilter
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -103,7 +106,7 @@ fun BookDetailScreen(
                     state = pagerState,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .height(280.dp),
                     contentPadding = PaddingValues(horizontal = horizontalPadding), // 좌우 여백 추가
                 ) { page ->
                     val book = bookList.getOrNull(page)
@@ -147,7 +150,7 @@ fun BookDetailScreen(
                     overflow = TextOverflow.Ellipsis
                 )
 
-                // 지은이
+                // 지은이, author
                 Text(
                     text = currentBook?.author ?: "",
                     modifier = Modifier
@@ -156,12 +159,13 @@ fun BookDetailScreen(
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     color = OdokColors.StealGray,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 SimpleSpeechBubble(currentBook?.getPercentageStr() ?: "",
                     (currentBook?.progressPercentage?.times(0.01f)) ?: 0f
                 )
@@ -211,8 +215,8 @@ fun BookDetailScreen(
                         .padding(top= 6.dp)
                         .fillMaxWidth(),
                     textAlign = TextAlign.Center,
-                    color = OdokColors.StealGray,
-                    fontWeight = FontWeight.Normal,
+                    color = OdokColors.NormalGray,
+                    fontWeight = FontWeight.Light,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -220,19 +224,35 @@ fun BookDetailScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 // 버튼 영역
-                Row(
+                BookActionButtons()
+
+                // Comment
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                        .padding(top= 20.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Button(onClick = { /* 독서 버튼 클릭 */ }) {
-                        Text("독서")
-                    }
-                    Button(onClick = { /* 기록 버튼 클릭 */ }) {
-                        Text("기록")
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = "Comments 0",
+                            textAlign = TextAlign.Center,
+                            color = OdokColors.StealGray,
+                            fontWeight = FontWeight.Light,
+                            fontSize = 18.sp,
+                            maxLines = 1,
+                        )
+                        Image(
+                            painter = painterResource(id = OdokIcons.DoubleDownArrow),
+                            contentDescription = "down arrow",
+                            modifier = Modifier.size(24.dp),
+                        )
                     }
                 }
+
             }
         }
     }
@@ -284,6 +304,85 @@ fun SimpleSpeechBubble(
                     },
                     color = Color.Black
                 )
+            }
+        }
+    }
+}
+
+
+@Composable
+fun BookActionButtons() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .height(44.dp)
+    ) {
+        // 독서 버튼
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .background(
+                    color = Color.Black,
+                    shape = RoundedCornerShape(
+                        topStart = 20.dp,
+                        bottomStart = 20.dp
+                    )
+                )
+                .clickable { /* TODO: 독서 클릭 */ },
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = OdokIcons.StopWatch),  // 또는 OdokIcons.Plant 자체
+                    contentDescription = "독서",
+                    modifier = Modifier.size(24.dp),
+//                    colorFilter = ColorFilter.tint(Color.White)   // tint 효과
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("독서", color = Color.White)
+            }
+        }
+
+        // 경계선 (흰색)
+        Box(
+            modifier = Modifier
+                .width(1.dp)
+                .fillMaxHeight()
+                .background(Color.White)
+        )
+
+        // 기록 버튼
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .background(
+                    color = Color.Black,
+                    shape = RoundedCornerShape(
+                        topEnd = 20.dp,
+                        bottomEnd = 20.dp
+                    )
+                )
+                .clickable { /* TODO: 기록 클릭 */ },
+            contentAlignment = Alignment.Center
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = OdokIcons.Write),  // 또는 OdokIcons.Plant 자체
+                    contentDescription = "메모",
+                    modifier = Modifier.size(24.dp),
+                    colorFilter = ColorFilter.tint(Color.White)   // tint 효과
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("메모", color = Color.White)
             }
         }
     }
