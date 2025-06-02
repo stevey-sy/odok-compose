@@ -289,8 +289,8 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         myLibraryScreen(
             sharedTransitionScope = sharedTransitionScope,
             onNavigateToSearch = { navController.navigateToSearch()},
-            onBookItemClicked = { itemId ->
-                navController.navigateToBookDetail(itemId)
+            onBookItemClicked = { itemId, filterType, searchQuery ->
+                navController.navigateToBookDetail(itemId, filterType, searchQuery)
             }
         )
 

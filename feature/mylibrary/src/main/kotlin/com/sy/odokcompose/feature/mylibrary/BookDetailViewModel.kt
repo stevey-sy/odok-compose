@@ -39,7 +39,8 @@ class BookDetailViewModel @Inject constructor(
         list.getOrNull(idx)
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE) {
+    private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE,
+                              searchQuery: String = "") {
         viewModelScope.launch {
             getMyBooksUseCase(filter).collect { books ->
                 _bookList.value = books
@@ -50,15 +51,27 @@ class BookDetailViewModel @Inject constructor(
     init {
         // navArgs로 전달된 itemId 가져오기
         val itemId: Int? = savedStateHandle["itemId"]
-//        val filterType: String? = savedStateHandle["filterType"]
-        loadBooksAndSetPage(itemId)
+        val filterTypeInt: Int? = savedStateHandle["filterType"]
+        val filterType = filterTypeInt?.let { ShelfFilterType.fromCode(it) } ?: ShelfFilterType.NONE
+        val searchQuery: String? = savedStateHandle["searchQuery"] ?: ""
+        loadBooksAndSetPage(itemId, filterType, searchQuery)
     }
 
-    private fun loadBooksAndSetPage(itemId: Int?, filterType: ShelfFilterType = ShelfFilterType.NONE) {
+    private fun loadBooksAndSetPage(itemId: Int?,
+                                    filterType: ShelfFilterType = ShelfFilterType.NONE,
+                                    searchQuery: String?) {
         viewModelScope.launch {
             getMyBooksUseCase(filterType).collect { books ->
-                _bookList.value = books
-                val index = books.indexOfFirst { it.itemId == itemId }
+                val filteredBooks = if (!searchQuery.isNullOrEmpty()) {
+                    books.filter { book ->
+                        book.title.lowercase().contains(searchQuery.lowercase()) ||
+                        book.author.lowercase().contains(searchQuery.lowercase())
+                    }
+                } else {
+                    books
+                }
+                _bookList.value = filteredBooks
+                val index = filteredBooks.indexOfFirst { it.itemId == itemId }
                 _currentPage.value = if (index >= 0) index else 0
             }
         }

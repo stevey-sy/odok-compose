@@ -73,7 +73,7 @@ fun MyLibraryScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onNavigateToSearch: () -> Unit,
-    onBookItemClicked: (itemId: Int) -> Unit,
+    onBookItemClicked: (itemId: Int, filterType: Int, searchQuery: String) -> Unit,
     viewModel: MyLibraryViewModel = hiltViewModel()
 ) {
     val shelfItems by viewModel.shelfItems.collectAsState()
@@ -81,6 +81,7 @@ fun MyLibraryScreen(
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredItems by viewModel.filteredItems.collectAsState()
+    val currentFilter by viewModel.currentFilter.collectAsState()
 
     // 검색창이 열려있으면 BackHandler 활성화
     if (uiState.isSearchViewShowing) {
@@ -150,7 +151,13 @@ fun MyLibraryScreen(
                                             index = index,
                                             book = book,
                                             isLastItem = index == filteredItems.lastIndex,
-                                            onClick = onBookItemClicked
+                                            onClick = { itemId ->
+                                                onBookItemClicked(
+                                                    itemId,
+                                                    currentFilter.code,
+                                                    searchQuery
+                                                )
+                                            }
                                         )
                                     }
                                 }
@@ -172,7 +179,7 @@ private fun BookShelfItem(
     index: Int,
     book: BookUiModel,
     isLastItem: Boolean = false,
-    onClick: ((itemId:Int) -> Unit)? = null
+    onClick: ((itemId: Int) -> Unit)? = null
 ) {
     Box(
         modifier = Modifier
@@ -194,7 +201,9 @@ private fun BookShelfItem(
                 book = book,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .clickable(enabled = onClick != null) { onClick?.invoke(book.itemId) } // 클릭 처리
+                    .clickable(enabled = onClick != null) { 
+                        onClick?.invoke(book.itemId)
+                    }
             )
         } else if (isLastItem) {
             Image(

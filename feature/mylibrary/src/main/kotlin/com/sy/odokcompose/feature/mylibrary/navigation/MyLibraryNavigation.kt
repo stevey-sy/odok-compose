@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.sy.odokcompose.feature.mylibrary.BookDetailScreen
 import com.sy.odokcompose.feature.mylibrary.MyLibraryScreen
+import com.sy.odokcompose.model.type.ShelfFilterType
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
@@ -26,7 +27,7 @@ fun NavController.navigateToMyLibrary() {
 fun NavGraphBuilder.myLibraryScreen(
     sharedTransitionScope: SharedTransitionScope,
     onNavigateToSearch: () -> Unit,
-    onBookItemClicked: (itemId: Int) -> Unit,
+    onBookItemClicked: (itemId: Int, filterType:Int, searchQuery:String) -> Unit,
 ) {
     composable(route = MY_LIBRARY_ROUTE) {
         MyLibraryScreen(
@@ -37,20 +38,29 @@ fun NavGraphBuilder.myLibraryScreen(
     }
 }
 
-fun NavController.navigateToBookDetail(itemId: Int, navOptions: NavOptions? = null) {
-    this.navigate("$BOOK_DETAIL_ROUTE/$itemId", navOptions)
+fun NavController.navigateToBookDetail(itemId: Int,
+                                       filterType: Int = ShelfFilterType.NONE.code,
+                                       searchQuery: String = "",
+                                       navOptions: NavOptions? = null) {
+    this.navigate("$BOOK_DETAIL_ROUTE/$itemId/$filterType/$searchQuery", navOptions)
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.bookDetailScreen(
     sharedTransitionScope: SharedTransitionScope,
-    route: String = "$BOOK_DETAIL_ROUTE/{itemId}"
+    route: String = "$BOOK_DETAIL_ROUTE/{itemId}/{filterType}/{searchQuery}"
 ) {
     composable(
         route = route,
         arguments = listOf(
             navArgument("itemId"){
                 type= NavType.IntType
+            },
+            navArgument("filterType"){
+                type= NavType.IntType
+            },
+            navArgument("searchQuery"){
+                type= NavType.StringType
             }
         )
     ) {
