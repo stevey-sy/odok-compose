@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @Composable
@@ -57,7 +58,9 @@ fun BookActionButtons() {
                     modifier = Modifier.size(24.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("독서", color = Color.White)
+                Text("독서",
+                    color = Color.White,
+                    fontSize = 14.sp)
             }
         }
 
@@ -95,7 +98,9 @@ fun BookActionButtons() {
                     colorFilter = ColorFilter.tint(Color.White)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("메모", color = Color.White)
+                Text("메모",
+                    color = Color.White,
+                    fontSize = 14.sp)
             }
         }
     }
