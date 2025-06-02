@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
@@ -182,7 +183,7 @@ fun MainScreen(
                                 )
 
                                 var expanded by remember { mutableStateOf(false) }
-                                var selectedFilter by remember { mutableStateOf(ShelfFilterType.NONE) }
+                                val currentFilter by myLibraryViewModel.currentFilter.collectAsState()
 
                                 Box {
                                     IconButton(onClick = { expanded = true }) {
@@ -199,25 +200,46 @@ fun MainScreen(
                                     ) {
                                         DropdownMenuItem(
                                             text = { Text("전체") },
+                                            leadingIcon = {
+                                                if (currentFilter == ShelfFilterType.NONE) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = "선택됨"
+                                                    )
+                                                }
+                                            },
                                             onClick = {
-                                                selectedFilter = ShelfFilterType.NONE
-                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                myLibraryViewModel.updateFilter(ShelfFilterType.NONE)
                                                 expanded = false
                                             }
                                         )
                                         DropdownMenuItem(
                                             text = { Text("읽는 중") },
+                                            leadingIcon = {
+                                                if (currentFilter == ShelfFilterType.READING) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = "선택됨"
+                                                    )
+                                                }
+                                            },
                                             onClick = {
-                                                selectedFilter = ShelfFilterType.READING
-                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                myLibraryViewModel.updateFilter(ShelfFilterType.READING)
                                                 expanded = false
                                             }
                                         )
                                         DropdownMenuItem(
                                             text = { Text("완독") },
+                                            leadingIcon = {
+                                                if (currentFilter == ShelfFilterType.FINISHED) {
+                                                    Icon(
+                                                        imageVector = Icons.Default.Check,
+                                                        contentDescription = "선택됨"
+                                                    )
+                                                }
+                                            },
                                             onClick = {
-                                                selectedFilter = ShelfFilterType.FINISHED
-                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                myLibraryViewModel.updateFilter(ShelfFilterType.FINISHED)
                                                 expanded = false
                                             }
                                         )
