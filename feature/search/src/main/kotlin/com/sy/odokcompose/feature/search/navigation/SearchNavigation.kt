@@ -18,7 +18,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 const val SEARCH_ROUTE = "search"
-const val SEARCH_BOOK_DETAIL_ROUTE = "search_book_detail"
+const val SEARCH_BOOK_DETAIL_ROUTE = "search_detail"
 
 fun NavController.navigateToSearch(navOptions: NavOptions? = null) {
     this.navigate(SEARCH_ROUTE, navOptions)

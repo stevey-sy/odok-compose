@@ -85,7 +85,19 @@ fun SearchBookScreen(
     // 검색어 입력 후 0.5초 후 자동 검색
     var isFirstLaunch by remember { mutableStateOf(true) }
 
-    OnKeyInputted(query, isFirstLaunch, viewModel)
+    LaunchedEffect(Unit) {
+        snapshotFlow { query }
+            .debounce(500)
+            .distinctUntilChanged()
+            .collectLatest { searchText ->
+                if (searchText.isNotBlank() && !isFirstLaunch) {
+                    viewModel.search(searchText)
+                }
+                isFirstLaunch = false
+            }
+    }
+
+//    OnKeyInputted(query, isFirstLaunch, viewModel)
 
     OdokTheme {
         Scaffold(

@@ -1,5 +1,6 @@
 package com.sy.odokcompose.feature.search
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -45,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -93,12 +95,10 @@ fun SearchBookDetailScreen(
     }
 
     // 저장 성공 시 Snackbar 표시 및 메인 화면으로 이동
+    val context = LocalContext.current
     LaunchedEffect(uiState.saveSuccess) {
         if (uiState.saveSuccess) {
-//            snackbarHostState.showSnackbar(
-//                message = "책이 서재에 저장되었습니다.",
-//                duration = androidx.compose.material3.SnackbarDuration.Short
-//            )
+            Toast.makeText(context, "책이 서재에 저장되었습니다.", Toast.LENGTH_SHORT).show()
             onNavigateToMain()
         }
     }
