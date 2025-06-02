@@ -13,12 +13,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -51,9 +54,20 @@ import com.sy.odokcompose.feature.search.navigation.searchBookDetailScreen
 import com.sy.odokcompose.feature.search.navigation.searchBookScreen
 import com.sy.odokcompose.feature.search.navigation.navigateToSearchBookDetail
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.feature.mylibrary.navigation.BOOK_DETAIL_ROUTE
 import com.sy.odokcompose.feature.mylibrary.navigation.bookDetailScreen
 import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import com.sy.odokcompose.feature.mylibrary.MyLibraryViewModel
+import com.sy.odokcompose.model.type.ShelfFilterType
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -74,6 +88,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@SuppressLint("UnrememberedGetBackStackEntry")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(
@@ -152,15 +167,70 @@ fun MainScreen(
                     }
                     else if (currentRoute == MY_LIBRARY_ROUTE) {
                         // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
-                        val drawableId = context.resources.getIdentifier("ic_plus_24", "drawable", context.packageName)
+
+                        val myLibraryBackStackEntry = remember { navController.getBackStackEntry(MY_LIBRARY_ROUTE) }
+                        val myLibraryViewModel: MyLibraryViewModel = hiltViewModel(myLibraryBackStackEntry)
+
                         OdokTopAppBar(
                             title = "오독오독",
                             actions = {
+
                                 ActionIconButton(
                                     onClick = { navController.navigateToSearch() },
                                     imageVector = Icons.Default.Search,
                                     contentDescription = "검색"
                                 )
+
+                                var expanded by remember { mutableStateOf(false) }
+                                var selectedFilter by remember { mutableStateOf(ShelfFilterType.NONE) }
+
+                                Box {
+                                    IconButton(onClick = { expanded = true }) {
+                                        Icon(
+                                            painter = painterResource(id = OdokIcons.Filter),
+                                            contentDescription = "필터",
+                                            modifier = Modifier.size(24.dp)
+                                        )
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+                                        DropdownMenuItem(
+                                            text = { Text("전체") },
+                                            onClick = {
+                                                selectedFilter = ShelfFilterType.NONE
+                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                expanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("읽는 중") },
+                                            onClick = {
+                                                selectedFilter = ShelfFilterType.READING
+                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                expanded = false
+                                            }
+                                        )
+                                        DropdownMenuItem(
+                                            text = { Text("완독") },
+                                            onClick = {
+                                                selectedFilter = ShelfFilterType.FINISHED
+                                                myLibraryViewModel.updateFilter(selectedFilter)
+                                                expanded = false
+                                            }
+                                        )
+                                    }
+                                }
+
+                                IconButton(onClick = { navController.navigateToSearch() }) {
+                                    Icon(
+                                        painter = painterResource(id = OdokIcons.Plus),
+                                        contentDescription = "추가",
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
                             }
                         )
                     }

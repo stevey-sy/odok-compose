@@ -22,8 +22,16 @@ class MyLibraryViewModel @Inject constructor(
     private val _shelfItems = MutableStateFlow<List<BookUiModel>>(emptyList())
     val shelfItems: StateFlow<List<BookUiModel>> = _shelfItems.asStateFlow()
 
+    private val _currentFilter = MutableStateFlow(ShelfFilterType.NONE)
+    val currentFilter: StateFlow<ShelfFilterType> = _currentFilter.asStateFlow()
+
     init {
         getShelfItems()
+    }
+
+    fun updateFilter(filter: ShelfFilterType) {
+        _currentFilter.value = filter
+        getShelfItems(filter)
     }
 
     private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE) {

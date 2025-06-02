@@ -21,4 +21,10 @@ object OdokIcons {
 
     @DrawableRes
     val DoubleDownArrow = R.drawable.ic_down_arrow_gray
+
+    @DrawableRes
+    val Filter = R.drawable.ic_filter_24
+
+    @DrawableRes
+    val Plus = R.drawable.ic_plus_24
 }
