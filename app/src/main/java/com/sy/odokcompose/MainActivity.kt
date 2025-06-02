@@ -177,7 +177,9 @@ fun MainScreen(
                             actions = {
 
                                 ActionIconButton(
-                                    onClick = { navController.navigateToSearch() },
+                                    onClick = { 
+                                        myLibraryViewModel.toggleSearchView(true)
+                                    },
                                     imageVector = Icons.Default.Search,
                                     contentDescription = "검색"
                                 )

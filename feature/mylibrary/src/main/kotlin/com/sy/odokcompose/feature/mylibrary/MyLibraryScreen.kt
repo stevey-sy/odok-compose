@@ -1,8 +1,15 @@
 package com.sy.odokcompose.feature.mylibrary
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -55,6 +62,7 @@ import com.sy.odokcompose.model.BookUiModel
 import androidx.compose.ui.graphics.Color
 import com.sy.odokcompose.core.designsystem.component.ActionIconButton
 import com.sy.odokcompose.core.designsystem.component.OdokTopAppBar
+import com.sy.odokcompose.core.designsystem.component.SearchTextField
 import com.sy.odokcompose.model.type.ShelfFilterType
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -67,6 +75,7 @@ fun MyLibraryScreen(
     viewModel: MyLibraryViewModel = hiltViewModel()
 ) {
     val shelfItems by viewModel.shelfItems.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     
     OdokTheme {
         Scaffold(
@@ -79,27 +88,60 @@ fun MyLibraryScreen(
                     .background(Color.White),
                 contentAlignment = Alignment.TopCenter
             ) {
-                if (shelfItems.isEmpty()) {
-                    EmptyLibraryView(onNavigateToSearch)
-                } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp),
-                        content = {
-                            itemsIndexed(shelfItems) { index, book ->
-                                BookShelfItem(
-                                    sharedTransitionScope = sharedTransitionScope,
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    index = index,
-                                    book = book,
-                                    isLastItem = index == shelfItems.lastIndex,
-                                    onClick = onBookItemClicked
-                                )
-                            }
+                Column(
+                    modifier = Modifier.animateContentSize()
+                ) {
+                    AnimatedVisibility(
+                        visible = uiState.isSearchViewShowing,
+                        enter = expandVertically(
+                            animationSpec = tween(300)
+                        ) + fadeIn(
+                            animationSpec = tween(300)
+                        ),
+                        exit = shrinkVertically(
+                            animationSpec = tween(300)
+                        ) + fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    ) {
+                        SearchTextField(
+                            query = "",
+                            onClose = { viewModel.toggleSearchView(false) }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = true,
+                        enter = fadeIn(
+                            animationSpec = tween(300)
+                        ),
+                        exit = fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    ) {
+                        if (shelfItems.isEmpty()) {
+                            EmptyLibraryView(onNavigateToSearch)
+                        } else {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(3),
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 16.dp),
+                                content = {
+                                    itemsIndexed(shelfItems) { index, book ->
+                                        BookShelfItem(
+                                            sharedTransitionScope = sharedTransitionScope,
+                                            animatedVisibilityScope = animatedVisibilityScope,
+                                            index = index,
+                                            book = book,
+                                            isLastItem = index == shelfItems.lastIndex,
+                                            onClick = onBookItemClicked
+                                        )
+                                    }
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }
         }

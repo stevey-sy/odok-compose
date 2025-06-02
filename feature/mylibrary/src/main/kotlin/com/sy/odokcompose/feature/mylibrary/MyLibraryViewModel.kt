@@ -34,6 +34,10 @@ class MyLibraryViewModel @Inject constructor(
         getShelfItems(filter)
     }
 
+    fun toggleSearchView(show: Boolean) {
+        _uiState.value = _uiState.value.copy(isSearchViewShowing = show)
+    }
+
     private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE) {
         viewModelScope.launch {
             getMyBooksUseCase(filter).collect { books ->
@@ -71,5 +75,6 @@ class MyLibraryViewModel @Inject constructor(
 
 data class MyLibraryUiState(
     val isLoading: Boolean = false,
+    val isSearchViewShowing: Boolean = false,
     val errorMessage: String? = null
 )
