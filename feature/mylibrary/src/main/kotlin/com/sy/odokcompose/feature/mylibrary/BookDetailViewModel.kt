@@ -39,6 +39,45 @@ class BookDetailViewModel @Inject constructor(
         list.getOrNull(idx)
     }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
+    // 수정 관련 상태
+    private val _finishedReadCnt = MutableStateFlow("0")
+    private val _currentPageCnt = MutableStateFlow("0")
+
+    fun showEditView() {
+        _uiState.update { it.copy(isEditViewShowing = true) }
+        currentBook.value?.let { book ->
+            _finishedReadCnt.value = book.finishedReadCnt.toString()
+            _currentPageCnt.value = book.currentPageCnt.toString()
+        }
+    }
+
+    fun hideEditView() {
+        _uiState.update { it.copy(isEditViewShowing = false) }
+    }
+
+    fun updateFinishedReadCnt(value: String) {
+        _finishedReadCnt.value = value
+    }
+
+    fun updateCurrentPageCnt(value: String) {
+        _currentPageCnt.value = value
+    }
+
+    fun saveChanges() {
+        viewModelScope.launch {
+            try {
+                val finishedReadCnt = _finishedReadCnt.value.toIntOrNull() ?: 0
+                val currentPageCnt = _currentPageCnt.value.toIntOrNull() ?: 0
+                
+                // TODO: 데이터베이스 업데이트 로직 추가
+                
+                hideEditView()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = e.message) }
+            }
+        }
+    }
+
     private fun getShelfItems(filter: ShelfFilterType = ShelfFilterType.NONE,
                               searchQuery: String = "") {
         viewModelScope.launch {
@@ -87,5 +126,7 @@ class BookDetailViewModel @Inject constructor(
 
 data class BookDetailUiState(
     val isLoading: Boolean = false,
+    val isEditViewShowing: Boolean = false,
+    val isMemoViewShowing: Boolean = false,
     val errorMessage: String? = null
 )

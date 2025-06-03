@@ -19,6 +19,7 @@ data class BookUiModel(
     var progressText: String = "",
     var progressPercentage: Int = 0,
     val memoList: List<MemoUiModel> = emptyList(),
+    val finishedReadCnt: Int = 0,
 ) {
     init {
         // 초기화 블록에서 계산된 값들을 설정

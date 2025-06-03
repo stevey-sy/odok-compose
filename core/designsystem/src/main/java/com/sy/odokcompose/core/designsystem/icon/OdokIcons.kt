@@ -33,4 +33,7 @@ object OdokIcons {
 
     @DrawableRes
     val Wreath = R.drawable.ic_wreath
+
+    @DrawableRes
+    val Edit = R.drawable.ic_pen
 }

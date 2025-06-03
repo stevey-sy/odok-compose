@@ -64,9 +64,11 @@ import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
 import com.sy.odokcompose.feature.mylibrary.MyLibraryViewModel
 import com.sy.odokcompose.model.type.ShelfFilterType
 
@@ -142,124 +144,136 @@ fun MainScreen(
                     .background(Color.White),
                 containerColor = Color.White,
                 topBar = {
-                    // 검색 화면일 때는 뒤로가기 버튼이 있는 TopAppBar 표시
-                    if (currentRoute == SEARCH_ROUTE) {
-                        OdokTopAppBar(
-                            title = "도서검색",
-                            showBackButton = true,
-                            fontFamily = FontFamily.Default,
-                            fontSize = 22.sp,
-                            onBackClick = { navController.popBackStack() }
-                        )
-                    }
-                    else if (currentRoute?.contains(SEARCH_BOOK_DETAIL_ROUTE) == true) {
-                        OdokTopAppBar(
-                            title = "서재 등록",
-                            showBackButton = true,
-                            fontFamily = FontFamily.Default,
-                            fontSize = 22.sp,
-                            onBackClick = { navController.popBackStack() }
-                        )
-                    }
-                    else if (currentRoute?.contains(BOOK_DETAIL_ROUTE) == true) {
-                        OdokTopAppBar(
-                            title = "오독오독",
-                        )
-                    }
-                    else if (currentRoute == MY_LIBRARY_ROUTE) {
-                        // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
+                    when {
+                        currentRoute?.startsWith(BOOK_DETAIL_ROUTE) == true -> {
+                            val bookDetailBackStackEntry = remember {
+                                navController.getBackStackEntry(currentRoute)
+                            }
+                            val bookDetailViewModel: BookDetailViewModel = hiltViewModel(bookDetailBackStackEntry)
+                            OdokTopAppBar(
+                                title = "오독오독",
+                                actions = {
+                                    TextButton(
+                                        onClick = { bookDetailViewModel.showEditView() }
+                                    ) {
+                                        Text("더보기")
+                                    }
+                                }
+                            )
+                        }
+                        currentRoute == SEARCH_ROUTE -> {
+                            OdokTopAppBar(
+                                title = "도서검색",
+                                showBackButton = true,
+                                fontFamily = FontFamily.Default,
+                                fontSize = 22.sp,
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                        currentRoute?.contains(SEARCH_BOOK_DETAIL_ROUTE) == true -> {
+                            OdokTopAppBar(
+                                title = "서재 등록",
+                                showBackButton = true,
+                                fontFamily = FontFamily.Default,
+                                fontSize = 22.sp,
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                        currentRoute == MY_LIBRARY_ROUTE -> {
+                            // 일반 화면일 때는 타이틀과 검색 버튼이 있는 TopAppBar 표시
 
-                        val myLibraryBackStackEntry = remember { navController.getBackStackEntry(MY_LIBRARY_ROUTE) }
-                        val myLibraryViewModel: MyLibraryViewModel = hiltViewModel(myLibraryBackStackEntry)
+                            val myLibraryBackStackEntry = remember { navController.getBackStackEntry(MY_LIBRARY_ROUTE) }
+                            val myLibraryViewModel: MyLibraryViewModel = hiltViewModel(myLibraryBackStackEntry)
 
-                        OdokTopAppBar(
-                            title = "오독오독",
-                            actions = {
+                            OdokTopAppBar(
+                                title = "오독오독",
+                                actions = {
 
-                                ActionIconButton(
-                                    onClick = { 
-                                        myLibraryViewModel.toggleSearchView(true)
-                                    },
-                                    imageVector = Icons.Default.Search,
-                                    contentDescription = "검색"
-                                )
+                                    ActionIconButton(
+                                        onClick = { 
+                                            myLibraryViewModel.toggleSearchView(true)
+                                        },
+                                        imageVector = Icons.Default.Search,
+                                        contentDescription = "검색"
+                                    )
 
-                                var expanded by remember { mutableStateOf(false) }
-                                val currentFilter by myLibraryViewModel.currentFilter.collectAsState()
+                                    var expanded by remember { mutableStateOf(false) }
+                                    val currentFilter by myLibraryViewModel.currentFilter.collectAsState()
 
-                                Box {
-                                    IconButton(onClick = { expanded = true }) {
+                                    Box {
+                                        IconButton(onClick = { expanded = true }) {
+                                            Icon(
+                                                painter = painterResource(id = OdokIcons.Filter),
+                                                contentDescription = "필터",
+                                                modifier = Modifier.size(24.dp)
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text("전체") },
+                                                leadingIcon = {
+                                                    if (currentFilter == ShelfFilterType.NONE) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Check,
+                                                            contentDescription = "선택됨"
+                                                        )
+                                                    }
+                                                },
+                                                onClick = {
+                                                    myLibraryViewModel.updateFilter(ShelfFilterType.NONE)
+                                                    expanded = false
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("읽는 중") },
+                                                leadingIcon = {
+                                                    if (currentFilter == ShelfFilterType.READING) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Check,
+                                                            contentDescription = "선택됨"
+                                                        )
+                                                    }
+                                                },
+                                                onClick = {
+                                                    myLibraryViewModel.updateFilter(ShelfFilterType.READING)
+                                                    expanded = false
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("완독") },
+                                                leadingIcon = {
+                                                    if (currentFilter == ShelfFilterType.FINISHED) {
+                                                        Icon(
+                                                            imageVector = Icons.Default.Check,
+                                                            contentDescription = "선택됨"
+                                                        )
+                                                    }
+                                                },
+                                                onClick = {
+                                                    myLibraryViewModel.updateFilter(ShelfFilterType.FINISHED)
+                                                    expanded = false
+                                                }
+                                            )
+                                        }
+                                    }
+
+                                    IconButton(onClick = {
+                                        myLibraryViewModel.toggleSearchView(false)
+                                        navController.navigateToSearch()
+                                    }) {
                                         Icon(
-                                            painter = painterResource(id = OdokIcons.Filter),
-                                            contentDescription = "필터",
+                                            painter = painterResource(id = OdokIcons.Plus),
+                                            contentDescription = "추가",
                                             modifier = Modifier.size(24.dp)
                                         )
                                     }
-
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }
-                                    ) {
-                                        DropdownMenuItem(
-                                            text = { Text("전체") },
-                                            leadingIcon = {
-                                                if (currentFilter == ShelfFilterType.NONE) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Check,
-                                                        contentDescription = "선택됨"
-                                                    )
-                                                }
-                                            },
-                                            onClick = {
-                                                myLibraryViewModel.updateFilter(ShelfFilterType.NONE)
-                                                expanded = false
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("읽는 중") },
-                                            leadingIcon = {
-                                                if (currentFilter == ShelfFilterType.READING) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Check,
-                                                        contentDescription = "선택됨"
-                                                    )
-                                                }
-                                            },
-                                            onClick = {
-                                                myLibraryViewModel.updateFilter(ShelfFilterType.READING)
-                                                expanded = false
-                                            }
-                                        )
-                                        DropdownMenuItem(
-                                            text = { Text("완독") },
-                                            leadingIcon = {
-                                                if (currentFilter == ShelfFilterType.FINISHED) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Check,
-                                                        contentDescription = "선택됨"
-                                                    )
-                                                }
-                                            },
-                                            onClick = {
-                                                myLibraryViewModel.updateFilter(ShelfFilterType.FINISHED)
-                                                expanded = false
-                                            }
-                                        )
-                                    }
                                 }
-
-                                IconButton(onClick = {
-                                    myLibraryViewModel.toggleSearchView(false)
-                                    navController.navigateToSearch()
-                                }) {
-                                    Icon(
-                                        painter = painterResource(id = OdokIcons.Plus),
-                                        contentDescription = "추가",
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
-                        )
+                            )
+                        }
                     }
                 },
                 bottomBar = {
