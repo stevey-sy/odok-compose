@@ -20,5 +20,6 @@ data class BookEntity(
     val elapsedTimeInSeconds: Int = 0,
     val completedReadingCnt: Int = 0,
     val description: String = "",
-    val rate: Float = 0f
+    val rate: Float = 0f,
+    val finishedReadCnt: Int = 0,
 )
