@@ -1,4 +1,4 @@
-package com.sy.odokcompose.feature.mylibrary.components
+package com.sy.odokcompose.core.designsystem.component
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -11,13 +11,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.model.BookUiModel
+import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -38,9 +39,6 @@ fun BookCover(
     with(sharedTransitionScope) {
         Box(
             modifier = modifier
-                .fillMaxWidth()
-                .height(140.dp)
-                .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
                 .sharedElement(
                     rememberSharedContentState(key = "bookItem/${book.itemId}"),
                     animatedVisibilityScope = animatedVisibilityScope,

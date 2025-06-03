@@ -37,6 +37,9 @@ android {
 }
 
 dependencies {
+
+    implementation(project(":core:model"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -47,6 +50,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    // Coil
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
     
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")

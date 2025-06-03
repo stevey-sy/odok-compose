@@ -314,11 +314,12 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         )
 
         bookDetailScreen(
-            onReadBtnClicked = {navController.navigateToTimer()},
+            onReadBtnClicked = { itemId -> navController.navigateToTimer(itemId)},
             sharedTransitionScope = sharedTransitionScope,
         )
 
         timerScreen (
+            sharedTransitionScope = sharedTransitionScope,
             onCloseClicked = { navController.popBackStack() }
         )
 
