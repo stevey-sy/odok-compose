@@ -87,113 +87,16 @@ fun BookDetailScreen(
                 }
 
                 if (uiState.isEditViewShowing) {
-                    ModalBottomSheet(
+                    BookEditBottomSheet(
                         onDismissRequest = { viewModel.hideEditView() },
                         sheetState = sheetState,
-                        modifier = Modifier.fillMaxHeight(1.0f),
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp)
-                                .navigationBarsPadding()
-                                .imePadding()
-                                .verticalScroll(rememberScrollState())
-                        ) {
-                            Text(
-                                text = "독서 정보 수정",
-                                fontSize = 20.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = OdokColors.Black
-                            )
-                            
-                            Spacer(modifier = Modifier.height(24.dp))
-                            
-                            // 완독 횟수 수정
-                            Text(
-                                text = "완독 횟수",
-                                fontSize = 16.sp,
-                                color = OdokColors.Black
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-//                            OutlinedTextField(
-//                                value = finishedReadCnt,
-//                                onValueChange = { viewModel.updateFinishedReadCnt(it) },
-//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-//                                modifier = Modifier.fillMaxWidth()
-//                            )
-                            var finishedCntValue by remember { mutableStateOf(TextFieldValue(finishedReadCnt)) }
-                            OutlinedTextField(
-                                value = finishedCntValue,
-                                onValueChange = {
-                                    finishedCntValue = it
-                                    viewModel.updateFinishedReadCnt(it.text)
-                                },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                textStyle = TextStyle(
-                                    textAlign = TextAlign.Center
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth(0.35f)
-                                    .onFocusChanged { focusState ->
-                                        if (focusState.isFocused) {
-                                            finishedCntValue = finishedCntValue.copy(
-                                                selection = TextRange(0, finishedCntValue.text.length)
-                                            )
-                                        }
-                                    }
-                            )
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-
-                            var currentCntValue by remember { mutableStateOf(TextFieldValue(currentPageCnt)) }
-                            // 현재 페이지 수정
-                            Text(
-                                text = "현재 페이지",
-                                fontSize = 16.sp,
-                                color = OdokColors.Black
-                            )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(0.5f),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                OutlinedTextField(
-                                    value = currentCntValue,
-                                    onValueChange = {
-                                        currentCntValue = it
-                                        viewModel.updateFinishedReadCnt(it.text)
-                                    },
-                                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                    modifier = Modifier.fillMaxWidth(0.7f),
-                                    textStyle = TextStyle(
-                                        textAlign = TextAlign.Center
-                                    ),
-                                    singleLine = true
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = "/ ${currentBook?.totalPageCnt ?: 0}",
-                                    fontSize = 16.sp,
-                                    color = OdokColors.Black
-                                )
-                            }
-                            
-                            Spacer(modifier = Modifier.height(24.dp))
-                            
-                            // 저장 버튼
-                            Button(
-                                onClick = { viewModel.saveChanges() },
-                                modifier = Modifier.fillMaxWidth(),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = OdokColors.Black
-                                )
-                            ) {
-                                Text("저장")
-                            }
-                            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
-                        }
-                    }
+                        finishedReadCnt = finishedReadCnt,
+                        currentPageCnt = currentPageCnt,
+                        totalPageCnt = currentBook?.totalPageCnt ?: 0,
+                        onFinishedReadCntChange = viewModel::updateFinishedReadCnt,
+                        onCurrentPageCntChange = viewModel::updateCurrentPageCnt,
+                        onSaveClick = viewModel::saveChanges
+                    )
                 }
             }
         }
