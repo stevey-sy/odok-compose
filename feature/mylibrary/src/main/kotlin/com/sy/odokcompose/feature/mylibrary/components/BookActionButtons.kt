@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @Composable
-fun BookActionButtons() {
+fun BookActionButtons(
+    onReadBtnClicked: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +47,7 @@ fun BookActionButtons() {
                         bottomStart = 20.dp
                     )
                 )
-                .clickable { /* TODO: 독서 클릭 */ },
+                .clickable { onReadBtnClicked() },
             contentAlignment = Alignment.Center
         ) {
             Row(

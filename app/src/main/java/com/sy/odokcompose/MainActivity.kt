@@ -68,6 +68,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.sy.feature.timer.navigation.navigateToTimer
+import com.sy.feature.timer.navigation.timerScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
 import com.sy.odokcompose.feature.mylibrary.MyLibraryViewModel
 import com.sy.odokcompose.model.type.ShelfFilterType
@@ -312,7 +314,12 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         )
 
         bookDetailScreen(
+            onReadBtnClicked = {navController.navigateToTimer()},
             sharedTransitionScope = sharedTransitionScope,
+        )
+
+        timerScreen (
+            onCloseClicked = { navController.popBackStack() }
         )
 
         searchBookScreen(

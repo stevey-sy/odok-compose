@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(project(":feature:mylibrary"))
     implementation(project(":feature:search"))
+    implementation(project(":feature:timer"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
 

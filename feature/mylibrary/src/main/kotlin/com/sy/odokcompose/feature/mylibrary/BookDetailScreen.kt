@@ -15,19 +15,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.feature.mylibrary.components.*
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.sp
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.input.TextFieldValue
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -35,6 +22,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 fun BookDetailScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
+    onReadBtnClicked: (itemId: Int) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel(),
 ) {
     val bookList by viewModel.bookList.collectAsState()
@@ -81,7 +69,11 @@ fun BookDetailScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    BookActionButtons()
+                    BookActionButtons(
+                        onReadBtnClicked= {
+                            onReadBtnClicked(currentBook?.itemId ?: 0)
+                        }
+                    )
 
                     CommentSection()
                 }
