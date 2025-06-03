@@ -23,6 +23,9 @@ object OdokColors {
 
     val StealGray = Color(0xFF71797E)
 
+    val IrisBlue = Color(0xFF5D3FD3)
+
+    // #5D3FD3
 
 
     //    <color name="book_shelf">#BEBEBE</color>

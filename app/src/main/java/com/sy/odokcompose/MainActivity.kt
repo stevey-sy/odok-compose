@@ -9,11 +9,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
@@ -63,11 +66,15 @@ import com.sy.odokcompose.feature.mylibrary.navigation.bookDetailScreen
 import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalDensity
 import com.sy.feature.timer.navigation.navigateToTimer
 import com.sy.feature.timer.navigation.timerScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
@@ -81,16 +88,49 @@ class MainActivity : ComponentActivity() {
         
         // 시스템 UI가 앱 콘텐츠 위에 그려지도록 설정
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        
+
         // Edge-to-Edge 설정
         enableEdgeToEdge()
         
         setContent {
             OdokTheme {
                 MainScreen()
+                StatusBarProtection()
             }
         }
     }
+}
+
+
+@Composable
+private fun StatusBarProtection(
+    color: Color = MaterialTheme.colorScheme.surfaceContainer,
+    heightProvider: () -> Float = calculateGradientHeight(),
+) {
+
+    Canvas(Modifier.fillMaxSize()) {
+        val calculatedHeight = heightProvider()
+        val gradient = Brush.verticalGradient(
+            colors = listOf(
+                color.copy(alpha = 1f),
+                color.copy(alpha = .8f),
+                Color.Transparent
+            ),
+            startY = 0f,
+            endY = calculatedHeight
+        )
+        drawRect(
+            brush = gradient,
+            size = Size(size.width, calculatedHeight),
+        )
+    }
+}
+
+@Composable
+fun calculateGradientHeight(): () -> Float {
+    val statusBars = WindowInsets.statusBars
+    val density = LocalDensity.current
+    return { statusBars.getTop(density).times(1.2f) }
 }
 
 @SuppressLint("UnrememberedGetBackStackEntry")

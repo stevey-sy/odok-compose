@@ -3,7 +3,10 @@ package com.sy.feature.timer
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateColor
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +44,8 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.component.BookCover
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
+import androidx.compose.ui.graphics.Color
+import androidx.compose.animation.core.*
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -51,10 +56,27 @@ fun TimerScreen(
     viewModel: TimerViewModel = hiltViewModel()
 ) {
     val book by viewModel.book.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val timerText by viewModel.timerText.collectAsState()
+    val guideText by viewModel.guideText.collectAsState()
+    val backgroundColor by viewModel.backgroundColor.collectAsState()
+    val textColor by viewModel.textColor.collectAsState()
+
+    val infiniteTransition = rememberInfiniteTransition(label = "infinite")
+    val animatedColor by infiniteTransition.animateColor(
+        initialValue = Color(0xFF4A148C),
+        targetValue = Color(0xFF4169E1), // 밝은 블루
+        animationSpec = infiniteRepeatable(
+            animation = tween(5000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "color"
+    )
 
     OdokTheme {
         Scaffold(
-            contentWindowInsets = WindowInsets(0, 0, 0, 0)
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            containerColor = if (uiState == TimerUiState.Reading) animatedColor else Color(backgroundColor)
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -72,7 +94,8 @@ fun TimerScreen(
                         Icon(
                             imageVector = Icons.Default.Close,
                             modifier = Modifier.size(80.dp),
-                            contentDescription = "닫기"
+                            contentDescription = "닫기",
+                            tint = Color(textColor)
                         )
                     }
                 }
@@ -81,29 +104,36 @@ fun TimerScreen(
 
                 // Timer Text
                 Text(
-                    text = "00:00:00",
+                    text = timerText,
                     fontSize = 48.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color(textColor)
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // Guide Text
                 Text(
-                    text = "독서를 시작해보세요",
-                    fontSize = 16.sp
+                    text = guideText,
+                    fontSize = 16.sp,
+                    color = Color(textColor)
                 )
 
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // Play Button
                 IconButton(
-                    onClick = {},
+                    onClick = { viewModel.onPlayButtonClick() },
                     modifier = Modifier.size(80.dp)
                 ) {
                     Image(
-                        painter = painterResource(id = OdokIcons.PlayButton), // drawable 파일명
-                        contentDescription = "시작",
+                        painter = painterResource(
+                            id = when (uiState) {
+                                TimerUiState.Reading -> OdokIcons.PauseButton
+                                else -> OdokIcons.PlayButton
+                            }
+                        ),
+                        contentDescription = if (uiState == TimerUiState.Reading) "일시정지" else "시작",
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -112,62 +142,76 @@ fun TimerScreen(
 
                 // Book Info View
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.Top,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    // 책 표지 이미지
-//                    Image(
-//                        painter = painterResource(id = OdokIcons.Plant), // TODO: 실제 리소스로 대체
-//                        contentDescription = "책 표지",
-//                        modifier = Modifier
-//                            .size(60.dp)
-//                            .clip(RoundedCornerShape(4.dp))
-//                    )
                     BookCover(
                         sharedTransitionScope = sharedTransitionScope,
                         animatedVisibilityScope = animatedVisibilityScope,
                         book = book,
                         modifier = Modifier
-                            .width(80.dp)
-                            .height(120.dp)
+                            .width(70.dp)
+                            .height(100.dp)
                     )
                     Spacer(modifier = Modifier.width(12.dp))
 
                     Column {
                         Text(book.title,
                             fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold)
+                            fontWeight = FontWeight.Bold,
+                            color = Color(textColor))
                         Text(book.author,
                             modifier = Modifier.padding(top=4.dp),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = OdokColors.StealGray )
+                            color = Color(textColor))
                         Text(book.progressText,
                             modifier = Modifier.padding(top=4.dp),
                             fontSize = 14.sp,
-                            color = OdokColors.StealGray)
-                        Text(book.progressPercentage.toString(),
+                            color = Color(textColor))
+                        Text(book.getElapsedTimeFormatted(),
                             modifier = Modifier.padding(top=4.dp),
                             fontSize = 14.sp,
-                            color = OdokColors.StealGray)
+                            color = Color(textColor))
                     }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
 
+                // Memo Button
+                Button(
+                    onClick = {  },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp)
+                        .padding(bottom = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = OdokColors.IrisBlue
+                    ),
+                    enabled = uiState != TimerUiState.Completed
+                ) {
+                    Image(
+                        painter = painterResource(id = OdokIcons.Write),
+                        contentDescription = "메모하기",
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("메모하기")
+                }
+
                 // Complete Button
                 Button(
-                    onClick = {},
+                    onClick = { viewModel.onCompleteClick() },
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(65.dp)
                         .padding(bottom = 16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = OdokColors.Black
-                    )
-
+                    ),
+                    enabled = uiState != TimerUiState.Completed
                 ) {
                     Icon(Icons.Default.Check, contentDescription = "완료")
                     Spacer(modifier = Modifier.width(8.dp))
