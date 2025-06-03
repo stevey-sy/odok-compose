@@ -25,6 +25,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -113,15 +116,37 @@ fun BookDetailScreen(
                                 color = OdokColors.Black
                             )
                             Spacer(modifier = Modifier.height(8.dp))
+//                            OutlinedTextField(
+//                                value = finishedReadCnt,
+//                                onValueChange = { viewModel.updateFinishedReadCnt(it) },
+//                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+//                                modifier = Modifier.fillMaxWidth()
+//                            )
+                            var finishedCntValue by remember { mutableStateOf(TextFieldValue(finishedReadCnt)) }
                             OutlinedTextField(
-                                value = finishedReadCnt,
-                                onValueChange = { viewModel.updateFinishedReadCnt(it) },
+                                value = finishedCntValue,
+                                onValueChange = {
+                                    finishedCntValue = it
+                                    viewModel.updateFinishedReadCnt(it.text)
+                                },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                modifier = Modifier.fillMaxWidth()
+                                textStyle = TextStyle(
+                                    textAlign = TextAlign.Center
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth(0.35f)
+                                    .onFocusChanged { focusState ->
+                                        if (focusState.isFocused) {
+                                            finishedCntValue = finishedCntValue.copy(
+                                                selection = TextRange(0, finishedCntValue.text.length)
+                                            )
+                                        }
+                                    }
                             )
                             
                             Spacer(modifier = Modifier.height(16.dp))
-                            
+
+                            var currentCntValue by remember { mutableStateOf(TextFieldValue(currentPageCnt)) }
                             // 현재 페이지 수정
                             Text(
                                 text = "현재 페이지",
@@ -134,8 +159,11 @@ fun BookDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 OutlinedTextField(
-                                    value = currentPageCnt,
-                                    onValueChange = { viewModel.updateCurrentPageCnt(it) },
+                                    value = currentCntValue,
+                                    onValueChange = {
+                                        currentCntValue = it
+                                        viewModel.updateFinishedReadCnt(it.text)
+                                    },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(0.7f),
                                     textStyle = TextStyle(
