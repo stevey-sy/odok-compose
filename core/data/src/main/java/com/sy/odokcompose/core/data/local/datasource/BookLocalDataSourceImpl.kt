@@ -57,4 +57,8 @@ class BookLocalDataSourceImpl @Inject constructor(
     override suspend fun getBookByIsbn(isbn: String): BookEntity? {
         return bookDao.getBookByIsbn(isbn)
     }
+
+    override suspend fun deleteBookById(itemId: Int) {
+        return bookDao.deleteBookById(itemId)
+    }
 }

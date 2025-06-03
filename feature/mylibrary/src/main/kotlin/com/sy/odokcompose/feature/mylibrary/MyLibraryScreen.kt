@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,10 +29,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -41,14 +45,19 @@ import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -62,10 +71,14 @@ import com.sy.odokcompose.feature.mylibrary.components.BookShelfRight
 import com.sy.odokcompose.model.BookUiModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.component.ActionIconButton
 import com.sy.odokcompose.core.designsystem.component.OdokTopAppBar
 import com.sy.odokcompose.core.designsystem.component.SearchTextField
 import com.sy.odokcompose.model.type.ShelfFilterType
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -82,17 +95,63 @@ fun MyLibraryScreen(
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredItems by viewModel.filteredItems.collectAsState()
     val currentFilter by viewModel.currentFilter.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
+    // SnackBar 메시지 처리
+    LaunchedEffect(uiState.snackBarMessage) {
+        uiState.snackBarMessage?.let { message ->
+            snackbarHostState.showSnackbar(message)
+            viewModel.clearSnackBarMessage()
+        }
+    }
 
     // 검색창이 열려있으면 BackHandler 활성화
     if (uiState.isSearchViewShowing) {
         BackHandler {
             viewModel.toggleSearchView(false)  // ViewModel의 검색창 닫기 로직 호출
         }
+    } else if (uiState.isDeleteMode) {
+        BackHandler {
+            viewModel.toggleDeleteMode()
+        }
     }
 
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                AnimatedVisibility(
+                    visible = uiState.isDeleteMode,
+                    enter = expandVertically(
+                        animationSpec = tween(300)
+                    ) + fadeIn(
+                        animationSpec = tween(300)
+                    ),
+                    exit = shrinkVertically(
+                        animationSpec = tween(300)
+                    ) + fadeOut(
+                        animationSpec = tween(300)
+                    )
+                ) {
+                    TopAppBar(
+                        title = { Text("${uiState.selectedItems.size}개 선택됨") },
+                        actions = {
+                            TextButton(
+                                onClick = { viewModel.deleteSelectedItems() }
+                            ) {
+                                Text("삭제")
+                            }
+                        },
+                        navigationIcon = {
+                            IconButton(onClick = { viewModel.toggleDeleteMode() }) {
+                                Icon(Icons.Default.Close, contentDescription = "닫기")
+                            }
+                        }
+                    )
+                }
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -138,8 +197,10 @@ fun MyLibraryScreen(
                         if (filteredItems.isEmpty()) {
                             EmptyLibraryView(onNavigateToSearch)
                         } else {
+                            val gridState = rememberLazyGridState()
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(3),
+                                state = gridState,
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .padding(horizontal = 16.dp),
@@ -157,6 +218,12 @@ fun MyLibraryScreen(
                                                     currentFilter.code,
                                                     searchQuery
                                                 )
+                                            },
+                                            onLongClick = { viewModel.toggleDeleteMode() },
+                                            isDeleteMode = uiState.isDeleteMode,
+                                            isSelected = uiState.selectedItems.contains(book.itemId),
+                                            onSelectionChanged = { isSelected ->
+                                                viewModel.toggleItemSelection(book.itemId)
                                             }
                                         )
                                     }
@@ -179,11 +246,17 @@ private fun BookShelfItem(
     index: Int,
     book: BookUiModel,
     isLastItem: Boolean = false,
-    onClick: ((itemId: Int) -> Unit)? = null
+    onClick: ((itemId: Int) -> Unit)? = null,
+    onLongClick: (() -> Unit)? = null,
+    isDeleteMode: Boolean = false,
+    isSelected: Boolean = false,
+    onSelectionChanged: ((Boolean) -> Unit)? = null,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .animateContentSize()
             .aspectRatio(0.7f)
     ) {
         BookShelfComponent(
@@ -195,16 +268,39 @@ private fun BookShelfItem(
         )
 
         if (book.itemId > 0) {
-            BookCover(
-                sharedTransitionScope = sharedTransitionScope,
-                animatedVisibilityScope = animatedVisibilityScope,
-                book = book,
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .clickable(enabled = onClick != null) { 
-                        onClick?.invoke(book.itemId)
-                    }
-            )
+                    .alpha(if (isDeleteMode && !isSelected) 0.5f else 1f)
+            ) {
+                BookCover(
+                    sharedTransitionScope = sharedTransitionScope,
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    book = book,
+                    modifier = Modifier
+                        .combinedClickable(
+                            enabled = onClick != null,
+                            onClick = {
+                                if (isDeleteMode) {
+                                    onSelectionChanged?.invoke(!isSelected)
+                                } else {
+                                    onClick?.invoke(book.itemId)
+                                }
+                            },
+                            onLongClick = onLongClick
+                        )
+                )
+                
+                if (isDeleteMode) {
+                    Checkbox(
+                        checked = isSelected,
+                        onCheckedChange = onSelectionChanged,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp)
+                    )
+                }
+            }
         } else if (isLastItem) {
             Image(
                 painter = painterResource(id = OdokIcons.Plant),
