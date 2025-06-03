@@ -35,7 +35,7 @@ class BookLocalDataSourceImpl @Inject constructor(
     }
 
     override suspend fun update(item: BookEntity) {
-        TODO("Not yet implemented")
+        bookDao.updateBook(item)
     }
 
     override suspend fun delete(item: BookEntity) {

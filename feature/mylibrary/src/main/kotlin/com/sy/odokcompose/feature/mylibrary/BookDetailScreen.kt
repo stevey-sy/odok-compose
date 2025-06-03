@@ -21,6 +21,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -34,6 +38,8 @@ fun BookDetailScreen(
     val currentPage by viewModel.currentPage.collectAsState()
     val currentBook by viewModel.currentBook.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val finishedReadCnt by viewModel.finishedReadCnt.collectAsState()
+    val currentPageCnt by viewModel.currentPageCnt.collectAsState()
 
     val sheetState = rememberModalBottomSheetState()
 
@@ -81,12 +87,15 @@ fun BookDetailScreen(
                     ModalBottomSheet(
                         onDismissRequest = { viewModel.hideEditView() },
                         sheetState = sheetState,
-                        modifier = Modifier.fillMaxHeight(1.0f)
+                        modifier = Modifier.fillMaxHeight(1.0f),
                     ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 24.dp, vertical = 16.dp)
+                                .navigationBarsPadding()
+                                .imePadding()
+                                .verticalScroll(rememberScrollState())
                         ) {
                             Text(
                                 text = "독서 정보 수정",
@@ -105,7 +114,7 @@ fun BookDetailScreen(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             OutlinedTextField(
-                                value = currentBook?.finishedReadCnt?.toString() ?: "0",
+                                value = finishedReadCnt,
                                 onValueChange = { viewModel.updateFinishedReadCnt(it) },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                 modifier = Modifier.fillMaxWidth()
@@ -125,7 +134,7 @@ fun BookDetailScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 OutlinedTextField(
-                                    value = currentBook?.currentPageCnt?.toString() ?: "0",
+                                    value = currentPageCnt,
                                     onValueChange = { viewModel.updateCurrentPageCnt(it) },
                                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                                     modifier = Modifier.fillMaxWidth(0.7f),
@@ -154,6 +163,7 @@ fun BookDetailScreen(
                             ) {
                                 Text("저장")
                             }
+                            Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
                         }
                     }
                 }

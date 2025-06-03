@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sy.odokcompose.core.domain.GetBookDetailUseCase
 import com.sy.odokcompose.core.domain.GetMyBooksUseCase
+import com.sy.odokcompose.core.domain.UpdateBookUseCase
 import com.sy.odokcompose.model.BookUiModel
 import com.sy.odokcompose.model.type.ShelfFilterType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
     private val getMyBooksUseCase: GetMyBooksUseCase,
+    private val updateBookUseCase: UpdateBookUseCase,
     private val savedStateHandle : SavedStateHandle
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(BookDetailUiState())
@@ -41,7 +43,10 @@ class BookDetailViewModel @Inject constructor(
 
     // 수정 관련 상태
     private val _finishedReadCnt = MutableStateFlow("0")
+    val finishedReadCnt: StateFlow<String> = _finishedReadCnt.asStateFlow()
+
     private val _currentPageCnt = MutableStateFlow("0")
+    val currentPageCnt: StateFlow<String> = _currentPageCnt.asStateFlow()
 
     fun showEditView() {
         _uiState.update { it.copy(isEditViewShowing = true) }
@@ -69,7 +74,13 @@ class BookDetailViewModel @Inject constructor(
                 val finishedReadCnt = _finishedReadCnt.value.toIntOrNull() ?: 0
                 val currentPageCnt = _currentPageCnt.value.toIntOrNull() ?: 0
                 
-                // TODO: 데이터베이스 업데이트 로직 추가
+                currentBook.value?.let { book ->
+                    val updatedBook = book.copy(
+                        finishedReadCnt = finishedReadCnt,
+                        currentPageCnt = currentPageCnt
+                    )
+                    updateBookUseCase.invoke(updatedBook)
+                }
                 
                 hideEditView()
             } catch (e: Exception) {

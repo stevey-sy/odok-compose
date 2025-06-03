@@ -25,7 +25,7 @@ class SaveBookUseCase @Inject constructor(
             bookLocalDataSource.insert(book)
             SaveBookResult.Success
         } catch (e: Exception) {
-            SaveBookResult.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
+            SaveBookResult.Error(e.message ?: "알 수 없는 오류가 발생했습니다.")
         }
     }
 }

@@ -20,6 +20,7 @@ object BookEntityMapper : EntityMapper<BookEntity, BookUiModel> {
             endDate = entity.endDate,
             elapsedTimeInSeconds = entity.elapsedTimeInSeconds,
             completedReadingCnt = entity.completedReadingCnt,
+            finishedReadCnt = entity.finishedReadCnt,
             shelfPosition = -1
         )
     }
@@ -43,7 +44,8 @@ object BookEntityMapper : EntityMapper<BookEntity, BookUiModel> {
             startDate = model.startDate,
             endDate = model.endDate,
             elapsedTimeInSeconds = model.elapsedTimeInSeconds,
-            completedReadingCnt = model.completedReadingCnt
+            completedReadingCnt = model.completedReadingCnt,
+            finishedReadCnt = model.finishedReadCnt,
         )
     }
 }
