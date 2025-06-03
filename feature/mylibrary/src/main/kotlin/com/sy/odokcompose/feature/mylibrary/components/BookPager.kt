@@ -6,6 +6,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -53,6 +54,7 @@ fun BookPager(
         state = pagerState,
         modifier = Modifier
             .fillMaxWidth()
+            .padding(top= 20.dp)
             .height(280.dp),
         contentPadding = PaddingValues(horizontal = horizontalPadding),
     ) { page ->
