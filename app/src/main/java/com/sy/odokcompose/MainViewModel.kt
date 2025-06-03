@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor() : ViewModel() {
             
             // 실제 데이터 로딩 로직이 여기에 들어갑니다
             // 예제를 위해 2초 지연을 추가합니다
-            delay(2000)
+//            delay(2000)
             
             _uiState.value = MainUiState.Success
         }

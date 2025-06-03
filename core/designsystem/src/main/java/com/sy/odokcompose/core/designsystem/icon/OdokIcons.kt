@@ -27,4 +27,10 @@ object OdokIcons {
 
     @DrawableRes
     val Plus = R.drawable.ic_plus_24
+
+    @DrawableRes
+    val Award = R.drawable.ic_award
+
+    @DrawableRes
+    val Wreath = R.drawable.ic_wreath
 }
