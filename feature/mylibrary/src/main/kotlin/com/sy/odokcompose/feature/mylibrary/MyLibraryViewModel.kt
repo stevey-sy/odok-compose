@@ -48,10 +48,25 @@ class MyLibraryViewModel @Inject constructor(
         val query = _searchQuery.value.lowercase()
         if (query.isEmpty()) {
             _filteredItems.value = _shelfItems.value
+            _uiState.update { it.copy(
+                noMatchingBooksMessage = null,
+                isSearchResult = false
+            ) }
         } else {
             _filteredItems.value = _shelfItems.value.filter { book ->
                 book.title.lowercase().contains(query) ||
                 book.author.lowercase().contains(query)
+            }
+            if (_filteredItems.value.isEmpty()) {
+                _uiState.update { it.copy(
+                    noMatchingBooksMessage = "'$query'에 대한 검색 결과가 없습니다",
+                    isSearchResult = true
+                ) }
+            } else {
+                _uiState.update { it.copy(
+                    noMatchingBooksMessage = null,
+                    isSearchResult = false
+                ) }
             }
         }
     }
@@ -76,6 +91,24 @@ class MyLibraryViewModel @Inject constructor(
                 val paddedBooks = addDummyItems(updatedBooks)
                 _shelfItems.value = paddedBooks
                 _filteredItems.value = paddedBooks
+                
+                if (books.isEmpty()) {
+                    _uiState.update { it.copy(
+                        isEmptyLibrary = filter == ShelfFilterType.NONE,
+                        noMatchingBooksMessage = when (filter) {
+                            ShelfFilterType.READING -> "읽고 있는 책이 없습니다"
+                            ShelfFilterType.FINISHED -> "완독한 책이 없습니다"
+                            else -> null
+                        },
+                        isSearchResult = false
+                    ) }
+                } else {
+                    _uiState.update { it.copy(
+                        isEmptyLibrary = false,
+                        noMatchingBooksMessage = null,
+                        isSearchResult = false
+                    ) }
+                }
             }
         }
     }
@@ -159,5 +192,8 @@ data class MyLibraryUiState(
     val isDeleteMode: Boolean = false,
     val selectedItems: Set<Int> = emptySet(),
     val errorMessage: String? = null,
-    val snackBarMessage: String? = null
+    val snackBarMessage: String? = null,
+    val isEmptyLibrary: Boolean = false,
+    val noMatchingBooksMessage: String? = null,
+    val isSearchResult: Boolean = false
 )

@@ -194,41 +194,52 @@ fun MyLibraryScreen(
                             animationSpec = tween(300)
                         )
                     ) {
-                        if (filteredItems.isEmpty()) {
-                            EmptyLibraryView(onNavigateToSearch)
-                        } else {
-                            val gridState = rememberLazyGridState()
-                            LazyVerticalGrid(
-                                columns = GridCells.Fixed(3),
-                                state = gridState,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(horizontal = 16.dp),
-                                content = {
-                                    itemsIndexed(filteredItems) { index, book ->
-                                        BookShelfItem(
-                                            sharedTransitionScope = sharedTransitionScope,
-                                            animatedVisibilityScope = animatedVisibilityScope,
-                                            index = index,
-                                            book = book,
-                                            isLastItem = index == filteredItems.lastIndex,
-                                            onClick = { itemId ->
-                                                onBookItemClicked(
-                                                    itemId,
-                                                    currentFilter.code,
-                                                    searchQuery
-                                                )
-                                            },
-                                            onLongClick = { viewModel.toggleDeleteMode() },
-                                            isDeleteMode = uiState.isDeleteMode,
-                                            isSelected = uiState.selectedItems.contains(book.itemId),
-                                            onSelectionChanged = { isSelected ->
-                                                viewModel.toggleItemSelection(book.itemId)
-                                            }
-                                        )
+                        when {
+                            uiState.isEmptyLibrary -> {
+                                EmptyLibraryView(onNavigateToSearch)
+                            }
+                            uiState.noMatchingBooksMessage != null -> {
+                                val message = uiState.noMatchingBooksMessage
+                                NoMatchingBooksView(
+                                    message = message.toString(),
+                                    isSearchResult = uiState.isSearchResult,
+                                    onClearSearch = { viewModel.updateSearchQuery("") }
+                                )
+                            }
+                            else -> {
+                                val gridState = rememberLazyGridState()
+                                LazyVerticalGrid(
+                                    columns = GridCells.Fixed(3),
+                                    state = gridState,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(horizontal = 16.dp),
+                                    content = {
+                                        itemsIndexed(filteredItems) { index, book ->
+                                            BookShelfItem(
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedVisibilityScope,
+                                                index = index,
+                                                book = book,
+                                                isLastItem = index == filteredItems.lastIndex,
+                                                onClick = { itemId ->
+                                                    onBookItemClicked(
+                                                        itemId,
+                                                        currentFilter.code,
+                                                        searchQuery
+                                                    )
+                                                },
+                                                onLongClick = { viewModel.toggleDeleteMode() },
+                                                isDeleteMode = uiState.isDeleteMode,
+                                                isSelected = uiState.selectedItems.contains(book.itemId),
+                                                onSelectionChanged = { isSelected ->
+                                                    viewModel.toggleItemSelection(book.itemId)
+                                                }
+                                            )
+                                        }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     }
                 }
@@ -344,7 +355,7 @@ private fun EmptyLibraryView(onNavigateToSearch: () -> Unit) {
             Text(
                 text = "당신의 첫 번째 책을 추가해 보세요",
                 style = typography.titleMedium,
-                fontWeight = FontWeight.Bold, // 이 줄 추가!
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(top = 32.dp)
             )
             Text(
@@ -361,6 +372,49 @@ private fun EmptyLibraryView(onNavigateToSearch: () -> Unit) {
                 Text(
                     text = "책 검색하기",
                 )
+            }
+        }
+    }
+}
+
+@Composable
+private fun NoMatchingBooksView(
+    message: String,
+    isSearchResult: Boolean,
+    onClearSearch: () -> Unit
+) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = OdokIcons.Plant),
+                contentDescription = "검색 결과 없음",
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Text(
+                text = "조건과 일치하는 책이 없습니다",
+                style = typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 32.dp)
+            )
+            Text(
+                text = message,
+                style = typography.bodyMedium,
+                color = colorScheme.onSurface.copy(alpha = 0.5f),
+                modifier = Modifier.padding(top = 8.dp)
+            )
+            if (isSearchResult) {
+                TextButton(
+                    onClick = onClearSearch,
+                    modifier = Modifier.padding(top = 16.dp)
+                ) {
+                    Text("검색어 지우기")
+                }
             }
         }
     }
