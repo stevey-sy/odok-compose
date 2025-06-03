@@ -248,7 +248,10 @@ fun MainScreen(
                                     }
                                 }
 
-                                IconButton(onClick = { navController.navigateToSearch() }) {
+                                IconButton(onClick = {
+                                    myLibraryViewModel.toggleSearchView(false)
+                                    navController.navigateToSearch()
+                                }) {
                                     Icon(
                                         painter = painterResource(id = OdokIcons.Plus),
                                         contentDescription = "추가",
