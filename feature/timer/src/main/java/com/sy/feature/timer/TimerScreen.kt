@@ -54,7 +54,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.ui.geometry.lerp
 
@@ -84,47 +84,74 @@ fun TimerScreen(
         label = "color"
     )
 
-    val rotation = remember { Animatable(0f) }
-    val coroutineScope = rememberCoroutineScope()
+    val lpRotationAngle = remember { Animatable(0f) }
+    val armAnimationProgress = remember { Animatable(0f) }
+    val volumeAnimationProgress = remember { Animatable(0f) }
+    val powerButtonRotation = remember { Animatable(0f) }
 
-    val armAnimationProgress by animateFloatAsState(
-        targetValue = if (uiState == TimerUiState.Reading) 1f else 0f,
-        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
-        label = "armProgress"
-    )
-
-    val volumeAnimationProgress by animateFloatAsState(
-        targetValue = if (uiState == TimerUiState.Reading) 1f else 0f, // Reading 상태일 때 volumeOn (1f)
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
-        label = "volumeProgress"
-    )
-
-    val powerButtonRotation by animateFloatAsState(
-        targetValue = if (uiState == TimerUiState.Reading) 90f else 0f, // Reading: 90도(수직), Other: 0도(수평)
-        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
-        label = "powerButtonRotation"
-    )
+    val shouldLpRotate = remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Reading) {
-            coroutineScope.launch {
-                rotation.animateTo(
-                    targetValue = rotation.value + 360f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 4000, easing = LinearEasing),
-                        repeatMode = RepeatMode.Restart
-                    )
+            shouldLpRotate.value = false
+            lpRotationAngle.stop()
+
+            powerButtonRotation.animateTo(
+                targetValue = 90f,
+                animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+            )
+
+            launch {
+                armAnimationProgress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 500, easing = LinearEasing)
                 )
             }
+            launch {
+                volumeAnimationProgress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(durationMillis = 300, easing = LinearEasing)
+                )
+            }
+
+            val armJob = launch {
+                armAnimationProgress.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 500, easing = LinearEasing))
+            }
+            val volumeJob = launch {
+                volumeAnimationProgress.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 300, easing = LinearEasing))
+            }
+            armJob.join()
+            volumeJob.join()
+
+            shouldLpRotate.value = true
+
         } else {
-            rotation.snapTo(0f)
+            shouldLpRotate.value = false
+            lpRotationAngle.stop()
+
+            launch { powerButtonRotation.animateTo(0f, tween(durationMillis = 300)) }
+            launch { armAnimationProgress.animateTo(0f, tween(durationMillis = 500)) }
+            launch { volumeAnimationProgress.animateTo(0f, tween(durationMillis = 300)) }
+        }
+    }
+
+    LaunchedEffect(shouldLpRotate.value, uiState) {
+        if (shouldLpRotate.value && uiState == TimerUiState.Reading) {
+            lpRotationAngle.animateTo(
+                targetValue = lpRotationAngle.value + 360f,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(durationMillis = 4000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            )
+        } else {
+            lpRotationAngle.stop()
         }
     }
 
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-//            containerColor = if (uiState == TimerUiState.Reading) animatedColor else Color(backgroundColor)
             containerColor = Color(backgroundColor)
         ) { innerPadding ->
             Column(
@@ -134,7 +161,6 @@ fun TimerScreen(
                     .padding(10.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Close Button (X)
                 Box(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopEnd
@@ -151,7 +177,6 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                // Orange Circle
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -167,32 +192,27 @@ fun TimerScreen(
                         val canvasHeight = size.height
                         val center = Offset(canvasWidth / 2, canvasHeight / 2)
 
-                        // 1. LP판(큰 검은색 원)만 회전
-                        rotate(rotation.value, center) {
+                        rotate(lpRotationAngle.value, center) {
                             drawCircle(
-                                color = Color(0xFF23272A),
+                                color = Color(0xFF353935),
                                 radius = canvasHeight * 0.38f,
                                 center = center
                             )
-                            // 2. 중앙의 검은색 원
                             drawCircle(
                                 color = Color.Black,
                                 radius = canvasHeight * 0.18f,
                                 center = center
                             )
-                            // 3. 중앙의 빨간색 원
                             drawCircle(
                                 color = Color(0xFFE53935),
                                 radius = canvasHeight * 0.11f,
                                 center = center
                             )
-                            // 3.1 중앙의 검은색 원
                             drawCircle(
                                 color = Color.Black,
                                 radius = canvasHeight * 0.02f,
                                 center = center
                             )
-                            // 4. 회전 느낌의 곡선(레코드판 위)
                             drawArc(
                                 color = Color(0xFF90A4AE),
                                 startAngle = 200f,
@@ -212,20 +232,17 @@ fun TimerScreen(
                                 style = Stroke(width = 4f)
                             )
                         }
-                        // 6. 톤암과 레코드판의 연결부(작은 오렌지 사각형)
                         val armStartOff = Offset(canvasWidth * 0.85f, canvasHeight * 0.85f)
                         val armStartOn = Offset(center.x + canvasHeight * 0.23f, center.y + canvasHeight * 0.1f)
                         val armEnd = Offset(canvasWidth * 0.85f, canvasHeight * 0.18f)
 
-                        val interpolatedArmStart = lerp(armStartOff, armStartOn, armAnimationProgress)
+                        val interpolatedArmStart = lerp(armStartOff, armStartOn, armAnimationProgress.value)
 
-                        // 7. 톤암 끝의 오렌지 원
                         drawCircle(
                             color = Color(0xFFFFB74D),
                             radius = 40f,
                             center = armEnd
                         )
-                        // 5. 톤암(검은색 선) - 오렌지 원 위로 그리기
                         drawLine(
                             color = Color.Black,
                             start = interpolatedArmStart,
@@ -239,16 +256,12 @@ fun TimerScreen(
                             size = androidx.compose.ui.geometry.Size(24f, 24f)
                         )
 
-                        // 톤암 끝
-
-                        // volume controller 시작
                         val ctrlX = canvasWidth * 0.92f
                         val volumeOnTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.45f)
                         val volumeOffTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.65f)
 
-                        val interpolatedVolumeTopLeft = lerp(volumeOffTopLeft, volumeOnTopLeft, volumeAnimationProgress)
+                        val interpolatedVolumeTopLeft = lerp(volumeOffTopLeft, volumeOnTopLeft, volumeAnimationProgress.value)
 
-                        // 8. 오른쪽 컨트롤러(세로 막대 + 사각형)
                         drawLine(
                             color = Color.Black,
                             start = Offset(ctrlX, canvasHeight * 0.4f),
@@ -260,20 +273,16 @@ fun TimerScreen(
                             topLeft = interpolatedVolumeTopLeft,
                             size = androidx.compose.ui.geometry.Size(36f, 18f)
                         )
-                        // volume controller 끝
 
-                        // 전원 controller 시작
                         val powerX = canvasWidth * 0.80f
                         val powerButtonCenter = Offset(powerX, canvasHeight * 0.8f)
 
-                        // 9. 작은 오렌지 원(버튼)
                         drawCircle(
                             color = Color(0xFFFFB74D),
                             radius = 20f,
                             center = powerButtonCenter
                         )
-                        // 10. 작은 검은색 선(버튼 위) - 회전 적용
-                        rotate(degrees = powerButtonRotation, pivot = powerButtonCenter) {
+                        rotate(degrees = powerButtonRotation.value, pivot = powerButtonCenter) {
                             drawLine(
                                 color = Color.Black,
                                 start = Offset(powerButtonCenter.x - 14f, powerButtonCenter.y),
@@ -281,11 +290,9 @@ fun TimerScreen(
                                 strokeWidth = 4f
                             )
                         }
-                        // 전원 controller 끝
                     }
                 }
 
-                // Timer Text
                 Text(
                     text = timerText,
                     fontSize = 48.sp,
@@ -295,7 +302,6 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Guide Text
                 Text(
                     text = guideText,
                     fontSize = 16.sp,
@@ -304,7 +310,6 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-                // Play Button
                 IconButton(
                     onClick = { viewModel.onPlayButtonClick() },
                     modifier = Modifier.size(80.dp)
@@ -323,7 +328,6 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.height(120.dp))
 
-                // Book Info View
                 Row(
                     verticalAlignment = Alignment.Top,
                     modifier = Modifier
@@ -363,7 +367,6 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                // Memo Button
                 Button(
                     onClick = {  },
                     modifier = Modifier
@@ -384,7 +387,6 @@ fun TimerScreen(
                     Text("메모하기")
                 }
 
-                // Complete Button
                 Button(
                     onClick = { viewModel.onCompleteClick() },
                     modifier = Modifier
