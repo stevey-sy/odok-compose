@@ -93,6 +93,18 @@ fun TimerScreen(
         label = "armProgress"
     )
 
+    val volumeAnimationProgress by animateFloatAsState(
+        targetValue = if (uiState == TimerUiState.Reading) 1f else 0f, // Reading 상태일 때 volumeOn (1f)
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
+        label = "volumeProgress"
+    )
+
+    val powerButtonRotation by animateFloatAsState(
+        targetValue = if (uiState == TimerUiState.Reading) 90f else 0f, // Reading: 90도(수직), Other: 0도(수평)
+        animationSpec = tween(durationMillis = 300, easing = LinearEasing),
+        label = "powerButtonRotation"
+    )
+
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Reading) {
             coroutineScope.launch {
@@ -174,6 +186,12 @@ fun TimerScreen(
                                 radius = canvasHeight * 0.11f,
                                 center = center
                             )
+                            // 3.1 중앙의 검은색 원
+                            drawCircle(
+                                color = Color.Black,
+                                radius = canvasHeight * 0.02f,
+                                center = center
+                            )
                             // 4. 회전 느낌의 곡선(레코드판 위)
                             drawArc(
                                 color = Color(0xFF90A4AE),
@@ -195,7 +213,7 @@ fun TimerScreen(
                             )
                         }
                         // 6. 톤암과 레코드판의 연결부(작은 오렌지 사각형)
-                        val armStartOff = Offset(canvasWidth * 0.85f, canvasHeight * 0.88f)
+                        val armStartOff = Offset(canvasWidth * 0.85f, canvasHeight * 0.85f)
                         val armStartOn = Offset(center.x + canvasHeight * 0.23f, center.y + canvasHeight * 0.1f)
                         val armEnd = Offset(canvasWidth * 0.85f, canvasHeight * 0.18f)
 
@@ -214,37 +232,56 @@ fun TimerScreen(
                             end = armEnd,
                             strokeWidth = 12f
                         )
+
                         drawRect(
                             color = Color(0xFFFFB74D),
                             topLeft = Offset(interpolatedArmStart.x - 12f, interpolatedArmStart.y - 12f),
                             size = androidx.compose.ui.geometry.Size(24f, 24f)
                         )
-                        // 8. 오른쪽 컨트롤러(세로 막대 + 사각형)
+
+                        // 톤암 끝
+
+                        // volume controller 시작
                         val ctrlX = canvasWidth * 0.92f
+                        val volumeOnTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.45f)
+                        val volumeOffTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.65f)
+
+                        val interpolatedVolumeTopLeft = lerp(volumeOffTopLeft, volumeOnTopLeft, volumeAnimationProgress)
+
+                        // 8. 오른쪽 컨트롤러(세로 막대 + 사각형)
                         drawLine(
                             color = Color.Black,
-                            start = Offset(ctrlX, canvasHeight * 0.25f),
+                            start = Offset(ctrlX, canvasHeight * 0.4f),
                             end = Offset(ctrlX, canvasHeight * 0.7f),
-                            strokeWidth = 8f
+                            strokeWidth = 12f
                         )
                         drawRect(
                             color = Color(0xFFFFB74D),
-                            topLeft = Offset(ctrlX - 18f, canvasHeight * 0.32f),
+                            topLeft = interpolatedVolumeTopLeft,
                             size = androidx.compose.ui.geometry.Size(36f, 18f)
                         )
+                        // volume controller 끝
+
+                        // 전원 controller 시작
+                        val powerX = canvasWidth * 0.80f
+                        val powerButtonCenter = Offset(powerX, canvasHeight * 0.8f)
+
                         // 9. 작은 오렌지 원(버튼)
                         drawCircle(
                             color = Color(0xFFFFB74D),
-                            radius = 14f,
-                            center = Offset(ctrlX - 40f, canvasHeight * 0.8f)
+                            radius = 20f,
+                            center = powerButtonCenter
                         )
-                        // 10. 작은 검은색 선(버튼 위)
-                        drawLine(
-                            color = Color.Black,
-                            start = Offset(ctrlX - 48f, canvasHeight * 0.8f),
-                            end = Offset(ctrlX - 32f, canvasHeight * 0.8f),
-                            strokeWidth = 4f
-                        )
+                        // 10. 작은 검은색 선(버튼 위) - 회전 적용
+                        rotate(degrees = powerButtonRotation, pivot = powerButtonCenter) {
+                            drawLine(
+                                color = Color.Black,
+                                start = Offset(powerButtonCenter.x - 14f, powerButtonCenter.y),
+                                end = Offset(powerButtonCenter.x + 14f, powerButtonCenter.y),
+                                strokeWidth = 4f
+                            )
+                        }
+                        // 전원 controller 끝
                     }
                 }
 
