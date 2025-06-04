@@ -1,5 +1,6 @@
 package com.sy.feature.timer
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,7 +32,7 @@ class TimerViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TimerUiState>(TimerUiState.BeforeReading)
-    val uiState: StateFlow<TimerUiState> = _uiState
+    val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
 
     private val _timerText = MutableStateFlow("00:00:00")
     val timerText: StateFlow<String> = _timerText.asStateFlow()
@@ -40,7 +41,7 @@ class TimerViewModel @Inject constructor(
     val guideText: StateFlow<String> = _guideText.asStateFlow()
 
     private val _book = MutableStateFlow<BookUiModel>(BookUiModel())
-    val book: StateFlow<BookUiModel> = _book
+    val book: StateFlow<BookUiModel> = _book.asStateFlow()
 
     private val _backgroundColor = MutableStateFlow(android.graphics.Color.WHITE)
     val backgroundColor: StateFlow<Int> = _backgroundColor.asStateFlow()
@@ -51,24 +52,28 @@ class TimerViewModel @Inject constructor(
     private var timerJob: Job? = null
     private var elapsedSeconds = 0L
 
+    // For Page Input Modal
+    private val _isPageInputModalVisible = MutableStateFlow(false)
+    val isPageInputModalVisible: StateFlow<Boolean> = _isPageInputModalVisible.asStateFlow()
+
+    private val _lastReadPageInput = MutableStateFlow("")
+    val lastReadPageInput: StateFlow<String> = _lastReadPageInput.asStateFlow()
+
     fun onPlayButtonClick() {
         when (_uiState.value) {
             TimerUiState.BeforeReading, TimerUiState.Paused -> {
                 startTimer()
                 _uiState.value = TimerUiState.Reading
                 _guideText.value = "독서 중..."
-                _backgroundColor.value = android.graphics.Color.WHITE
-                _textColor.value = android.graphics.Color.BLACK
+                // 배경색/텍스트색 변경은 Screen에서 애니메이션으로 처리하므로 ViewModel에서 직접 변경하지 않음
             }
             TimerUiState.Reading -> {
                 pauseTimer()
                 _uiState.value = TimerUiState.Paused
                 _guideText.value = "일시 정지됨"
-                _backgroundColor.value = android.graphics.Color.WHITE
-                _textColor.value = android.graphics.Color.BLACK
             }
             TimerUiState.Completed -> {
-                // 완료 상태에서는 아무 동작도 하지 않음
+                // 완료 상태에서는 Play 버튼 동작 없음
             }
         }
     }
@@ -86,7 +91,7 @@ class TimerViewModel @Inject constructor(
 
     private fun pauseTimer() {
         timerJob?.cancel()
-        timerJob = null
+        // timerJob = null // Setting to null might not be necessary if we always cancel and re-launch
     }
 
     private fun updateTimerText() {
@@ -97,53 +102,45 @@ class TimerViewModel @Inject constructor(
     }
 
     fun onCompleteClick() {
+//        if (_uiState.value == TimerUiState.Completed) return // 이미 완료된 경우 중복 실행 방지
         pauseTimer()
-        _uiState.value = TimerUiState.Completed
-        _guideText.value = "독서 완료!"
-        _backgroundColor.value = android.graphics.Color.WHITE
-        _textColor.value = android.graphics.Color.BLACK
-        
-        // TODO: 독서 시간을 저장하는 로직 추가
+        _uiState.value = TimerUiState.Paused
+        _guideText.value = "일시 정지됨"
+        _isPageInputModalVisible.value = true
+        // 페이지 입력 후 저장 시점에 실제 BookUiModel 업데이트 진행
+    }
+
+    fun onLastReadPageInputChange(page: String) {
+        _lastReadPageInput.value = page
+    }
+
+    fun saveLastReadPageAndDismiss() {
+        val pageNumber = _lastReadPageInput.value.toIntOrNull()
         viewModelScope.launch {
             try {
-                _book.value.let { book ->
-                    val updatedBook = book.copy(
-                        elapsedTimeInSeconds = book.elapsedTimeInSeconds + elapsedSeconds.toInt()
-                    )
-                    updateBookUseCase.invoke(updatedBook)
-                }
+                val currentBook = _book.value
+                val updatedBook = currentBook.copy(
+                    elapsedTimeInSeconds = currentBook.elapsedTimeInSeconds + elapsedSeconds.toInt(),
+                    // Assuming BookUiModel has a field like lastReadPage or currentPageCnt
+                    // This needs to be adjusted based on your BookUiModel structure
+                    currentPageCnt = pageNumber ?: currentBook.currentPageCnt // 예시: 페이지 입력이 있으면 그걸로, 없으면 기존 값
+                )
+                updateBookUseCase.invoke(updatedBook)
+                _book.value = updatedBook // 로컬 상태도 업데이트
+                dismissPageInputModal()
+                _uiState.value = TimerUiState.Completed
             } catch (e: Exception) {
-//                _uiState.update { it.copy(errorMessage = e.message) }
+                Log.e("TimerViewModel", "Error saving last read page", e)
+                // TODO: Show error message to user
+                dismissPageInputModal() // 에러 발생 시에도 모달은 닫음
             }
-
-
         }
     }
 
-//    fun saveChanges() {
-//        viewModelScope.launch {
-//            try {
-//                val finishedReadCntValue = _finishedReadCnt.value.toIntOrNull() ?: 0
-//                val currentPageCntValue = _currentPageCnt.value.toIntOrNull() ?: 0
-//
-//                currentBook.value?.let { bookToUpdate ->
-//                    // 업데이트될 책의 ID를 activeItemId로 설정
-//                    // 이렇게 하면 _bookList가 갱신된 후 loadBooksAndSetPage의 collect 블록에서
-//                    // 이 책을 기준으로 _currentPage를 올바르게 설정하려고 시도합니다.
-//                    activeItemId = bookToUpdate.itemId
-//
-//                    val updatedBook = bookToUpdate.copy(
-//                        finishedReadCnt = finishedReadCntValue,
-//                        currentPageCnt = currentPageCntValue
-//                    )
-//                    updateBookUseCase.invoke(updatedBook)
-//                }
-//
-//                hideEditView() // UI 상태 변경은 작업 완료 후
-//            } catch (e: Exception) {
-//                _uiState.update { it.copy(errorMessage = e.message) }
-//            }
-//        }
+    fun dismissPageInputModal() {
+        _isPageInputModalVisible.value = false
+        _lastReadPageInput.value = "" // 입력 필드 초기화
+    }
 
     private fun loadBookInfo(itemId: Int) {
         viewModelScope.launch {
@@ -154,14 +151,16 @@ class TimerViewModel @Inject constructor(
     }
 
     init {
+        Log.d("TimerViewModel", "ViewModel created")
         val itemId: Int = checkNotNull(savedStateHandle["itemId"]) { "itemId가 필요합니다." }
         loadBookInfo(itemId)
-        _backgroundColor.value = android.graphics.Color.WHITE
-        _textColor.value = android.graphics.Color.BLACK
+        // 초기 배경색/텍스트색 설정은 ViewModel에서 제거 (Screen에서 애니메이션 초기값으로 처리)
     }
 
     override fun onCleared() {
         super.onCleared()
+        Log.d("TimerViewModel", "ViewModel cleared")
         timerJob?.cancel()
     }
+
 }

@@ -22,10 +22,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -56,13 +60,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.ui.geometry.lerp
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+
 import androidx.compose.ui.util.lerp
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun TimerScreen(
     sharedTransitionScope: SharedTransitionScope,
@@ -76,6 +86,10 @@ fun TimerScreen(
     val guideText by viewModel.guideText.collectAsState()
     val backgroundColor by viewModel.backgroundColor.collectAsState()
     val textColor by viewModel.textColor.collectAsState()
+
+    val isPageInputModalVisible by viewModel.isPageInputModalVisible.collectAsState()
+    val lastReadPageInput by viewModel.lastReadPageInput.collectAsState()
+    val sheetState = rememberModalBottomSheetState()
 
     val infiniteTransition = rememberInfiniteTransition(label = "infinite")
     val animatedColor by infiniteTransition.animateColor(
@@ -155,6 +169,13 @@ fun TimerScreen(
             )
         } else {
             lpRotationAngle.stop()
+        }
+    }
+
+    // Completed 시 자동으로 화면 나가기
+    LaunchedEffect(uiState) {
+        if (uiState == TimerUiState.Completed) {
+            onClose()
         }
     }
 
@@ -245,7 +266,7 @@ fun TimerScreen(
                         val armStartOn = Offset(center.x + canvasHeight * 0.23f, center.y + canvasHeight * 0.1f)
                         val armEnd = Offset(canvasWidth * 0.85f, canvasHeight * 0.18f)
 
-                        val interpolatedArmStart = lerp(armStartOff, armStartOn, armAnimationProgress.value)
+                        val interpolatedArmStart = androidx.compose.ui.geometry.lerp(armStartOff, armStartOn, armAnimationProgress.value)
 
                         drawCircle(
                             color = OdokColors.Orange,
@@ -269,7 +290,7 @@ fun TimerScreen(
                         val volumeOnTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.45f)
                         val volumeOffTopLeft = Offset(ctrlX - 18f, canvasHeight * 0.65f)
 
-                        val interpolatedVolumeTopLeft = lerp(volumeOffTopLeft, volumeOnTopLeft, volumeAnimationProgress.value)
+                        val interpolatedVolumeTopLeft = androidx.compose.ui.geometry.lerp(volumeOffTopLeft, volumeOnTopLeft, volumeAnimationProgress.value)
 
                         drawLine(
                             color = Color.Black,
@@ -445,7 +466,6 @@ fun TimerScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = OdokColors.Orange
                     ),
-                    enabled = uiState != TimerUiState.Completed
                 ) {
                     Image(
                         painter = painterResource(id = OdokIcons.Write),
@@ -465,11 +485,53 @@ fun TimerScreen(
                     colors = ButtonDefaults.buttonColors(
                         containerColor = OdokColors.Black
                     ),
-                    enabled = uiState != TimerUiState.Completed
                 ) {
                     Icon(Icons.Default.Check, contentDescription = "완료")
                     Spacer(modifier = Modifier.width(8.dp))
                     Text("완료")
+                }
+            }
+
+            // Modal Bottom Sheet for Page Input
+            if (isPageInputModalVisible) {
+                ModalBottomSheet(
+                    onDismissRequest = { viewModel.dismissPageInputModal() },
+                    sheetState = sheetState
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text("마지막으로 읽은 페이지를 입력하세요")
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("p.",)
+                            TextField(
+                                value = lastReadPageInput,
+                                onValueChange = { viewModel.onLastReadPageInputChange(it) },
+                                modifier = Modifier.width(100.dp), // 입력칸 너비 조절
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                textStyle = TextStyle(textAlign = TextAlign.Center)
+                                // label = { Text("페이지") } // 라벨은 Row 바깥으로 빼거나 다른 형태로 표시
+                            )
+                            Text(" / ${book.totalPageCnt}",)
+                        }
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Button(
+                            onClick = { viewModel.saveLastReadPageAndDismiss() },
+                            enabled = lastReadPageInput.isNotBlank()
+                        ) {
+                            Text("저장")
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }
