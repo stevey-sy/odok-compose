@@ -41,5 +41,5 @@ object OdokIcons {
     val PlayButton = R.drawable.ic_play_button
 
     @DrawableRes
-    val PauseButton = R.drawable.ic_pause_white
+    val PauseButton = R.drawable.ic_pause
 }
