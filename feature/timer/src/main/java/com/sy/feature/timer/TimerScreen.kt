@@ -56,6 +56,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.geometry.lerp
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -175,7 +176,7 @@ fun TimerScreen(
                     }
                 }
 
-                Spacer(modifier = Modifier.height(50.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 Box(
                     modifier = Modifier
@@ -291,11 +292,36 @@ fun TimerScreen(
                             )
                         }
                     }
+                    BookCover(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        book = book,
+                        modifier = Modifier
+                            .fillMaxWidth(0.45f)
+                            .fillMaxHeight()
+//                            .padding(start=30.dp)
+////                            .align(Alignment.TopStart)
+
+                    )
                 }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Text(book.title,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(textColor))
+                Text(book.author,
+                    modifier = Modifier.padding(top=10.dp),
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = OdokColors.StealGray)
+
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Text(
                     text = timerText,
-                    fontSize = 48.sp,
+                    fontSize = 38.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(textColor)
                 )
@@ -308,11 +334,11 @@ fun TimerScreen(
                     color = Color(textColor)
                 )
 
-                Spacer(modifier = Modifier.height(32.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 IconButton(
                     onClick = { viewModel.onPlayButtonClick() },
-                    modifier = Modifier.size(80.dp)
+                    modifier = Modifier.size(60.dp)
                 ) {
                     Image(
                         painter = painterResource(
@@ -326,7 +352,7 @@ fun TimerScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(120.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
                 Row(
                     verticalAlignment = Alignment.Top,
@@ -334,35 +360,35 @@ fun TimerScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                 ) {
-                    BookCover(
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        book = book,
-                        modifier = Modifier
-                            .width(70.dp)
-                            .height(100.dp)
-                    )
+//                    BookCover(
+//                        sharedTransitionScope = sharedTransitionScope,
+//                        animatedVisibilityScope = animatedVisibilityScope,
+//                        book = book,
+//                        modifier = Modifier
+//                            .width(70.dp)
+//                            .height(100.dp)
+//                    )
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    Column {
-                        Text(book.title,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color(textColor))
-                        Text(book.author,
-                            modifier = Modifier.padding(top=4.dp),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = Color(textColor))
-                        Text(book.progressText,
-                            modifier = Modifier.padding(top=4.dp),
-                            fontSize = 14.sp,
-                            color = Color(textColor))
-                        Text(book.getElapsedTimeFormatted(),
-                            modifier = Modifier.padding(top=4.dp),
-                            fontSize = 14.sp,
-                            color = Color(textColor))
-                    }
+//                    Column {
+//                        Text(book.title,
+//                            fontSize = 16.sp,
+//                            fontWeight = FontWeight.Bold,
+//                            color = Color(textColor))
+//                        Text(book.author,
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            fontWeight = FontWeight.SemiBold,
+//                            color = Color(textColor))
+//                        Text(book.progressText,
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            color = Color(textColor))
+//                        Text(book.getElapsedTimeFormatted(),
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            color = Color(textColor))
+//                    }
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
