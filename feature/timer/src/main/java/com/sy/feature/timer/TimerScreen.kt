@@ -58,6 +58,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.geometry.lerp
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.util.lerp
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -89,50 +92,55 @@ fun TimerScreen(
     val armAnimationProgress = remember { Animatable(0f) }
     val volumeAnimationProgress = remember { Animatable(0f) }
     val powerButtonRotation = remember { Animatable(0f) }
+    val bookCoverHorizontalOffset = remember { Animatable(0f) } // 0f is center, 1f is moved left
 
     val shouldLpRotate = remember { mutableStateOf(false) }
+
+    val configuration = LocalConfiguration.current
+    val screenWidthDpValue = configuration.screenWidthDp.toFloat() // Get screen width as Float
+    // Calculate the offset needed to move BookCover (0.45f of screen width, centered) to the left edge
+    val bookCoverWidthValue = screenWidthDpValue * 0.55f
+    val targetBookCoverOffsetXValue = -(screenWidthDpValue / 2) + (bookCoverWidthValue / 2) // Result is Float
 
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Reading) {
             shouldLpRotate.value = false
             lpRotationAngle.stop()
 
+            // 1. BookCover animation
+            bookCoverHorizontalOffset.animateTo(
+                targetValue = 1f, // 1f represents the fully moved left state
+                animationSpec = tween(durationMillis = 500, easing = LinearEasing)
+            )
+
+            // 2. Power button animation
             powerButtonRotation.animateTo(
                 targetValue = 90f,
                 animationSpec = tween(durationMillis = 300, easing = LinearEasing)
             )
 
-            launch {
-                armAnimationProgress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(durationMillis = 500, easing = LinearEasing)
-                )
-            }
-            launch {
-                volumeAnimationProgress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(durationMillis = 300, easing = LinearEasing)
-                )
-            }
-
+            // 3. Tonearm and Volume animations in parallel
             val armJob = launch {
                 armAnimationProgress.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 500, easing = LinearEasing))
             }
             val volumeJob = launch {
                 volumeAnimationProgress.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 300, easing = LinearEasing))
             }
-            armJob.join()
-            volumeJob.join()
+            armJob.join() // Wait for arm animation to complete
+            volumeJob.join() // Wait for volume animation to complete
 
+            // 4. Start LP rotation
             shouldLpRotate.value = true
 
-        } else {
+        } else { // Not Reading
             shouldLpRotate.value = false
             lpRotationAngle.stop()
 
+            // Animate all back to off state in parallel
+            launch { bookCoverHorizontalOffset.animateTo(0f, tween(durationMillis = 500)) } // Back to center
             launch { powerButtonRotation.animateTo(0f, tween(durationMillis = 300)) }
-            launch { armAnimationProgress.animateTo(0f, tween(durationMillis = 500)) }
-            launch { volumeAnimationProgress.animateTo(0f, tween(durationMillis = 300)) }
+            launch { armAnimationProgress.animateTo(0f, tween(durationMillis = 700)) }
+            launch { volumeAnimationProgress.animateTo(0f, tween(durationMillis = 500)) }
         }
     }
 
@@ -240,7 +248,7 @@ fun TimerScreen(
                         val interpolatedArmStart = lerp(armStartOff, armStartOn, armAnimationProgress.value)
 
                         drawCircle(
-                            color = Color(0xFFFFB74D),
+                            color = OdokColors.Orange,
                             radius = 40f,
                             center = armEnd
                         )
@@ -252,7 +260,7 @@ fun TimerScreen(
                         )
 
                         drawRect(
-                            color = Color(0xFFFFB74D),
+                            color = OdokColors.Orange,
                             topLeft = Offset(interpolatedArmStart.x - 12f, interpolatedArmStart.y - 12f),
                             size = androidx.compose.ui.geometry.Size(24f, 24f)
                         )
@@ -270,7 +278,7 @@ fun TimerScreen(
                             strokeWidth = 12f
                         )
                         drawRect(
-                            color = Color(0xFFFFB74D),
+                            color = OdokColors.Orange,
                             topLeft = interpolatedVolumeTopLeft,
                             size = androidx.compose.ui.geometry.Size(36f, 18f)
                         )
@@ -279,7 +287,7 @@ fun TimerScreen(
                         val powerButtonCenter = Offset(powerX, canvasHeight * 0.8f)
 
                         drawCircle(
-                            color = Color(0xFFFFB74D),
+                            color = OdokColors.Orange,
                             radius = 20f,
                             center = powerButtonCenter
                         )
@@ -297,11 +305,9 @@ fun TimerScreen(
                         animatedVisibilityScope = animatedVisibilityScope,
                         book = book,
                         modifier = Modifier
-                            .fillMaxWidth(0.45f)
+                            .fillMaxWidth(0.42f)
                             .fillMaxHeight()
-//                            .padding(start=30.dp)
-////                            .align(Alignment.TopStart)
-
+                            .offset(x = lerp(0f, targetBookCoverOffsetXValue, bookCoverHorizontalOffset.value).dp)
                     )
                 }
 
@@ -316,6 +322,43 @@ fun TimerScreen(
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Normal,
                     color = OdokColors.StealGray)
+
+//                Row(
+//                    verticalAlignment = Alignment.Top,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 16.dp)
+//                ) {
+//                    BookCover(
+//                        sharedTransitionScope = sharedTransitionScope,
+//                        animatedVisibilityScope = animatedVisibilityScope,
+//                        book = book,
+//                        modifier = Modifier
+//                            .width(70.dp)
+//                            .height(100.dp)
+//                    )
+//                    Spacer(modifier = Modifier.width(12.dp))
+//
+//                    Column {
+//                        Text(book.title,
+//                            fontSize = 16.sp,
+//                            fontWeight = FontWeight.Bold,
+//                            color = Color(textColor))
+//                        Text(book.author,
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            fontWeight = FontWeight.SemiBold,
+//                            color = Color(textColor))
+//                        Text(book.progressText,
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            color = Color(textColor))
+//                        Text(book.getElapsedTimeFormatted(),
+//                            modifier = Modifier.padding(top=4.dp),
+//                            fontSize = 14.sp,
+//                            color = Color(textColor))
+//                    }
+//                }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -354,12 +397,12 @@ fun TimerScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                Row(
-                    verticalAlignment = Alignment.Top,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                ) {
+//                Row(
+//                    verticalAlignment = Alignment.Top,
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 16.dp)
+//                ) {
 //                    BookCover(
 //                        sharedTransitionScope = sharedTransitionScope,
 //                        animatedVisibilityScope = animatedVisibilityScope,
@@ -368,8 +411,8 @@ fun TimerScreen(
 //                            .width(70.dp)
 //                            .height(100.dp)
 //                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-
+//                    Spacer(modifier = Modifier.width(12.dp))
+//
 //                    Column {
 //                        Text(book.title,
 //                            fontSize = 16.sp,
@@ -389,7 +432,7 @@ fun TimerScreen(
 //                            fontSize = 14.sp,
 //                            color = Color(textColor))
 //                    }
-                }
+//                }
 
                 Spacer(modifier = Modifier.weight(1f))
 
@@ -400,7 +443,7 @@ fun TimerScreen(
                         .height(65.dp)
                         .padding(bottom = 16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = OdokColors.IrisBlue
+                        containerColor = OdokColors.Orange
                     ),
                     enabled = uiState != TimerUiState.Completed
                 ) {

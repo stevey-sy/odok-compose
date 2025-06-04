@@ -24,6 +24,7 @@ object OdokColors {
     val StealGray = Color(0xFF71797E)
 
     val IrisBlue = Color(0xFF5D3FD3)
+    val Orange = Color(0xFFFFB74D)
 
     // #5D3FD3
 
