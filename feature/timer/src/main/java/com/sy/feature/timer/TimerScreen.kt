@@ -5,8 +5,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColor
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.getValue
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -34,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -46,6 +41,22 @@ import com.sy.odokcompose.core.designsystem.component.BookCover
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import androidx.compose.ui.graphics.Color
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.ui.geometry.lerp
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -73,10 +84,36 @@ fun TimerScreen(
         label = "color"
     )
 
+    val rotation = remember { Animatable(0f) }
+    val coroutineScope = rememberCoroutineScope()
+
+    val armAnimationProgress by animateFloatAsState(
+        targetValue = if (uiState == TimerUiState.Reading) 1f else 0f,
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+        label = "armProgress"
+    )
+
+    LaunchedEffect(uiState) {
+        if (uiState == TimerUiState.Reading) {
+            coroutineScope.launch {
+                rotation.animateTo(
+                    targetValue = rotation.value + 360f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 4000, easing = LinearEasing),
+                        repeatMode = RepeatMode.Restart
+                    )
+                )
+            }
+        } else {
+            rotation.snapTo(0f)
+        }
+    }
+
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            containerColor = if (uiState == TimerUiState.Reading) animatedColor else Color(backgroundColor)
+//            containerColor = if (uiState == TimerUiState.Reading) animatedColor else Color(backgroundColor)
+            containerColor = Color(backgroundColor)
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -101,6 +138,115 @@ fun TimerScreen(
                 }
 
                 Spacer(modifier = Modifier.height(50.dp))
+
+                // Orange Circle
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 16.dp)
+                    ) {
+                        val canvasWidth = size.width
+                        val canvasHeight = size.height
+                        val center = Offset(canvasWidth / 2, canvasHeight / 2)
+
+                        // 1. LP판(큰 검은색 원)만 회전
+                        rotate(rotation.value, center) {
+                            drawCircle(
+                                color = Color(0xFF23272A),
+                                radius = canvasHeight * 0.38f,
+                                center = center
+                            )
+                            // 2. 중앙의 검은색 원
+                            drawCircle(
+                                color = Color.Black,
+                                radius = canvasHeight * 0.18f,
+                                center = center
+                            )
+                            // 3. 중앙의 빨간색 원
+                            drawCircle(
+                                color = Color(0xFFE53935),
+                                radius = canvasHeight * 0.11f,
+                                center = center
+                            )
+                            // 4. 회전 느낌의 곡선(레코드판 위)
+                            drawArc(
+                                color = Color(0xFF90A4AE),
+                                startAngle = 200f,
+                                sweepAngle = 40f,
+                                useCenter = false,
+                                topLeft = Offset(center.x - canvasHeight * 0.32f, center.y - canvasHeight * 0.32f),
+                                size = androidx.compose.ui.geometry.Size(canvasHeight * 0.64f, canvasHeight * 0.64f),
+                                style = Stroke(width = 6f)
+                            )
+                            drawArc(
+                                color = Color(0xFF90A4AE),
+                                startAngle = 30f,
+                                sweepAngle = 30f,
+                                useCenter = false,
+                                topLeft = Offset(center.x - canvasHeight * 0.22f, center.y - canvasHeight * 0.22f),
+                                size = androidx.compose.ui.geometry.Size(canvasHeight * 0.44f, canvasHeight * 0.44f),
+                                style = Stroke(width = 4f)
+                            )
+                        }
+                        // 6. 톤암과 레코드판의 연결부(작은 오렌지 사각형)
+                        val armStartOff = Offset(canvasWidth * 0.85f, canvasHeight * 0.88f)
+                        val armStartOn = Offset(center.x + canvasHeight * 0.23f, center.y + canvasHeight * 0.1f)
+                        val armEnd = Offset(canvasWidth * 0.85f, canvasHeight * 0.18f)
+
+                        val interpolatedArmStart = lerp(armStartOff, armStartOn, armAnimationProgress)
+
+                        // 7. 톤암 끝의 오렌지 원
+                        drawCircle(
+                            color = Color(0xFFFFB74D),
+                            radius = 40f,
+                            center = armEnd
+                        )
+                        // 5. 톤암(검은색 선) - 오렌지 원 위로 그리기
+                        drawLine(
+                            color = Color.Black,
+                            start = interpolatedArmStart,
+                            end = armEnd,
+                            strokeWidth = 12f
+                        )
+                        drawRect(
+                            color = Color(0xFFFFB74D),
+                            topLeft = Offset(interpolatedArmStart.x - 12f, interpolatedArmStart.y - 12f),
+                            size = androidx.compose.ui.geometry.Size(24f, 24f)
+                        )
+                        // 8. 오른쪽 컨트롤러(세로 막대 + 사각형)
+                        val ctrlX = canvasWidth * 0.92f
+                        drawLine(
+                            color = Color.Black,
+                            start = Offset(ctrlX, canvasHeight * 0.25f),
+                            end = Offset(ctrlX, canvasHeight * 0.7f),
+                            strokeWidth = 8f
+                        )
+                        drawRect(
+                            color = Color(0xFFFFB74D),
+                            topLeft = Offset(ctrlX - 18f, canvasHeight * 0.32f),
+                            size = androidx.compose.ui.geometry.Size(36f, 18f)
+                        )
+                        // 9. 작은 오렌지 원(버튼)
+                        drawCircle(
+                            color = Color(0xFFFFB74D),
+                            radius = 14f,
+                            center = Offset(ctrlX - 40f, canvasHeight * 0.8f)
+                        )
+                        // 10. 작은 검은색 선(버튼 위)
+                        drawLine(
+                            color = Color.Black,
+                            start = Offset(ctrlX - 48f, canvasHeight * 0.8f),
+                            end = Offset(ctrlX - 32f, canvasHeight * 0.8f),
+                            strokeWidth = 4f
+                        )
+                    }
+                }
 
                 // Timer Text
                 Text(

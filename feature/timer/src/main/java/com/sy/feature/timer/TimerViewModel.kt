@@ -57,8 +57,8 @@ class TimerViewModel @Inject constructor(
                 startTimer()
                 _uiState.value = TimerUiState.Reading
                 _guideText.value = "독서 중..."
-                _backgroundColor.value = android.graphics.Color.BLACK
-                _textColor.value = android.graphics.Color.WHITE
+                _backgroundColor.value = android.graphics.Color.WHITE
+                _textColor.value = android.graphics.Color.BLACK
             }
             TimerUiState.Reading -> {
                 pauseTimer()
