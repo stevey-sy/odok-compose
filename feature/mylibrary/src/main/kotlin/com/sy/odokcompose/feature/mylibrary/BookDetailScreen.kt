@@ -73,7 +73,7 @@ fun BookDetailScreen(
                     )
 
                     BookInfo(
-                        title = currentBook?.title ?: "",
+                        title = currentBook?.getTitleText() ?: "",
                         author = currentBook?.author ?: ""
                     )
 

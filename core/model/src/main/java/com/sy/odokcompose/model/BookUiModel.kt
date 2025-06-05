@@ -58,4 +58,8 @@ data class BookUiModel(
         val seconds = elapsedTimeInSeconds % 60
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
+
+    fun getTitleText(): String {
+        return title.split("(", "-").first().trim()
+    }
 }

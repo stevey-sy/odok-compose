@@ -332,9 +332,9 @@ fun TimerScreen(
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text(book.title,
+                Text(book.getTitleText(),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(textColor))
@@ -346,6 +346,7 @@ fun TimerScreen(
 
 //                Row(
 //                    verticalAlignment = Alignment.Top,
+//                    horizontalArrangement = Arrangement.Center,
 //                    modifier = Modifier
 //                        .fillMaxWidth()
 //                        .padding(horizontal = 16.dp)
