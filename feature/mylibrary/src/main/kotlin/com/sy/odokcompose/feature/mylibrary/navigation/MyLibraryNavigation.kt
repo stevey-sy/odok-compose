@@ -47,6 +47,7 @@ fun NavController.navigateToBookDetail(itemId: Int,
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.bookDetailScreen(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
     onReadBtnClicked: (itemId: Int) -> Unit,
     route: String = "$BOOK_DETAIL_ROUTE/{itemId}/{filterType}/{searchQuery}"
@@ -66,6 +67,7 @@ fun NavGraphBuilder.bookDetailScreen(
         )
     ) {
         BookDetailScreen(
+            navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             onReadBtnClicked = onReadBtnClicked,
             animatedVisibilityScope = this,

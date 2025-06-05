@@ -77,7 +77,7 @@ import androidx.compose.ui.util.lerp
 fun TimerScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    onClose: () -> Unit = {},
+    onClose: (page: Int, elapsedTimeSeconds: Int) -> Unit = { _, _ -> },
     viewModel: TimerViewModel = hiltViewModel()
 ) {
     val book by viewModel.book.collectAsState()
@@ -175,7 +175,7 @@ fun TimerScreen(
     // Completed 시 자동으로 화면 나가기
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Completed) {
-            onClose()
+            onClose(viewModel.getLastReadPageInt(), viewModel.getElapsedTimeSeconds())
         }
     }
 
@@ -195,7 +195,7 @@ fun TimerScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopEnd
                 ) {
-                    IconButton(onClick = onClose) {
+                    IconButton(onClick = { onClose(-1, -1) }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             modifier = Modifier.size(80.dp),
@@ -494,6 +494,10 @@ fun TimerScreen(
 
             // Modal Bottom Sheet for Page Input
             if (isPageInputModalVisible) {
+                LaunchedEffect(Unit) {
+                    // 모달이 처음 열릴 때만 초기값 설정
+                    viewModel.onLastReadPageInputChange(book.currentPageCnt.toString())
+                }
                 ModalBottomSheet(
                     onDismissRequest = { viewModel.dismissPageInputModal() },
                     sheetState = sheetState

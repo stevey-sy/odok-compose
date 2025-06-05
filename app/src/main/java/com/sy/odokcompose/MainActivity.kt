@@ -37,7 +37,6 @@ import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sy.odokcompose.core.designsystem.OdokTheme
@@ -354,13 +353,21 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         )
 
         bookDetailScreen(
-            onReadBtnClicked = { itemId -> navController.navigateToTimer(itemId)},
+            navController = navController,
+            onReadBtnClicked = { itemId ->
+                navController.navigateToTimer(itemId)
+            },
             sharedTransitionScope = sharedTransitionScope,
         )
 
-        timerScreen (
+        timerScreen(
             sharedTransitionScope = sharedTransitionScope,
-            onCloseClicked = { navController.popBackStack() }
+            onClose = { page, elapsedTimeSeconds ->
+                val bookDetailBackStackEntry = navController.previousBackStackEntry
+                bookDetailBackStackEntry?.savedStateHandle?.set("lastReadPage", page)
+                bookDetailBackStackEntry?.savedStateHandle?.set("elapsedTimeSeconds", elapsedTimeSeconds)
+                navController.popBackStack()
+            }
         )
 
         searchBookScreen(

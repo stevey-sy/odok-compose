@@ -123,6 +123,22 @@ class BookDetailViewModel @Inject constructor(
         }
     }
 
+    fun updateBookWithTimerData(lastReadPage: Int, elapsedTimeSeconds: Int) {
+        viewModelScope.launch {
+            try {
+                currentBook.value?.let { bookToUpdate ->
+                    val updatedBook = bookToUpdate.copy(
+                        currentPageCnt = lastReadPage,
+                        elapsedTimeInSeconds = bookToUpdate.elapsedTimeInSeconds + elapsedTimeSeconds
+                    )
+                    updateBookUseCase.invoke(updatedBook)
+                }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(errorMessage = e.message) }
+            }
+        }
+    }
+
     // ViewPager에서 페이지 변경 시 호출
     fun onPageChanged(newIndex: Int) {
         _currentPage.value = newIndex

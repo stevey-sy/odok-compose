@@ -12,20 +12,23 @@ import com.sy.feature.timer.TimerScreen
 
 const val TIMER = "timer"
 
-fun NavController.navigateToTimer(itemId: Int,
-                                  navOptions: NavOptions? = null) {
+fun NavController.navigateToTimer(
+    itemId: Int,
+    navOptions: NavOptions? = null
+) {
     this.navigate("$TIMER/$itemId", navOptions)
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.timerScreen(
     sharedTransitionScope: SharedTransitionScope,
-    onCloseClicked: () -> Unit,
+    onClose: (page: Int, elapsedTimeSeconds: Int) -> Unit,
     route: String = "$TIMER/{itemId}"
 ) {
-    composable(route = route,
+    composable(
+        route = route,
         arguments = listOf(
-            navArgument("itemId"){
+            navArgument("itemId") {
                 type = NavType.IntType
             }
         )
@@ -33,8 +36,7 @@ fun NavGraphBuilder.timerScreen(
         TimerScreen(
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this,
-            onClose = onCloseClicked
+            onClose = { page, elapsedTimeSeconds -> onClose(page, elapsedTimeSeconds) }
         )
     }
-
 }

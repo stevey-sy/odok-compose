@@ -114,32 +114,23 @@ class TimerViewModel @Inject constructor(
         _lastReadPageInput.value = page
     }
 
+    fun getLastReadPageInt(): Int {
+        return _lastReadPageInput.value.toIntOrNull() ?: _book.value.currentPageCnt
+    }
+
     fun saveLastReadPageAndDismiss() {
-        val pageNumber = _lastReadPageInput.value.toIntOrNull()
         viewModelScope.launch {
-            try {
-                val currentBook = _book.value
-                val updatedBook = currentBook.copy(
-                    elapsedTimeInSeconds = currentBook.elapsedTimeInSeconds + elapsedSeconds.toInt(),
-                    // Assuming BookUiModel has a field like lastReadPage or currentPageCnt
-                    // This needs to be adjusted based on your BookUiModel structure
-                    currentPageCnt = pageNumber ?: currentBook.currentPageCnt // 예시: 페이지 입력이 있으면 그걸로, 없으면 기존 값
-                )
-                updateBookUseCase.invoke(updatedBook)
-                _book.value = updatedBook // 로컬 상태도 업데이트
-                dismissPageInputModal()
+            // 입력값이 유효한 경우에만 Completed 상태로 변경
+            if (_lastReadPageInput.value.isNotBlank()) {
                 _uiState.value = TimerUiState.Completed
-            } catch (e: Exception) {
-                Log.e("TimerViewModel", "Error saving last read page", e)
-                // TODO: Show error message to user
-                dismissPageInputModal() // 에러 발생 시에도 모달은 닫음
             }
+            dismissPageInputModal()
         }
     }
 
     fun dismissPageInputModal() {
         _isPageInputModalVisible.value = false
-        _lastReadPageInput.value = "" // 입력 필드 초기화
+        // 입력값 초기화 제거
     }
 
     private fun loadBookInfo(itemId: Int) {
@@ -148,6 +139,10 @@ class TimerViewModel @Inject constructor(
                 _book.value = book
             }
         }
+    }
+
+    fun getElapsedTimeSeconds(): Int {
+        return elapsedSeconds.toInt()
     }
 
     init {

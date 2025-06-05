@@ -12,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.feature.mylibrary.components.*
@@ -24,6 +26,7 @@ fun BookDetailScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     onReadBtnClicked: (itemId: Int) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel(),
+    navController: NavController,
 ) {
     val bookList by viewModel.bookList.collectAsState()
     val currentPage by viewModel.currentPage.collectAsState()
@@ -33,6 +36,20 @@ fun BookDetailScreen(
     val currentPageCnt by viewModel.currentPageCnt.collectAsState()
 
     val sheetState = rememberModalBottomSheetState()
+
+    // SavedStateHandle 데이터 변경 감지
+    LaunchedEffect(Unit) {
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        val page = savedStateHandle?.get<Int>("lastReadPage")
+        val elapsedTime = savedStateHandle?.get<Int>("elapsedTimeSeconds")
+        
+        if (page != null && elapsedTime != null && page >= 0 && elapsedTime >= 0) {
+            viewModel.updateBookWithTimerData(page, elapsedTime)
+            // 데이터 처리 후 초기화
+            savedStateHandle["lastReadPage"] = null
+            savedStateHandle["elapsedTimeSeconds"] = null
+        }
+    }
 
     OdokTheme {
         Scaffold(
