@@ -69,6 +69,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.util.lerp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -84,7 +85,7 @@ import com.sy.odokcompose.core.designsystem.R
 fun TimerScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    onClose: (page: Int, elapsedTimeSeconds: Int) -> Unit = { _, _ -> },
+    onClose: (page: Int, elapsedTimeSeconds: Int, isFinished: Boolean) -> Unit = { _, _, _ -> },
     viewModel: TimerViewModel = hiltViewModel()
 ) {
     val book by viewModel.book.collectAsState()
@@ -182,7 +183,10 @@ fun TimerScreen(
     // Completed 시 자동으로 화면 나가기
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Completed) {
-            onClose(viewModel.getLastReadPageInt(), viewModel.getElapsedTimeSeconds())
+            onClose(viewModel.getLastReadPageInt(),
+                viewModel.getElapsedTimeSeconds(),
+                viewModel.isBookReadingCompleted()
+                )
         }
     }
 
@@ -202,7 +206,7 @@ fun TimerScreen(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.TopEnd
                 ) {
-                    IconButton(onClick = { onClose(-1, -1) }) {
+                    IconButton(onClick = { onClose(-1, -1, false) }) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             modifier = Modifier.size(80.dp),
@@ -328,86 +332,92 @@ fun TimerScreen(
                             )
                         }
                     }
-                    BookCover(
-                        sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope,
-                        book = book,
-                        modifier = Modifier
-                            .fillMaxWidth(0.42f)
-                            .fillMaxHeight()
-                            .offset(x = lerp(0f, targetBookCoverOffsetXValue, bookCoverHorizontalOffset.value).dp)
-                    )
-                }
-
-
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pop_effect_black))
-                val progress by animateLottieCompositionAsState(
-                    composition = composition,
-                    iterations = LottieConstants.IterateForever
-                )
-
-
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                Text(book.getTitleText(),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(textColor))
-                Text(book.author,
-                    modifier = Modifier.padding(top=10.dp),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = OdokColors.StealGray)
-
-//                Row(
-//                    verticalAlignment = Alignment.Top,
-//                    horizontalArrangement = Arrangement.Center,
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(horizontal = 16.dp)
-//                ) {
 //                    BookCover(
 //                        sharedTransitionScope = sharedTransitionScope,
 //                        animatedVisibilityScope = animatedVisibilityScope,
 //                        book = book,
 //                        modifier = Modifier
-//                            .width(70.dp)
-//                            .height(100.dp)
+//                            .fillMaxWidth(0.42f)
+//                            .fillMaxHeight()
+//                            .offset(x = lerp(0f, targetBookCoverOffsetXValue, bookCoverHorizontalOffset.value).dp)
 //                    )
-//                    Spacer(modifier = Modifier.width(12.dp))
-//
-//                    Column {
-//                        Text(book.title,
-//                            fontSize = 16.sp,
-//                            fontWeight = FontWeight.Bold,
-//                            color = Color(textColor))
-//                        Text(book.author,
-//                            modifier = Modifier.padding(top=4.dp),
-//                            fontSize = 14.sp,
-//                            fontWeight = FontWeight.SemiBold,
-//                            color = Color(textColor))
-//                        Text(book.progressText,
-//                            modifier = Modifier.padding(top=4.dp),
-//                            fontSize = 14.sp,
-//                            color = Color(textColor))
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+//                Text(book.getTitleText(),
+//                    fontSize = 16.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color(textColor))
+//                Text(book.author,
+//                    modifier = Modifier.padding(top=10.dp),
+//                    fontSize = 14.sp,
+//                    fontWeight = FontWeight.Normal,
+//                    color = OdokColors.StealGray)
+
+                Row(
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .padding(horizontal = 16.dp)
+                ) {
+                    BookCover(
+                        sharedTransitionScope = sharedTransitionScope,
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        book = book,
+                        modifier = Modifier
+                            .width(70.dp)
+                            .height(100.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Column (
+                        modifier = Modifier
+                            .fillMaxHeight() // 중요
+                    ) {
+                        Text(book.getTitleText(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(textColor),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                        Text(book.author,
+                            modifier = Modifier.padding(top=4.dp),
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = OdokColors.StealGray,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                        Text(book.progressText,
+                            modifier = Modifier.padding(top=4.dp),
+                            fontSize = 14.sp,
+                            color = Color(textColor))
 //                        Text(book.getElapsedTimeFormatted(),
 //                            modifier = Modifier.padding(top=4.dp),
 //                            fontSize = 14.sp,
 //                            color = Color(textColor))
-//                    }
-//                }
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(
+                            text = timerText,
+                            fontSize = 38.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color(textColor)
+                        )
+                    }
+                }
+
+//                Spacer(modifier = Modifier.height(20.dp))
+
+//                Text(
+//                    text = timerText,
+//                    fontSize = 38.sp,
+//                    fontWeight = FontWeight.Bold,
+//                    color = Color(textColor)
+//                )
 
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Text(
-                    text = timerText,
-                    fontSize = 38.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(textColor)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
                     text = guideText,
@@ -547,7 +557,11 @@ fun TimerScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
                             onClick = { viewModel.saveLastReadPageAndDismiss() },
-                            enabled = lastReadPageInput.isNotBlank()
+                            enabled = lastReadPageInput.isNotBlank(),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = OdokColors.Black, // 원하는 배경색
+                                contentColor = Color.White          // 텍스트 색
+                            )
                         ) {
                             Text("저장")
                         }

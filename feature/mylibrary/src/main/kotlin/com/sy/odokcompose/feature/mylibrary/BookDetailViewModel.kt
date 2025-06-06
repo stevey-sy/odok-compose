@@ -123,14 +123,14 @@ class BookDetailViewModel @Inject constructor(
         }
     }
 
-    fun updateBookWithTimerData(lastReadPage: Int, elapsedTimeSeconds: Int) {
+    fun updateBookWithTimerData(lastReadPage: Int, elapsedTimeSeconds: Int, isBookReadingCompleted: Boolean) {
         viewModelScope.launch {
             try {
                 currentBook.value?.let { bookToUpdate ->
                     val updatedBook = bookToUpdate.copy(
                         currentPageCnt = lastReadPage,
                         elapsedTimeInSeconds = bookToUpdate.elapsedTimeInSeconds + elapsedTimeSeconds,
-                        finishedReadCnt = if (lastReadPage == bookToUpdate.totalPageCnt) {
+                        finishedReadCnt = if (isBookReadingCompleted) {
                             bookToUpdate.finishedReadCnt + 1
                         } else {
                             bookToUpdate.finishedReadCnt

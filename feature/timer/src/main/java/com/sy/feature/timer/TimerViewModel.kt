@@ -13,7 +13,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,7 +36,7 @@ class TimerViewModel @Inject constructor(
     private val _timerText = MutableStateFlow("00:00:00")
     val timerText: StateFlow<String> = _timerText.asStateFlow()
 
-    private val _guideText = MutableStateFlow<String>("독서를 시작해보세요")
+    private val _guideText = MutableStateFlow<String>("독서 시간을 측정합니다.")
     val guideText: StateFlow<String> = _guideText.asStateFlow()
 
     private val _book = MutableStateFlow<BookUiModel>(BookUiModel())
@@ -143,6 +142,11 @@ class TimerViewModel @Inject constructor(
 
     fun getElapsedTimeSeconds(): Int {
         return elapsedSeconds.toInt()
+    }
+
+    fun isBookReadingCompleted(): Boolean {
+        val lastReadPage = _lastReadPageInput.value.toIntOrNull() ?: 0
+        return lastReadPage > _book.value.currentPageCnt && lastReadPage == _book.value.totalPageCnt
     }
 
     init {

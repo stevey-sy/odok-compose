@@ -51,12 +51,15 @@ fun BookDetailScreen(
         val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
         val page = savedStateHandle?.get<Int>("lastReadPage")
         val elapsedTime = savedStateHandle?.get<Int>("elapsedTimeSeconds")
+        val isBookReadingCompleted = savedStateHandle?.get<Boolean>("isBookReadingCompleted")
         
-        if (page != null && elapsedTime != null && page >= 0 && elapsedTime >= 0) {
-            viewModel.updateBookWithTimerData(page, elapsedTime)
+        if (page != null && elapsedTime != null && isBookReadingCompleted != null
+            && page >= 0 && elapsedTime >= 0) {
+            viewModel.updateBookWithTimerData(page, elapsedTime, isBookReadingCompleted)
             // 데이터 처리 후 초기화
             savedStateHandle["lastReadPage"] = null
             savedStateHandle["elapsedTimeSeconds"] = null
+            savedStateHandle["isBookReadingCompleted"] = null
         }
     }
 

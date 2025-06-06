@@ -362,10 +362,11 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
 
         timerScreen(
             sharedTransitionScope = sharedTransitionScope,
-            onClose = { page, elapsedTimeSeconds ->
+            onClose = { page, elapsedTimeSeconds, isBookReadingCompleted ->
                 val bookDetailBackStackEntry = navController.previousBackStackEntry
                 bookDetailBackStackEntry?.savedStateHandle?.set("lastReadPage", page)
                 bookDetailBackStackEntry?.savedStateHandle?.set("elapsedTimeSeconds", elapsedTimeSeconds)
+                bookDetailBackStackEntry?.savedStateHandle?.set("isBookReadingCompleted", isBookReadingCompleted)
                 navController.popBackStack()
             }
         )
