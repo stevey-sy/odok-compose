@@ -129,7 +129,12 @@ class BookDetailViewModel @Inject constructor(
                 currentBook.value?.let { bookToUpdate ->
                     val updatedBook = bookToUpdate.copy(
                         currentPageCnt = lastReadPage,
-                        elapsedTimeInSeconds = bookToUpdate.elapsedTimeInSeconds + elapsedTimeSeconds
+                        elapsedTimeInSeconds = bookToUpdate.elapsedTimeInSeconds + elapsedTimeSeconds,
+                        finishedReadCnt = if (lastReadPage == bookToUpdate.totalPageCnt) {
+                            bookToUpdate.finishedReadCnt + 1
+                        } else {
+                            bookToUpdate.finishedReadCnt
+                        }
                     )
                     updateBookUseCase.invoke(updatedBook)
                 }
