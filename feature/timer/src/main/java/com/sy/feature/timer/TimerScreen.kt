@@ -552,7 +552,7 @@ fun TimerScreen(
                                 )
                             )
                             Text(
-                                text = "${viewModel.getLastReadPageInt()} 페이지",
+                                text = "${viewModel.getReadPageInt()} 페이지",
                                 style = TextStyle(
                                     fontSize = 18.sp,
                                     fontWeight = FontWeight.Bold

@@ -128,6 +128,10 @@ class TimerViewModel @Inject constructor(
         return _lastReadPageInput.value.toIntOrNull() ?: _book.value.currentPageCnt
     }
 
+    fun getReadPageInt(): Int {
+        return _book.value.currentPageCnt - _lastReadPageInput.value.toInt()
+    }
+
     fun saveLastReadPageAndDismiss() {
         viewModelScope.launch {
             // 입력값이 유효한 경우에만 Completed 상태로 변경
