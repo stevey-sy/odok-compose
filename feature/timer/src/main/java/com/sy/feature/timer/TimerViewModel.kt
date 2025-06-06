@@ -49,11 +49,14 @@ class TimerViewModel @Inject constructor(
     val textColor: StateFlow<Int> = _textColor.asStateFlow()
 
     private var timerJob: Job? = null
-    private var elapsedSeconds = 0L
+    var elapsedSeconds = 0L
 
     // For Page Input Modal
     private val _isPageInputModalVisible = MutableStateFlow(false)
     val isPageInputModalVisible: StateFlow<Boolean> = _isPageInputModalVisible.asStateFlow()
+
+    private val _isSummaryModalVisible = MutableStateFlow(false)
+    val isSummaryModalVisible: StateFlow<Boolean> = _isSummaryModalVisible.asStateFlow()
 
     private val _lastReadPageInput = MutableStateFlow("")
     val lastReadPageInput: StateFlow<String> = _lastReadPageInput.asStateFlow()
@@ -100,6 +103,14 @@ class TimerViewModel @Inject constructor(
         _timerText.value = String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    fun getTotalTime() : String {
+        val totalSeconds = elapsedSeconds + book.value.elapsedTimeInSeconds
+        val hours = totalSeconds / 3600
+        val minutes = (totalSeconds % 3600) / 60
+        val seconds = totalSeconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
     fun onCompleteClick() {
 //        if (_uiState.value == TimerUiState.Completed) return // 이미 완료된 경우 중복 실행 방지
         pauseTimer()
@@ -121,7 +132,8 @@ class TimerViewModel @Inject constructor(
         viewModelScope.launch {
             // 입력값이 유효한 경우에만 Completed 상태로 변경
             if (_lastReadPageInput.value.isNotBlank()) {
-                _uiState.value = TimerUiState.Completed
+//                _uiState.value = TimerUiState.Completed
+                _isSummaryModalVisible.value = true
             }
             dismissPageInputModal()
         }
@@ -130,6 +142,11 @@ class TimerViewModel @Inject constructor(
     fun dismissPageInputModal() {
         _isPageInputModalVisible.value = false
         // 입력값 초기화 제거
+    }
+
+    fun dismissSummaryModal() {
+        _isSummaryModalVisible.value = false
+        _uiState.value = TimerUiState.Completed
     }
 
     private fun loadBookInfo(itemId: Int) {
