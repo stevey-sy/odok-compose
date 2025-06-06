@@ -65,11 +65,18 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.foundation.layout.offset
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.util.lerp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.sy.odokcompose.core.designsystem.R
 
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
@@ -331,6 +338,15 @@ fun TimerScreen(
                             .offset(x = lerp(0f, targetBookCoverOffsetXValue, bookCoverHorizontalOffset.value).dp)
                     )
                 }
+
+
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.pop_effect_black))
+                val progress by animateLottieCompositionAsState(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever
+                )
+
+
 
                 Spacer(modifier = Modifier.height(10.dp))
 
