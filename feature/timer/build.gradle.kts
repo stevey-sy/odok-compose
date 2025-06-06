@@ -63,6 +63,9 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
 
+    // lottie 애니메이션
+    implementation (libs.lottie.compose)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

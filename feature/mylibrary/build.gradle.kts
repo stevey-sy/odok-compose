@@ -60,6 +60,9 @@ dependencies {
     // Coil
     implementation(libs.coil)
     implementation(libs.coil.compose)
+
+    // lottie 애니메이션
+    implementation (libs.lottie.compose)
     
     // Core modules
     implementation(project(":core:designsystem"))
