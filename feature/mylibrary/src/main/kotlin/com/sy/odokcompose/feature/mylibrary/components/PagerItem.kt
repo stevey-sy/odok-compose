@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.OdokColors
+import com.sy.odokcompose.feature.mylibrary.components.FinishedBadge
 import com.sy.odokcompose.model.BookUiModel
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
@@ -55,35 +56,7 @@ fun PagerItem(
             ) {
                 BookPagerItem(1f, book)
                 if (book.finishedReadCnt > 0) {
-                    Box(
-                        modifier = Modifier
-                            .size(55.dp)
-                            .offset { IntOffset(-60, -100) },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = OdokIcons.Wreath),
-                            contentDescription = "완독수",
-                            modifier = Modifier.fillMaxSize()
-                        )
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(
-                                text = "완독!",
-                                fontSize = 10.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = OdokColors.Black,
-                            )
-                            Text(
-                                text = "${book.finishedReadCnt}",
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = OdokColors.Black
-                            )
-                        }
-                    }
+                    FinishedBadge(book = book)
                 }
             }
         }

@@ -8,25 +8,34 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.OdokColors
+import com.sy.odokcompose.core.designsystem.R
 import com.sy.odokcompose.feature.mylibrary.components.*
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun BookDetailScreen(
+    navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onReadBtnClicked: (itemId: Int) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel(),
-    navController: NavController,
 ) {
     val bookList by viewModel.bookList.collectAsState()
     val currentPage by viewModel.currentPage.collectAsState()
@@ -61,6 +70,7 @@ fun BookDetailScreen(
                     .background(OdokColors.White)
                     .padding(innerPadding)
             ) {
+
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
