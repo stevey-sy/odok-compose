@@ -42,4 +42,10 @@ object OdokIcons {
 
     @DrawableRes
     val PauseButton = R.drawable.ic_pause
+
+    @DrawableRes
+    val CloseButton = R.drawable.ic_cross_24
+
+    @DrawableRes
+    val WhitePaper = R.drawable.white_paper
 }

@@ -74,6 +74,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
+import com.sy.feature.memo.navigation.addMemoScreen
+import com.sy.feature.memo.navigation.navigateToAddMemo
 import com.sy.feature.timer.navigation.navigateToTimer
 import com.sy.feature.timer.navigation.timerScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
@@ -360,8 +362,15 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
             sharedTransitionScope = sharedTransitionScope,
         )
 
+        addMemoScreen(
+            onClose = {navController.popBackStack()}
+        )
+
         timerScreen(
             sharedTransitionScope = sharedTransitionScope,
+            onMemoClick= { itemId ->
+                navController.navigateToAddMemo(itemId)
+            },
             onClose = { page, elapsedTimeSeconds, isBookReadingCompleted ->
                 val bookDetailBackStackEntry = navController.previousBackStackEntry
                 bookDetailBackStackEntry?.savedStateHandle?.set("lastReadPage", page)

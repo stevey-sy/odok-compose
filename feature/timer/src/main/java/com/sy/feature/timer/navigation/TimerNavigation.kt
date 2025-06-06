@@ -22,6 +22,7 @@ fun NavController.navigateToTimer(
 @OptIn(ExperimentalSharedTransitionApi::class)
 fun NavGraphBuilder.timerScreen(
     sharedTransitionScope: SharedTransitionScope,
+    onMemoClick:(itemId: Int) -> Unit,
     onClose: (page: Int, elapsedTimeSeconds: Int, isBookReadingCompleted: Boolean) -> Unit,
     route: String = "$TIMER/{itemId}"
 ) {
@@ -36,6 +37,7 @@ fun NavGraphBuilder.timerScreen(
         TimerScreen(
             sharedTransitionScope = sharedTransitionScope,
             animatedVisibilityScope = this,
+            onMemoClick = {itemId -> onMemoClick(itemId)},
             onClose = { page, elapsedTimeSeconds, isBookReadingCompleted -> onClose(page, elapsedTimeSeconds, isBookReadingCompleted) }
         )
     }

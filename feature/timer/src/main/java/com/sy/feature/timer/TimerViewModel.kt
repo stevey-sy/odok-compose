@@ -58,6 +58,9 @@ class TimerViewModel @Inject constructor(
     private val _isSummaryModalVisible = MutableStateFlow(false)
     val isSummaryModalVisible: StateFlow<Boolean> = _isSummaryModalVisible.asStateFlow()
 
+    private val _isMemoSelectModalVisible = MutableStateFlow(false)
+    val isMemoSelectModalVisible: StateFlow<Boolean> = _isMemoSelectModalVisible.asStateFlow()
+
     private val _lastReadPageInput = MutableStateFlow("")
     val lastReadPageInput: StateFlow<String> = _lastReadPageInput.asStateFlow()
 
@@ -111,6 +114,10 @@ class TimerViewModel @Inject constructor(
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
+    fun onMemoButtonClick() {
+        _isMemoSelectModalVisible.value = true
+    }
+
     fun onCompleteClick() {
 //        if (_uiState.value == TimerUiState.Completed) return // 이미 완료된 경우 중복 실행 방지
         pauseTimer()
@@ -146,6 +153,10 @@ class TimerViewModel @Inject constructor(
     fun dismissPageInputModal() {
         _isPageInputModalVisible.value = false
         // 입력값 초기화 제거
+    }
+
+    fun dismissMemoSelectModal() {
+        _isMemoSelectModalVisible.value = false
     }
 
     fun dismissSummaryModal() {
