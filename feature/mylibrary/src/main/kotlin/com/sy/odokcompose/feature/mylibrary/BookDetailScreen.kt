@@ -87,7 +87,7 @@ fun BookDetailScreen(
                         author = currentBook?.author ?: ""
                     )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     BookProgress(
                         progressPercentage = currentBook?.progressPercentage ?: 0,

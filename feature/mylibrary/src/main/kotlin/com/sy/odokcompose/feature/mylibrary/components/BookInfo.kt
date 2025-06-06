@@ -30,8 +30,7 @@ fun BookInfo(
         Text(
             text = title,
             fontSize = 16.sp,
-            maxLines = 2,
-            minLines = 2,
+            maxLines = 1,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
@@ -40,6 +39,7 @@ fun BookInfo(
             text = author,
             fontSize = 14.sp,
             textAlign = TextAlign.Center,
+            fontWeight = FontWeight.SemiBold,
             color = Color.Gray,
             maxLines = 1
         )
