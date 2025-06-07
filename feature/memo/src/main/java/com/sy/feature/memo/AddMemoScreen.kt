@@ -1,5 +1,6 @@
 package com.sy.feature.memo
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -77,9 +79,10 @@ fun AddMemoScreen(
     onClose: () -> Unit,
     viewModel: AddMemoViewModel = hiltViewModel()
 ) {
-    var pageTextState by remember { mutableStateOf(TextFieldValue("")) }
-    var memoTextState by remember { mutableStateOf(TextFieldValue("")) }
+    val pageTextState by viewModel.pageText.collectAsState()
+    val memoTextState by viewModel.memoText.collectAsState()
     val selectedPaperType by viewModel.selectedPaperType.collectAsState()
+    val isSaving by viewModel.isSaving.collectAsState()
     val paperTypes = listOf(OdokIcons.WhitePaper, OdokIcons.OldPaper, OdokIcons.DotPaper, OdokIcons.BlueSky,
         OdokIcons.YellowPaper)
     val pagerState = rememberPagerState(pageCount = { paperTypes.size })
@@ -141,7 +144,18 @@ fun AddMemoScreen(
                         }
                     }
                     Button(
-                        onClick = { /* 저장 or 완료 처리 */ },
+                        onClick = { 
+                            if (!isSaving) {
+                                coroutineScope.launch {
+                                    try {
+                                        viewModel.saveMemo()
+                                        onClose()
+                                    } catch (e: Exception) {
+                                        Log.e("AddMemoScreen", "메모 저장 실패", e)
+                                    }
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(65.dp)
@@ -149,10 +163,18 @@ fun AddMemoScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = OdokColors.Black
                         ),
+                        enabled = !isSaving
                     ) {
-                        Icon(Icons.Default.Check, contentDescription = "완료")
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text("완료")
+                        if (isSaving) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = Color.White
+                            )
+                        } else {
+                            Icon(Icons.Default.Check, contentDescription = "완료")
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("완료")
+                        }
                     }
                 }
             }
@@ -226,7 +248,7 @@ fun AddMemoScreen(
                             )
                             TextField(
                                 value = pageTextState,
-                                onValueChange = { pageTextState = it },
+                                onValueChange = { viewModel.updatePageText(it) },
                                 placeholder = {
                                     Text(
                                         text = "페이지 입력",
@@ -266,7 +288,7 @@ fun AddMemoScreen(
                         ) {
                             TextField(
                                 value = memoTextState,
-                                onValueChange = { memoTextState = it },
+                                onValueChange = { viewModel.updateMemoText(it) },
                                 placeholder = {
                                     Box(
                                         modifier = Modifier.fillMaxWidth(),

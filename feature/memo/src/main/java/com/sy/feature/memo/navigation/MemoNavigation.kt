@@ -27,8 +27,7 @@ fun NavGraphBuilder.addMemoScreen(
         )
     ) {
         AddMemoScreen(
-            onClose = {onClose}
+            onClose = onClose
         )
     }
-
 }

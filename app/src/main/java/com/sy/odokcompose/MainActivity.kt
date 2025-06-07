@@ -363,7 +363,9 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
         )
 
         addMemoScreen(
-            onClose = {navController.popBackStack()}
+            onClose = {
+                navController.popBackStack()
+            }
         )
 
         timerScreen(

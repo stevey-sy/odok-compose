@@ -3,6 +3,7 @@ package com.sy.odokcompose.core.database.di
 import android.content.Context
 import androidx.room.Room
 import com.sy.odokcompose.core.database.BookDao
+import com.sy.odokcompose.core.database.MemoDao
 import com.sy.odokcompose.core.database.OdokDatabase
 import dagger.Module
 import dagger.Provides
@@ -29,5 +30,11 @@ object DatabaseModule {
     @Singleton
     fun provideBookDao(database: OdokDatabase): BookDao {
         return database.bookDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMemoDao(database: OdokDatabase): MemoDao {
+        return database.memoDao()
     }
 } 

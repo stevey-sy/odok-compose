@@ -8,14 +8,18 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sy.odokcompose.core.database.entity.BookEntity
+import com.sy.odokcompose.core.database.entity.MemoEntity
+import com.sy.odokcompose.core.database.entity.MemoTagCrossRef
+import com.sy.odokcompose.core.database.entity.TagEntity
 
 @Database(
-    entities = [BookEntity::class],
+    entities = [BookEntity::class, MemoEntity::class, TagEntity::class, MemoTagCrossRef::class],
     version = 2,
     exportSchema = true,
 )
 abstract class OdokDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
+    abstract fun memoDao(): MemoDao
     
     companion object {
         private const val DATABASE_NAME = "odok-database"
