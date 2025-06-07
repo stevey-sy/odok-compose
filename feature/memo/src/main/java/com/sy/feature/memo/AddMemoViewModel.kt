@@ -42,18 +42,18 @@ class AddMemoViewModel @Inject constructor(
     private val _memoText = MutableStateFlow(TextFieldValue(""))
     val memoText: StateFlow<TextFieldValue> = _memoText.asStateFlow()
 
-    private val _selectedPaperType = MutableStateFlow(OdokIcons.WhitePaper)
-    val selectedPaperType: StateFlow<Int> = _selectedPaperType.asStateFlow()
+    private val _selectedPaperType = MutableStateFlow("white_paper")
+    val selectedPaperType: StateFlow<String> = _selectedPaperType.asStateFlow()
 
     private val _isSaving = MutableStateFlow(false)
     val isSaving: StateFlow<Boolean> = _isSaving.asStateFlow()
 
     private val paperTypes = listOf(
-        OdokIcons.WhitePaper,
-        OdokIcons.OldPaper,
-        OdokIcons.DotPaper,
-        OdokIcons.BlueSky,
-        OdokIcons.YellowPaper
+        "white_paper",
+        "old_paper",
+        "dot_paper",
+        "blue_sky",
+        "yellow_paper"
     )
 
     fun getTodayDate(): String {
@@ -79,7 +79,7 @@ class AddMemoViewModel @Inject constructor(
         
         try {
             _isSaving.value = true
-            val page = _pageText.value.text.toInt()
+            val page = _pageText.value.text.ifEmpty { "0" }.toInt()
             val memo = _memoText.value.text
             val paperType = _selectedPaperType.value
             

@@ -69,4 +69,8 @@ object OdokIcons {
 
     @DrawableRes
     val Microphone = R.drawable.ic_microphone
+
+    @DrawableRes
+    val HorizontalDots = R.drawable.ic_horizontal_dots
+
 }

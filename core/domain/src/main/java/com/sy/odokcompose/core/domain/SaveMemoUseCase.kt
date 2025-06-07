@@ -12,13 +12,13 @@ sealed class SaveMemoResult {
 class SaveMemoUseCase @Inject constructor(
     private val memoLocalDataSource: MemoLocalDataSource
 ) {
-    suspend operator fun invoke(bookId: Int, page:Int, content:String, background:Int): SaveMemoResult {
+    suspend operator fun invoke(bookId: Int, page:Int, content:String, backgroundId:String): SaveMemoResult {
         return try {
             val memo = MemoEntity(
                 bookId = bookId,
                 content = content,
                 pageNumber = page,
-                background = background,
+                backgroundId = backgroundId,
                 createdAt = System.currentTimeMillis()
             )
             memoLocalDataSource.insert(memo)

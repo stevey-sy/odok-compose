@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MemoDao {
-    @Query("SELECT * FROM memos WHERE bookId = :bookId ORDER BY createdAt DESC")
+    @Query("SELECT * FROM memos WHERE bookId = :bookId ORDER BY pageNumber ASC")
     fun getMemosByBookId(bookId: Int): Flow<List<MemoEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

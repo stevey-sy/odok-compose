@@ -88,8 +88,13 @@ fun AddMemoScreen(
     val selectedPaperType by viewModel.selectedPaperType.collectAsState()
     val isSaving by viewModel.isSaving.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
-    val paperTypes = listOf(OdokIcons.WhitePaper, OdokIcons.OldPaper, OdokIcons.DotPaper, OdokIcons.BlueSky,
-        OdokIcons.YellowPaper)
+    val paperTypes = listOf(
+        "white_paper" to OdokIcons.WhitePaper,
+        "old_paper" to OdokIcons.OldPaper,
+        "dot_paper" to OdokIcons.DotPaper,
+        "blue_sky" to OdokIcons.BlueSky,
+        "yellow_paper" to OdokIcons.YellowPaper
+    )
     val pagerState = rememberPagerState(pageCount = { paperTypes.size })
     val coroutineScope = rememberCoroutineScope()
 
@@ -129,18 +134,18 @@ fun AddMemoScreen(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        items(paperTypes) { paperType ->
+                        items(paperTypes) { (paperTypeName, paperTypeId) ->
                             Box(
                                 modifier = Modifier
                                     .size(60.dp)
                                     .shadow(4.dp, RoundedCornerShape(8.dp))
                                     .background(Color.White, RoundedCornerShape(8.dp))
                                     .clickable { 
-                                        viewModel.updatePaperType(paperTypes.indexOf(paperType))
+                                        viewModel.updatePaperType(paperTypes.indexOfFirst { it.first == paperTypeName })
                                     }
                             ) {
                                 Image(
-                                    painter = painterResource(id = paperType),
+                                    painter = painterResource(id = paperTypeId),
                                     contentDescription = "메모지 선택",
                                     contentScale = ContentScale.FillBounds,
                                     modifier = Modifier
@@ -148,7 +153,7 @@ fun AddMemoScreen(
                                         .padding(8.dp)
                                 )
                                 
-                                if (paperType == selectedPaperType) {
+                                if (paperTypeName == selectedPaperType) {
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
@@ -246,7 +251,14 @@ fun AddMemoScreen(
                             .background(Color.White, RoundedCornerShape(10.dp))
                     ) {
                         Image(
-                            painter = painterResource(id = selectedPaperType),
+                            painter = painterResource(id = when(selectedPaperType) {
+                                "white_paper" -> OdokIcons.WhitePaper
+                                "old_paper" -> OdokIcons.OldPaper
+                                "dot_paper" -> OdokIcons.DotPaper
+                                "blue_sky" -> OdokIcons.BlueSky
+                                "yellow_paper" -> OdokIcons.YellowPaper
+                                else -> OdokIcons.WhitePaper
+                            }),
                             contentDescription = "메모하기",
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier.matchParentSize()

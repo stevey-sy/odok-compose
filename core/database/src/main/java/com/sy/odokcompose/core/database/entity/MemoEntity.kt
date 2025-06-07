@@ -20,7 +20,7 @@ data class MemoEntity(
     val bookId: Int,
     val content: String,
     val pageNumber: Int,
-    val background: Int = 0,
+    val backgroundId: String = "",
     val imgUrl: String = "",
     val createdAt: Long,
     val updatedAt: Long = System.currentTimeMillis()

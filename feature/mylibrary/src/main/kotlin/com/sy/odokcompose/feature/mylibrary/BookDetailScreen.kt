@@ -7,6 +7,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -45,6 +46,13 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.R
 import com.sy.odokcompose.feature.mylibrary.components.*
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.geometry.Offset
+
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInWindow
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
+import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
@@ -168,8 +176,16 @@ fun BookDetailScreen(
                                         .shadow(8.dp, RoundedCornerShape(10.dp))
                                         .background(Color.White, RoundedCornerShape(10.dp))
                                 ) {
+
                                     Image(
-                                        painter = painterResource(id = memo.backgroundId),
+                                        painter = painterResource(id = when(memo.backgroundId) {
+                                            "white_paper" -> OdokIcons.WhitePaper
+                                            "old_paper" -> OdokIcons.OldPaper
+                                            "dot_paper" -> OdokIcons.DotPaper
+                                            "blue_sky" -> OdokIcons.BlueSky
+                                            "yellow_paper" -> OdokIcons.YellowPaper
+                                            else -> OdokIcons.WhitePaper
+                                        }),
                                         contentDescription = "메모 배경",
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier.matchParentSize()
@@ -186,7 +202,9 @@ fun BookDetailScreen(
                                             Text(
                                                 text = "p.${memo.pageNumber}",
                                                 fontSize = 16.sp,
-                                                fontFamily = MaruBuriFont,)
+                                                fontFamily = MaruBuriFont,
+                                                color = if (memo.pageNumber == 0) Color.Transparent else Color.Unspecified
+                                            )
                                         }
 
                                         Spacer(modifier = Modifier.height(12.dp))
@@ -228,6 +246,56 @@ fun BookDetailScreen(
                                         )
                                     }
 
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.TopEnd
+                                    ) {
+                                        var showMenu by remember { mutableStateOf(false) }
+                                        var iconOffset by remember { mutableStateOf(Offset.Zero) }
+                                        val density = LocalDensity.current
+                                        val iconSize = 24.dp
+
+                                        Box(
+                                            modifier = Modifier
+                                                .onGloballyPositioned { coordinates ->
+                                                    iconOffset = coordinates.positionInWindow()
+                                                }
+                                        ) {
+                                            Image(
+                                                painter = painterResource(id = OdokIcons.HorizontalDots),
+                                                contentDescription = "메모 설정",
+                                                modifier = Modifier
+                                                    .size(iconSize)
+                                                    .clickable { showMenu = true }
+                                            )
+                                        }
+
+                                        DropdownMenu(
+                                            expanded = showMenu,
+                                            onDismissRequest = { showMenu = false },
+                                            offset = DpOffset(
+                                                x = with(density) { iconOffset.x.toDp() },
+                                                y = with(density) { (iconOffset.y + iconSize.toPx()).toDp() }
+                                            )
+                                        ) {
+                                            DropdownMenuItem(
+                                                text = { Text("수정") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    // TODO
+                                                }
+                                            )
+                                            DropdownMenuItem(
+                                                text = { Text("삭제") },
+                                                onClick = {
+                                                    showMenu = false
+                                                    // TODO
+                                                }
+                                            )
+                                        }
+                                    }
 
                                 }
 

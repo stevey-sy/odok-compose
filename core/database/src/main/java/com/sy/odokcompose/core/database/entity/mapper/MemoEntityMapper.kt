@@ -12,7 +12,7 @@ object MemoEntityMapper : EntityMapper<MemoEntity, MemoUiModel> {
             pageNumber = entity.pageNumber,
             createdAt = entity.createdAt,
             updatedAt = entity.updatedAt,
-            backgroundId = entity.background,
+            backgroundId = entity.backgroundId,
             tags = emptyList()
         )
     }
@@ -25,7 +25,7 @@ object MemoEntityMapper : EntityMapper<MemoEntity, MemoUiModel> {
             pageNumber = model.pageNumber,
             createdAt = model.createdAt,
             updatedAt = model.updatedAt,
-            background = model.backgroundId
+            backgroundId = model.backgroundId
         )
     }
 }
