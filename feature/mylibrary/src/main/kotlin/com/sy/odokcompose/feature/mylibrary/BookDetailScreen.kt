@@ -155,86 +155,82 @@ fun BookDetailScreen(
                     ) {
                         LazyColumn (
                             modifier = Modifier
-                                .fillMaxWidth(),
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
                         ) {
                             items(memoList) { memo ->
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 20.dp, start=24.dp, end=24.dp, bottom=20.dp)
+                                        .padding(top = 20.dp, start = 24.dp, end = 24.dp, bottom = 20.dp)
                                         .wrapContentHeight()
+                                        .heightIn(min = 240.dp)
                                         .shadow(8.dp, RoundedCornerShape(10.dp))
                                         .background(Color.White, RoundedCornerShape(10.dp))
                                 ) {
                                     Image(
                                         painter = painterResource(id = memo.backgroundId),
-                                        contentDescription = "메모하기",
+                                        contentDescription = "메모 배경",
                                         contentScale = ContentScale.FillBounds,
                                         modifier = Modifier.matchParentSize()
                                     )
 
-                                    Row(
+                                    Column(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(start = 24.dp, top=24.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                            .wrapContentHeight()
+                                            .padding(horizontal = 24.dp, vertical = 20.dp)
                                     ) {
-                                        Text(
-                                            text = "p.",
-                                            fontSize = 16.sp,
-                                            fontFamily = MaruBuriFont,
-                                            color = OdokColors.Black
-                                        )
-                                        Text(
-                                            text = memo.pageNumber.toString(),
-                                            fontSize = 16.sp,
-                                            fontFamily = MaruBuriFont,
-                                            color = OdokColors.Black
-                                        )
-                                    }
+                                        // 상단 페이지 정보
+                                        Row {
+                                            Text(
+                                                text = "p.${memo.pageNumber}",
+                                                fontSize = 16.sp,
+                                                fontFamily = MaruBuriFont,)
+                                        }
 
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .heightIn(min = 240.dp)
-                                            .padding(horizontal = 24.dp, vertical = 20.dp),
+                                        Spacer(modifier = Modifier.height(12.dp))
 
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = memo.content,
-                                            style = TextStyle(
-                                                color = OdokColors.Black,
+                                        // 중앙 Box: 한 줄이어도 정중앙에 배치되도록
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .heightIn(min = 120.dp)
+                                                .wrapContentHeight(),
+                                            contentAlignment = Alignment.Center // 👈 핵심
+                                        ) {
+                                            Text(
+                                                text = memo.content,
                                                 fontSize = 22.sp,
                                                 fontFamily = DashiFont,
                                                 fontWeight = FontWeight.Normal,
-                                                textAlign = TextAlign.Center
-                                            ),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .wrapContentHeight()
-                                                .align(Alignment.Center)
-                                        )
-                                    }
+                                                textAlign = TextAlign.Center,
+                                                color = Color.Black,
+                                                softWrap = true,
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .wrapContentHeight()
+                                                    .padding(horizontal = 16.dp)
+                                            )
+                                        }
 
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(bottom = 20.dp)
-                                            .align(Alignment.BottomCenter), // ✅ 날짜는 아래로 고정
-                                        contentAlignment = Alignment.Center
-                                    ) {
+                                        Spacer(modifier = Modifier.height(24.dp))
+
+                                        // 하단 날짜 정보
                                         Text(
                                             text = memo.getCreateDateText(),
                                             fontSize = 14.sp,
                                             fontFamily = MaruBuriFont,
-                                            fontWeight = FontWeight.Normal,
                                             color = OdokColors.StealGray,
                                             textAlign = TextAlign.Center,
-                                            modifier = Modifier.fillMaxWidth()
+                                            modifier = Modifier
+                                                .fillMaxWidth()
                                         )
                                     }
+
+
                                 }
+
                             }
                         }
                     }
