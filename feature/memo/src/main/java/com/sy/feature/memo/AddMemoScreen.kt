@@ -75,6 +75,8 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 
 @Composable
 fun AddMemoScreen(
@@ -351,11 +353,11 @@ fun AddMemoScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 20.dp)
-                                .align(Alignment.BottomCenter), // ✅ 날짜는 아래로 고정
+                                .align(Alignment.BottomCenter),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "2025. 06. 07",
+                                text = viewModel.getTodayDate(),
                                 fontSize = 14.sp,
                                 fontFamily = MaruBuriFont,
                                 fontWeight = FontWeight.Normal,

@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.core.domain.SaveMemoUseCase
 import com.sy.odokcompose.model.MemoUiModel
+import java.text.SimpleDateFormat
+import java.util.*
 
 sealed class AddMemoUiState {
     object CreateMode : AddMemoUiState()
@@ -53,6 +55,10 @@ class AddMemoViewModel @Inject constructor(
         OdokIcons.BlueSky,
         OdokIcons.YellowPaper
     )
+
+    fun getTodayDate(): String {
+        return SimpleDateFormat("yyyy. MM. dd", Locale.getDefault()).format(Date())
+    }
 
     fun updatePageText(newValue: TextFieldValue) {
         _pageText.value = newValue
