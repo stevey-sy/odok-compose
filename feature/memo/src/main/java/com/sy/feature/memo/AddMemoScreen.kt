@@ -1,6 +1,7 @@
 package com.sy.feature.memo
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -72,6 +73,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,6 +85,7 @@ fun AddMemoScreen(
     val memoTextState by viewModel.memoText.collectAsState()
     val selectedPaperType by viewModel.selectedPaperType.collectAsState()
     val isSaving by viewModel.isSaving.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
     val paperTypes = listOf(OdokIcons.WhitePaper, OdokIcons.OldPaper, OdokIcons.DotPaper, OdokIcons.BlueSky,
         OdokIcons.YellowPaper)
     val pagerState = rememberPagerState(pageCount = { paperTypes.size })
@@ -90,6 +93,24 @@ fun AddMemoScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         viewModel.updatePaperType(pagerState.currentPage)
+    }
+
+    // 저장 성공 시 Snackbar 표시 및 메인 화면으로 이동
+
+    val context = LocalContext.current
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            is AddMemoUiState.SaveSuccess -> {
+                Toast.makeText(context, "메모가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                onClose()
+            }
+            is AddMemoUiState.Error -> {
+                // TODO: 에러 처리 (예: Snackbar 표시)
+//                Log.e("AddMemoScreen", (uiState as AddMemoUiState.Error).message)
+                Toast.makeText(context, (uiState as AddMemoUiState.Error).message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
     }
 
     OdokTheme {
@@ -147,12 +168,7 @@ fun AddMemoScreen(
                         onClick = { 
                             if (!isSaving) {
                                 coroutineScope.launch {
-                                    try {
-                                        viewModel.saveMemo()
-                                        onClose()
-                                    } catch (e: Exception) {
-                                        Log.e("AddMemoScreen", "메모 저장 실패", e)
-                                    }
+                                    viewModel.saveMemo()
                                 }
                             }
                         },

@@ -16,6 +16,13 @@ import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.core.domain.SaveMemoUseCase
 import com.sy.odokcompose.model.MemoUiModel
 
+sealed class AddMemoUiState {
+    object CreateMode : AddMemoUiState()
+    object EditMode : AddMemoUiState()
+    object SaveSuccess : AddMemoUiState()
+    data class Error(val message: String) : AddMemoUiState()
+}
+
 @HiltViewModel
 class AddMemoViewModel @Inject constructor(
     private val saveMemoUseCase: SaveMemoUseCase,
@@ -24,9 +31,8 @@ class AddMemoViewModel @Inject constructor(
 
     private val itemId: Int = checkNotNull(savedStateHandle["itemId"]) { "itemId가 필요합니다." }
 
-    init {
-        // 초기 배경색/텍스트색 설정은 ViewModel에서 제거 (Screen에서 애니메이션 초기값으로 처리)
-    }
+    private val _uiState = MutableStateFlow<AddMemoUiState>(AddMemoUiState.CreateMode)
+    val uiState: StateFlow<AddMemoUiState> = _uiState.asStateFlow()
 
     private val _pageText = MutableStateFlow(TextFieldValue(""))
     val pageText: StateFlow<TextFieldValue> = _pageText.asStateFlow()
@@ -73,7 +79,10 @@ class AddMemoViewModel @Inject constructor(
             
             if (memo.isNotBlank()) {
                 saveMemoUseCase(itemId, page, memo, paperType)
+                _uiState.value = AddMemoUiState.SaveSuccess
             }
+        } catch (e: Exception) {
+            _uiState.value = AddMemoUiState.Error(e.message ?: "메모 저장에 실패했습니다.")
         } finally {
             _isSaving.value = false
         }

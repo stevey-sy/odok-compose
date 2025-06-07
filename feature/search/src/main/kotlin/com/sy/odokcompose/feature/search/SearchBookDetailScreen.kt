@@ -64,9 +64,9 @@ fun SearchBookDetailScreen(
     cover: String,
     onNavigateBack: () -> Unit,
     onNavigateToMain: () -> Unit,
-    viewModel: SearchDetailViewModel = hiltViewModel(),
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    viewModel: SearchDetailViewModel = hiltViewModel(),
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val uiState by viewModel.uiState.collectAsState()
