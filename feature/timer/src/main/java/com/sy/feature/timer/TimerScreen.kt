@@ -28,6 +28,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.airbnb.lottie.compose.LottieAnimation
@@ -54,6 +56,7 @@ import com.sy.feature.timer.components.PageInputModal
 import com.sy.feature.timer.components.PlayButton
 import com.sy.feature.timer.components.SummaryModal
 import com.sy.odokcompose.core.designsystem.OdokColors
+import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -229,7 +232,11 @@ fun TimerScreen(
                                 containerColor = OdokColors.Black
                             ),
                         ) {
-                            Icon(Icons.Default.Check, contentDescription = "완료")
+                            Image(
+                                painter = painterResource(id = OdokIcons.Microphone),
+                                contentDescription = "마이크",
+                                modifier = Modifier.size(24.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("음성인식으로 가져오기")
                         }
@@ -243,7 +250,11 @@ fun TimerScreen(
                                 containerColor = OdokColors.Black
                             ),
                         ) {
-                            Icon(Icons.Default.Check, contentDescription = "완료")
+                            Image(
+                                painter = painterResource(id = OdokIcons.Camera),
+                                contentDescription = "사진",
+                                modifier = Modifier.size(24.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("사진으로 가져오기")
                         }
@@ -260,7 +271,11 @@ fun TimerScreen(
                                 containerColor = OdokColors.Black
                             ),
                         ) {
-                            Icon(Icons.Default.Check, contentDescription = "완료")
+                            Image(
+                                painter = painterResource(id = OdokIcons.Keyboard),
+                                contentDescription = "직접 입력",
+                                modifier = Modifier.size(24.dp)
+                            )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text("직접 입력하기")
                         }

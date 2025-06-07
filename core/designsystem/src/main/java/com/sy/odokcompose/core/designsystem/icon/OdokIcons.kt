@@ -60,4 +60,13 @@ object OdokIcons {
 
     @DrawableRes
     val YellowPaper = R.drawable.yellow
+
+    @DrawableRes
+    val Keyboard = R.drawable.ic_keyboard
+
+    @DrawableRes
+    val Camera = R.drawable.ic_camera
+
+    @DrawableRes
+    val Microphone = R.drawable.ic_microphone
 }
