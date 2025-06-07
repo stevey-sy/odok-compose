@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ fun BookInfo(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxWidth()
-            .height(100.dp)
+            .wrapContentHeight()
             .padding(horizontal = 16.dp)
     ) {
         BookCover(
@@ -54,7 +55,7 @@ fun BookInfo(
 
         Column(
             modifier = Modifier
-                .fillMaxHeight() // 중요
+                .wrapContentHeight()
         ) {
             Text(
                 book.getTitleText(),
@@ -79,7 +80,7 @@ fun BookInfo(
                 fontSize = 14.sp,
                 color = Color(textColor)
             )
-            Spacer(modifier = Modifier.weight(1f))
+
             Text(
                 text = timerText,
                 fontSize = 38.sp,

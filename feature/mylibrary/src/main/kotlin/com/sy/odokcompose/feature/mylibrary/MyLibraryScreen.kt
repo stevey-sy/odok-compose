@@ -66,6 +66,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import com.sy.odokcompose.core.designsystem.component.SearchTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.ui.platform.LocalConfiguration
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -84,6 +85,9 @@ fun MyLibraryScreen(
     val currentFilter by viewModel.currentFilter.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+//    val configuration = LocalConfiguration.current
+//    val screenWidth = configuration.screenWidthDp.dp
+//    val screenHeight = configuration.screenHeightDp.dp
 
     // SnackBar 메시지 처리
     LaunchedEffect(uiState.snackBarMessage) {
@@ -249,8 +253,17 @@ private fun BookShelfItem(
     isDeleteMode: Boolean = false,
     isSelected: Boolean = false,
     onSelectionChanged: ((Boolean) -> Unit)? = null,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+    // 화면 크기에 따라 높이 계산
+    val coverHeight = when {
+        screenWidth <= 360.dp -> 140.dp  // 작은 화면
+        screenWidth < 400.dp -> 150.dp  // 중간 화면
+        else -> 160.dp                  // 큰 화면
+    }
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -276,7 +289,7 @@ private fun BookShelfItem(
                     animatedVisibilityScope = animatedVisibilityScope,
                     book = book,
                     modifier = Modifier
-                        .height(140.dp)
+                        .height(coverHeight)
                         .padding(start = 20.dp, end = 20.dp, top = 10.dp, bottom = 25.dp)
                         .combinedClickable(
                             enabled = onClick != null,
