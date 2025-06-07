@@ -118,6 +118,10 @@ class TimerViewModel @Inject constructor(
         _isMemoSelectModalVisible.value = true
     }
 
+    fun onDirectInputButtonClick() {
+        _isMemoSelectModalVisible.value = false
+    }
+
     fun onCompleteClick() {
 //        if (_uiState.value == TimerUiState.Completed) return // 이미 완료된 경우 중복 실행 방지
         pauseTimer()

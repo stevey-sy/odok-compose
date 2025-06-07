@@ -40,6 +40,7 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import androidx.compose.ui.text.style.TextAlign
+import com.sy.odokcompose.core.designsystem.MaruBuriFont
 
 @Composable
 fun AddMemoScreen(
@@ -146,6 +147,17 @@ fun AddMemoScreen(
                             ),
                             singleLine = false,
                             maxLines = 5
+                        )
+
+                        Text(
+                            text = "2025. 06. 07",
+                            modifier = Modifier
+                                .padding(top = 24.dp),
+                            fontSize = 14.sp,
+                            fontFamily = MaruBuriFont,
+                            fontWeight = FontWeight.Normal,
+                            color = OdokColors.StealGray,
+                            textAlign = TextAlign.Center
                         )
 
                     }

@@ -249,7 +249,9 @@ fun TimerScreen(
                         }
                        
                         Button(
-                            onClick = { onMemoClick(book.itemId) },
+                            onClick = {
+                                viewModel.dismissMemoSelectModal()
+                                onMemoClick(book.itemId) },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(65.dp)
