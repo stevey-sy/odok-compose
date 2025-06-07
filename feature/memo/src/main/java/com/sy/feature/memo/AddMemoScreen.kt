@@ -364,7 +364,6 @@ fun AddMemoScreen(
                             )
                         }
                     }
-
                 }
             }
         }

@@ -16,7 +16,7 @@ import androidx.room.PrimaryKey
     ]
 )
 data class MemoEntity(
-    @PrimaryKey(autoGenerate = true) val memoId: Long = 0,
+    @PrimaryKey(autoGenerate = true) val memoId: Int = 0,
     val bookId: Int,
     val content: String,
     val pageNumber: Int,

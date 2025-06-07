@@ -1,6 +1,7 @@
 package com.sy.odokcompose.feature.mylibrary.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +20,15 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @Composable
-fun CommentSection() {
+fun CommentSection(
+    onCommentsClick: () -> Unit,
+    commentCount: Int,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp),
+            .padding(top = 20.dp)
+            .clickable(onClick = onCommentsClick),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -31,7 +36,7 @@ fun CommentSection() {
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = "Comments 0",
+                text = "Comments $commentCount",
                 textAlign = TextAlign.Center,
                 color = OdokColors.StealGray,
                 fontWeight = FontWeight.Light,

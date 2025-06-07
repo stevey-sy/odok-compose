@@ -8,6 +8,8 @@ import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSource
 import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSourceImpl
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSource
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSourceImpl
+import com.sy.odokcompose.core.data.repository.MemoRepository
+import com.sy.odokcompose.core.data.repository.MemoRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -36,4 +38,9 @@ interface DataModule {
     fun bindMemoLocalDataSource(
         memoLocalDataSourceImpl: MemoLocalDataSourceImpl
     ): MemoLocalDataSource
+
+    @Binds
+    fun bindMemoRepository(
+        memoRepositoryImpl: MemoRepositoryImpl
+    ): MemoRepository
 } 

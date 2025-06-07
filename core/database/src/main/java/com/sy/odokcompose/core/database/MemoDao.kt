@@ -30,10 +30,10 @@ interface MemoDao {
     suspend fun deleteMemosByBookId(bookId: Int)
 
     @Query("SELECT * FROM memos WHERE memoId = :memoId")
-    suspend fun getMemoById(memoId: Long): MemoEntity?
+    suspend fun getMemoById(memoId: Int): MemoEntity?
 
     @Query("DELETE FROM memos WHERE memoId = :memoId")
-    suspend fun deleteMemoById(memoId: Long)
+    suspend fun deleteMemoById(memoId: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMemoTagCrossRef(crossRef: MemoTagCrossRef)

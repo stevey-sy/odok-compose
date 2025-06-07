@@ -34,13 +34,12 @@ fun BookEditBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        modifier = Modifier.fillMaxHeight(1.0f),
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp)
-                .navigationBarsPadding()
+//                .navigationBarsPadding()
                 .imePadding()
                 .verticalScroll(rememberScrollState())
         ) {
