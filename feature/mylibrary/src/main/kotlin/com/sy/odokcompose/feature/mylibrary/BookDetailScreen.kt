@@ -155,14 +155,13 @@ fun BookDetailScreen(
                     ) {
                         LazyColumn (
                             modifier = Modifier
-                                .padding(12.dp)
                                 .fillMaxWidth(),
                         ) {
                             items(memoList) { memo ->
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 20.dp)
+                                        .padding(top = 20.dp, start=24.dp, end=24.dp, bottom=20.dp)
                                         .wrapContentHeight()
                                         .shadow(8.dp, RoundedCornerShape(10.dp))
                                         .background(Color.White, RoundedCornerShape(10.dp))
@@ -174,31 +173,34 @@ fun BookDetailScreen(
                                         modifier = Modifier.matchParentSize()
                                     )
 
-                                    Column(
+                                    Row(
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .padding(horizontal = 24.dp, vertical = 20.dp)
+                                            .padding(start = 24.dp, top=24.dp),
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Text(
-                                                text = "p.",
-                                                fontSize = 16.sp,
-                                                fontFamily = MaruBuriFont,
-                                                color = OdokColors.Black
-                                            )
-                                            Text(
-                                                text = memo.pageNumber.toString(),
-                                                fontSize = 16.sp,
-                                                fontFamily = MaruBuriFont,
-                                                color = OdokColors.Black
-                                            )
-                                        }
+                                        Text(
+                                            text = "p.",
+                                            fontSize = 16.sp,
+                                            fontFamily = MaruBuriFont,
+                                            color = OdokColors.Black
+                                        )
+                                        Text(
+                                            text = memo.pageNumber.toString(),
+                                            fontSize = 16.sp,
+                                            fontFamily = MaruBuriFont,
+                                            color = OdokColors.Black
+                                        )
+                                    }
 
-                                        Spacer(modifier = Modifier.height(16.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(min = 240.dp)
+                                            .padding(horizontal = 24.dp, vertical = 20.dp),
 
+                                        contentAlignment = Alignment.Center
+                                    ) {
                                         Text(
                                             text = memo.content,
                                             style = TextStyle(
@@ -210,11 +212,18 @@ fun BookDetailScreen(
                                             ),
                                             modifier = Modifier
                                                 .fillMaxWidth()
-                                                .heightIn(min = 240.dp)
+                                                .wrapContentHeight()
+                                                .align(Alignment.Center)
                                         )
+                                    }
 
-                                        Spacer(modifier = Modifier.height(16.dp))
-
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 20.dp)
+                                            .align(Alignment.BottomCenter), // ✅ 날짜는 아래로 고정
+                                        contentAlignment = Alignment.Center
+                                    ) {
                                         Text(
                                             text = memo.getCreateDateText(),
                                             fontSize = 14.sp,

@@ -350,7 +350,7 @@ fun AddMemoScreen(
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 16.dp)
+                                .padding(bottom = 20.dp)
                                 .align(Alignment.BottomCenter), // ✅ 날짜는 아래로 고정
                             contentAlignment = Alignment.Center
                         ) {

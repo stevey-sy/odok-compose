@@ -16,7 +16,7 @@ data class MemoUiModel(
     val tags: List<TagUiModel> = emptyList()
 ) {
     fun getCreateDateText(): String {
-        val formatter = SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault())
+        val formatter = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
         return formatter.format(Date(createdAt))
     }
 }
