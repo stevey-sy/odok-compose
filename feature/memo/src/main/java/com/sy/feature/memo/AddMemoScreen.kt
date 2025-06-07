@@ -20,6 +20,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -66,6 +71,22 @@ fun AddMemoScreen(
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            bottomBar = {
+                Button(
+                    onClick = { /* 저장 or 완료 처리 */ },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(65.dp)
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = OdokColors.Black
+                    ),
+                ) {
+                    Icon(Icons.Default.Check, contentDescription = "완료")
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("완료")
+                }
+            }
         ) { innerPadding ->
             Box(
                 modifier = Modifier
@@ -142,8 +163,8 @@ fun AddMemoScreen(
                                     Text(
                                         text = "페이지 입력",
                                         color = OdokColors.StealGray,
-                                        fontSize = 22.sp,
-                                        fontFamily = DashiFont,
+                                        fontSize = 16.sp,
+                                        fontFamily = MaruBuriFont,
                                     )
                                 },
                                 colors = TextFieldDefaults.colors(
@@ -155,8 +176,8 @@ fun AddMemoScreen(
                                 ),
                                 textStyle = TextStyle(
                                     color = OdokColors.Black,
-                                    fontSize = 22.sp,
-                                    fontFamily = DashiFont,
+                                    fontSize = 16.sp,
+                                    fontFamily = MaruBuriFont,
                                     fontWeight = FontWeight.Normal,
                                     textAlign = TextAlign.Start
                                 ),
@@ -211,10 +232,12 @@ fun AddMemoScreen(
                                     imeAction = ImeAction.Default
                                 ),
                                 singleLine = false,
-                                maxLines = 10,
+                                maxLines = Int.MAX_VALUE,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .wrapContentHeight()
+                                    .padding(40.dp)
+                                    .align(Alignment.Center)
                             )
                         }
 
