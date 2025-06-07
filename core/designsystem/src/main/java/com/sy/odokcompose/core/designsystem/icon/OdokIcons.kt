@@ -48,4 +48,16 @@ object OdokIcons {
 
     @DrawableRes
     val WhitePaper = R.drawable.white_paper
+
+    @DrawableRes
+    val OldPaper = R.drawable.old_book_paper
+
+    @DrawableRes
+    val DotPaper = R.drawable.old_paper
+
+    @DrawableRes
+    val BlueSky = R.drawable.sky_blue_paper
+
+    @DrawableRes
+    val YellowPaper = R.drawable.yellow
 }

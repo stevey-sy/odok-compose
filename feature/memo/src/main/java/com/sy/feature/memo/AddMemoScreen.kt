@@ -3,6 +3,9 @@ package com.sy.feature.memo
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +19,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -31,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,6 +65,12 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.core.designsystem.MaruBuriFont
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun AddMemoScreen(
@@ -67,24 +79,81 @@ fun AddMemoScreen(
 ) {
     var pageTextState by remember { mutableStateOf(TextFieldValue("")) }
     var memoTextState by remember { mutableStateOf(TextFieldValue("")) }
+    val selectedPaperType by viewModel.selectedPaperType.collectAsState()
+    val paperTypes = listOf(OdokIcons.WhitePaper, OdokIcons.OldPaper, OdokIcons.DotPaper, OdokIcons.BlueSky,
+        OdokIcons.YellowPaper)
+    val pagerState = rememberPagerState(pageCount = { paperTypes.size })
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(pagerState.currentPage) {
+        viewModel.updatePaperType(pagerState.currentPage)
+    }
 
     OdokTheme {
         Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             bottomBar = {
-                Button(
-                    onClick = { /* 저장 or 완료 처리 */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(65.dp)
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = OdokColors.Black
-                    ),
-                ) {
-                    Icon(Icons.Default.Check, contentDescription = "완료")
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("완료")
+                Column {
+                    LazyRow(
+                        modifier = Modifier
+                            .background(OdokColors.Black)
+                            .fillMaxWidth()
+                            .height(80.dp)
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        items(paperTypes) { paperType ->
+                            Box(
+                                modifier = Modifier
+                                    .size(60.dp)
+                                    .shadow(4.dp, RoundedCornerShape(8.dp))
+                                    .background(Color.White, RoundedCornerShape(8.dp))
+                                    .clickable { 
+                                        viewModel.updatePaperType(paperTypes.indexOf(paperType))
+                                    }
+                            ) {
+                                Image(
+                                    painter = painterResource(id = paperType),
+                                    contentDescription = "메모지 선택",
+                                    contentScale = ContentScale.FillBounds,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp)
+                                )
+                                
+                                if (paperType == selectedPaperType) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(Color.Black.copy(alpha = 0.3f)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Check,
+                                            contentDescription = "선택됨",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(32.dp)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Button(
+                        onClick = { /* 저장 or 완료 처리 */ },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(65.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = OdokColors.Black
+                        ),
+                    ) {
+                        Icon(Icons.Default.Check, contentDescription = "완료")
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("완료")
+                    }
                 }
             }
         ) { innerPadding ->
@@ -111,7 +180,6 @@ fun AddMemoScreen(
                         }
                     }
 
-                    // 메모를 추가합니다.
                     Text(
                         modifier = Modifier.padding(top = 20.dp),
                         text = "메모를 추가합니다.",
@@ -138,7 +206,7 @@ fun AddMemoScreen(
                             .background(Color.White, RoundedCornerShape(10.dp))
                     ) {
                         Image(
-                            painter = painterResource(id = OdokIcons.WhitePaper),
+                            painter = painterResource(id = selectedPaperType),
                             contentDescription = "메모하기",
                             contentScale = ContentScale.FillBounds,
                             modifier = Modifier.matchParentSize()
