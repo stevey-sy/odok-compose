@@ -2,17 +2,22 @@ package com.sy.feature.memo
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.IconButton
@@ -23,23 +28,31 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sy.odokcompose.core.designsystem.DashiFont
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
-import androidx.compose.ui.text.style.TextAlign
 import com.sy.odokcompose.core.designsystem.MaruBuriFont
 
 @Composable
@@ -47,9 +60,11 @@ fun AddMemoScreen(
     onClose: () -> Unit,
     viewModel: AddMemoViewModel = hiltViewModel()
 ) {
-    val memoText = viewModel.memoText
+    var pageTextState by remember { mutableStateOf(TextFieldValue("")) }
+    var memoTextState by remember { mutableStateOf(TextFieldValue("")) }
+
     OdokTheme {
-        Scaffold (
+        Scaffold(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) { innerPadding ->
             Box(
@@ -58,15 +73,15 @@ fun AddMemoScreen(
                     .padding(innerPadding)
                     .background(OdokColors.White)
             ) {
-                Column (
+                Column(
                     modifier = Modifier
                         .padding(12.dp)
-                ){
+                ) {
                     Box(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.TopEnd
                     ) {
-                        IconButton(onClick = { onClose }) {
+                        IconButton(onClick = { onClose() }) {
                             Image(
                                 painter = painterResource(id = OdokIcons.CloseButton),
                                 contentDescription = "닫기",
@@ -77,7 +92,7 @@ fun AddMemoScreen(
 
                     // 메모를 추가합니다.
                     Text(
-                        modifier = Modifier.padding(top=20.dp),
+                        modifier = Modifier.padding(top = 20.dp),
                         text = "메모를 추가합니다.",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
@@ -96,77 +111,133 @@ fun AddMemoScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top=20.dp)
-                            .height(240.dp)
+                            .padding(top = 20.dp)
+                            .wrapContentHeight()
                             .shadow(8.dp, RoundedCornerShape(10.dp))
-                            .background(Color.White, RoundedCornerShape(10.dp)),
-                        contentAlignment = Alignment.Center
+                            .background(Color.White, RoundedCornerShape(10.dp))
                     ) {
                         Image(
                             painter = painterResource(id = OdokIcons.WhitePaper),
                             contentDescription = "메모하기",
                             contentScale = ContentScale.FillBounds,
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.matchParentSize()
                         )
 
-                        TextField(
-                            value = memoText,
-                            onValueChange = { viewModel.updateMemoText(it) },
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(16.dp),
-                            placeholder = {
-                                Text(
-                                    text = "메모를 입력하세요",
-                                    color = OdokColors.StealGray,
-                                    fontSize = 16.sp,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                            },
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent,
-                                disabledContainerColor = Color.Transparent,
-                                focusedIndicatorColor = OdokColors.Black,
-                                unfocusedIndicatorColor = OdokColors.Black.copy(alpha = 0.5f)
-                            ),
-                            textStyle = TextStyle(
-                                color = OdokColors.Black,
+                                .padding(start = 24.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "p.",
                                 fontSize = 16.sp,
-                                textAlign = TextAlign.Center
-                            ),
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.Default
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onDone = {
-                                    // 원하는 동작 수행
-                                }
-                            ),
-                            singleLine = false,
-                            maxLines = 5
-                        )
+                                fontFamily = MaruBuriFont,
+                                color = OdokColors.Black
+                            )
+                            TextField(
+                                value = pageTextState,
+                                onValueChange = { pageTextState = it },
+                                placeholder = {
+                                    Text(
+                                        text = "페이지 입력",
+                                        color = OdokColors.StealGray,
+                                        fontSize = 22.sp,
+                                        fontFamily = DashiFont,
+                                    )
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    disabledContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+                                textStyle = TextStyle(
+                                    color = OdokColors.Black,
+                                    fontSize = 22.sp,
+                                    fontFamily = DashiFont,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Start
+                                ),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Number
+                                ),
+                                singleLine = true,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
 
-                        Text(
-                            text = "2025. 06. 07",
+                        Box(
                             modifier = Modifier
-                                .padding(top = 24.dp),
-                            fontSize = 14.sp,
-                            fontFamily = MaruBuriFont,
-                            fontWeight = FontWeight.Normal,
-                            color = OdokColors.StealGray,
-                            textAlign = TextAlign.Center
-                        )
+                                .fillMaxWidth()
+                                .heightIn(min = 240.dp)
+                                .padding(horizontal = 24.dp, vertical = 20.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TextField(
+                                value = memoTextState,
+                                onValueChange = { memoTextState = it },
+                                placeholder = {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "메모를 입력하세요",
+                                            color = OdokColors.StealGray,
+                                            fontSize = 22.sp,
+                                            fontFamily = DashiFont,
+                                            fontWeight = FontWeight.Normal,
+                                            textAlign = TextAlign.Center
+                                        )
+                                    }
+                                },
+                                colors = TextFieldDefaults.colors(
+                                    focusedContainerColor = Color.Transparent,
+                                    unfocusedContainerColor = Color.Transparent,
+                                    disabledContainerColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+                                textStyle = TextStyle(
+                                    color = OdokColors.Black,
+                                    fontSize = 22.sp,
+                                    fontFamily = DashiFont,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Center
+                                ),
+                                keyboardOptions = KeyboardOptions.Default.copy(
+                                    imeAction = ImeAction.Default
+                                ),
+                                singleLine = false,
+                                maxLines = 10,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight()
+                            )
+                        }
 
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                                .align(Alignment.BottomCenter), // ✅ 날짜는 아래로 고정
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "2025. 06. 07",
+                                fontSize = 14.sp,
+                                fontFamily = MaruBuriFont,
+                                fontWeight = FontWeight.Normal,
+                                color = OdokColors.StealGray,
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
+
                 }
-
             }
-
-
-
         }
     }
 }

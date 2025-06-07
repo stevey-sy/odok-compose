@@ -58,6 +58,9 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
 
+    // text editor
+//    implementation("com.mohamedrejeb.richeditor:richeditor-compose:1.0.0-rc12")
+
     // Compose 의존성 추가
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -65,5 +68,5 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:${libs.versions.lifecycleRuntimeKtx.get()}")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation(libs.androidx.navigation.compose)
 }

@@ -60,6 +60,7 @@ fun BookEditBottomSheet(
                 color = OdokColors.Black
             )
             Spacer(modifier = Modifier.height(8.dp))
+
             var finishedCntValue by remember { mutableStateOf(TextFieldValue(finishedReadCnt)) }
             OutlinedTextField(
                 value = finishedCntValue,
