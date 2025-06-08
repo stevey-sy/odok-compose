@@ -140,7 +140,8 @@ class TimerViewModel @Inject constructor(
     }
 
     fun getReadPageInt(): Int {
-        return _book.value.currentPageCnt - _lastReadPageInput.value.toInt()
+        return _lastReadPageInput.value.toInt() - _book.value.currentPageCnt
+
     }
 
     fun saveLastReadPageAndDismiss() {
