@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.sy.odokcompose.core.database.BookDao
 import com.sy.odokcompose.core.database.MemoDao
 import com.sy.odokcompose.core.database.OdokDatabase
+import com.sy.odokcompose.core.database.export.BookJsonExporter
+import com.sy.odokcompose.core.database.export.DatabaseExporter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -36,5 +38,21 @@ object DatabaseModule {
     @Singleton
     fun provideMemoDao(database: OdokDatabase): MemoDao {
         return database.memoDao()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideBookJsonExporter(): BookJsonExporter {
+        return BookJsonExporter()
+    }
+    
+    @Provides
+    @Singleton
+    fun provideDatabaseExporter(
+        @ApplicationContext context: Context,
+        bookDao: BookDao,
+        bookJsonExporter: BookJsonExporter
+    ): DatabaseExporter {
+        return DatabaseExporter(context, bookDao, bookJsonExporter)
     }
 } 
