@@ -68,6 +68,7 @@ dependencies {
     
     // Core modules
     implementation(project(":core:designsystem"))
+    implementation(project(":core:ui"))
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     implementation(project(":core:domain"))

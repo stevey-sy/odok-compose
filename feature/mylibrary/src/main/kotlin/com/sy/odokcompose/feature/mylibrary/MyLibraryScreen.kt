@@ -56,14 +56,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
-import com.sy.odokcompose.core.designsystem.component.BookCover
+import com.sy.core.ui.components.BookCover
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfBase
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfLeft
 import com.sy.odokcompose.feature.mylibrary.components.BookShelfRight
 import com.sy.odokcompose.model.BookUiModel
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import com.sy.odokcompose.core.designsystem.component.SearchTextField
+import com.sy.core.ui.components.SearchTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.platform.LocalConfiguration

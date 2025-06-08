@@ -1,4 +1,4 @@
-package com.sy.odokcompose.core.designsystem.component
+package com.sy.core.ui.components
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,7 +25,6 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.model.BookUiModel
-import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
