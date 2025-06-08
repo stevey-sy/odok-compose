@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.sy.core.ui.toast
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.OdokTheme
 import com.sy.odokcompose.feature.mylibrary.components.BookActionButtons
@@ -78,12 +79,8 @@ fun BookDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                is UiEvent.ShowDeleteSuccess -> {
-                    Toast.makeText(context, "메모가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                }
-                is UiEvent.ShowError -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
+                is UiEvent.ShowDeleteSuccess -> context.toast("메모가 삭제되었습니다.")
+                is UiEvent.ShowError -> context.toast(event.message)
                 is UiEvent.HandleDeleteButton -> viewModel.deleteMemoById(event.memoId)
                 is UiEvent.HandleReadButton -> onReadBtnClicked(event.itemId)
             }
