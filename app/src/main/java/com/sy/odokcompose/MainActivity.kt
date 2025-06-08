@@ -361,6 +361,9 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
             onReadBtnClicked = { itemId ->
                 navController.navigateToTimer(itemId)
             },
+            onMemoAddBtnClicked = { bookId ->
+                navController.navigateToAddMemo(bookId)
+            },
             onMemoEditBtnClicked = {bookId, memoId ->
                 navController.navigateToEditMemo(bookId, memoId)
             },

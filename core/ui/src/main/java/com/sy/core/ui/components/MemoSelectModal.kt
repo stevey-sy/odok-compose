@@ -30,7 +30,7 @@ fun MemoSelectModal(
     memoSelectSheetState: SheetState,
 ) {
     ModalBottomSheet(
-        onDismissRequest = { onDismissRequest },
+        onDismissRequest = { onDismissRequest() },
         sheetState = memoSelectSheetState
     ) {
         Column(

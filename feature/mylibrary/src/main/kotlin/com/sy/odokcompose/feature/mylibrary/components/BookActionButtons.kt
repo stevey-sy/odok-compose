@@ -27,7 +27,8 @@ import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
 @Composable
 fun BookActionButtons(
-    onReadBtnClicked: () -> Unit
+    onReadBtnClicked: () -> Unit,
+    onMemoBtnClicked: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -86,7 +87,7 @@ fun BookActionButtons(
                         bottomEnd = 20.dp
                     )
                 )
-                .clickable { /* TODO: 기록 클릭 */ },
+                .clickable { onMemoBtnClicked() },
             contentAlignment = Alignment.Center
         ) {
             Row(

@@ -32,11 +32,14 @@ data class BookDetailUiState(
     val isEditViewShowing: Boolean = false,
     val isMemoListShowing: Boolean = false,
     val isMemoViewShowing: Boolean = false,
+    val isMemoOptionShowing: Boolean = false,
 )
 
 sealed class BookDetailEvent {
+    object HandleMemoButton: BookDetailEvent()
     data class HandleReadButton(val itemId: Int) : BookDetailEvent()
     data class HandleMemoDeleteButton(val memoId: Int) : BookDetailEvent()
+    data class HandleMemoAddButton(val bookId: Int): BookDetailEvent()
     data class HandleMemoEditButton(val bookId: Int, val memoId: Int): BookDetailEvent()
     data class ShowError(val message: String) : BookDetailEvent()
     data class HandleCommentButton(val itemId: Int): BookDetailEvent()
@@ -102,6 +105,8 @@ class BookDetailViewModel @Inject constructor(
             is BookDetailEvent.HandleMemoDeleteButton,
             is BookDetailEvent.ShowDeleteSuccess,
             is BookDetailEvent.HandleCommentButton,
+            is BookDetailEvent.HandleMemoButton,
+            is BookDetailEvent.HandleMemoAddButton,
             is BookDetailEvent.ShowError -> {
                 sendEvent(event)
             }
@@ -239,7 +244,7 @@ class BookDetailViewModel @Inject constructor(
         _uiState.update { it.copy(isEditViewShowing = false) }
     }
 
-    // ViewModel
+
     fun showMemoListView() {
         if(_memoList.value.isEmpty()) return
         _uiState.update { it.copy(isMemoListShowing = true) }
@@ -248,6 +253,15 @@ class BookDetailViewModel @Inject constructor(
     fun hideMemoListView() {
         _uiState.update { it.copy(isMemoListShowing = false) }
     }
+
+    fun showMemoSelectView() {
+        _uiState.update { it.copy(isMemoOptionShowing = true) }
+    }
+
+    fun hideMemoSelectView() {
+        _uiState.update { it.copy(isMemoOptionShowing = false) }
+    }
+
 
     fun updateFinishedReadCnt(value: String) {
         _finishedReadCnt.value = value

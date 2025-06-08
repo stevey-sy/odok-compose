@@ -49,6 +49,7 @@ fun NavController.navigateToBookDetail(itemId: Int,
 fun NavGraphBuilder.bookDetailScreen(
     navController: NavController,
     sharedTransitionScope: SharedTransitionScope,
+    onMemoAddBtnClicked: (bookId: Int) -> Unit,
     onMemoEditBtnClicked: (bookId:Int, memoId: Int) -> Unit,
     onReadBtnClicked: (itemId: Int) -> Unit,
     route: String = "$BOOK_DETAIL_ROUTE/{itemId}/{filterType}/{searchQuery}"
@@ -71,6 +72,7 @@ fun NavGraphBuilder.bookDetailScreen(
             navController = navController,
             sharedTransitionScope = sharedTransitionScope,
             onReadBtnClicked = onReadBtnClicked,
+            onMemoAddBtnClicked = onMemoAddBtnClicked,
             onMemoEditBtnClicked = onMemoEditBtnClicked,
             animatedVisibilityScope = this,
         )
