@@ -208,7 +208,10 @@ fun AddMemoScreen(
 
                     Text(
                         modifier = Modifier.padding(top = 20.dp),
-                        text = "메모를 추가합니다.",
+                        text = when (uiState) {
+                            is AddMemoUiState.CreateMode -> "메모를 추가합니다."
+                            is AddMemoUiState.EditMode -> "메모를 수정합니다."
+                        },
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                         color = OdokColors.Black
