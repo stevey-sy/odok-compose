@@ -106,7 +106,7 @@ class BookDetailViewModel @Inject constructor(
                 sendEvent(event)
             }
             is BookDetailEvent.HandleMemoEditButton -> {
-                hideMemoListView()
+//                hideMemoListView()
                 sendEvent(event)
             }
             else -> { /* 추가 이벤트 처리 */ }
