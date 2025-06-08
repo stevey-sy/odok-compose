@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -48,6 +49,7 @@ import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
 import com.sy.odokcompose.model.MemoUiModel
+import androidx.compose.runtime.saveable.rememberSaveable
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,16 +60,23 @@ fun MemoListBottomSheet(
     onEditClick: (memoId: Int) -> Unit,
     onDeleteClick: (memoId: Int) -> Unit,
 ) {
+    var expandedMemoIds by rememberSaveable { mutableStateOf(setOf<Int>()) }
+    val listState = rememberLazyListState()
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
         ) {
-            items(memoList) { memo ->
+            items(
+                items = memoList,
+                key = { it.memoId }
+            ) { memo ->
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -118,21 +127,45 @@ fun MemoListBottomSheet(
                                 .fillMaxWidth()
                                 .heightIn(min = 120.dp)
                                 .wrapContentHeight(),
-                            contentAlignment = Alignment.Center // 👈 핵심
+                            contentAlignment = Alignment.Center
                         ) {
-                            Text(
-                                text = memo.content,
-                                fontSize = 22.sp,
-                                fontFamily = DashiFont,
-                                fontWeight = FontWeight.Normal,
-                                textAlign = TextAlign.Center,
-                                color = Color.Black,
-                                softWrap = true,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(horizontal = 16.dp)
-                            )
+                            Column {
+                                Text(
+                                    text = memo.content,
+                                    fontSize = 22.sp,
+                                    fontFamily = DashiFont,
+                                    fontWeight = FontWeight.Normal,
+                                    textAlign = TextAlign.Center,
+                                    color = Color.Black,
+                                    softWrap = true,
+                                    maxLines = if (expandedMemoIds.contains(memo.memoId)) Int.MAX_VALUE else 5,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(horizontal = 16.dp)
+                                )
+                                
+                                if (memo.content.count { it == '\n' } >= 4) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = if (expandedMemoIds.contains(memo.memoId)) "접기" else "펼치기",
+                                        fontSize = 16.sp,
+                                        fontFamily = DashiFont,
+                                        color = OdokColors.StealGray,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { 
+                                                expandedMemoIds = if (expandedMemoIds.contains(memo.memoId)) {
+                                                    expandedMemoIds - memo.memoId
+                                                } else {
+                                                    expandedMemoIds + memo.memoId
+                                                }
+                                            }
+                                            .padding(vertical = 4.dp)
+                                    )
+                                }
+                            }
                         }
 
                         Spacer(modifier = Modifier.height(24.dp))

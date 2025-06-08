@@ -56,7 +56,7 @@ fun BookDetailScreen(
     val memoList by viewModel.memoList.collectAsState()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val memoSheetState = rememberModalBottomSheetState()
+    val memoSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     // SavedStateHandle 데이터 변경 감지
     LaunchedEffect(Unit) {
