@@ -187,14 +187,14 @@ fun MemoListBottomSheet(
                                 text = { Text("수정") },
                                 onClick = {
                                     showMenu = false
-                                    onEditClick(0)
+                                    onEditClick(memo.memoId)
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("삭제") },
                                 onClick = {
                                     showMenu = false
-                                    onDeleteClick(0)
+                                    onDeleteClick(memo.memoId)
                                 }
                             )
                         }

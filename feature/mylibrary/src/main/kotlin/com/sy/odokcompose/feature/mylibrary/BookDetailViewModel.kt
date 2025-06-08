@@ -3,7 +3,8 @@ package com.sy.odokcompose.feature.mylibrary
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sy.odokcompose.core.domain.GetBookDetailUseCase
+import com.sy.odokcompose.core.domain.DeleteMemoResult
+import com.sy.odokcompose.core.domain.DeleteMemoUseCase
 import com.sy.odokcompose.core.domain.GetMemosUseCase
 import com.sy.odokcompose.core.domain.GetMyBooksUseCase
 import com.sy.odokcompose.core.domain.UpdateBookUseCase
@@ -12,27 +13,45 @@ import com.sy.odokcompose.model.MemoUiModel
 import com.sy.odokcompose.model.type.ShelfFilterType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class BookDetailUiState(
+    val isLoading: Boolean = false,
+    val isEditViewShowing: Boolean = false,
+    val isMemoListShowing: Boolean = false,
+    val isMemoViewShowing: Boolean = false,
+)
+
+sealed class UiEvent {
+    data class HandleReadButton(val itemId: Int) : UiEvent()
+    data class HandleDeleteButton(val memoId: Int) : UiEvent()
+    data class ShowError(val message: String) : UiEvent()
+    object ShowDeleteSuccess : UiEvent()
+}
+
 @HiltViewModel
 class BookDetailViewModel @Inject constructor(
     private val getMyBooksUseCase: GetMyBooksUseCase,
     private val getMemosUseCase: GetMemosUseCase,
+    private val deleteMemoUseCase: DeleteMemoUseCase,
     private val updateBookUseCase: UpdateBookUseCase,
-    private val savedStateHandle : SavedStateHandle
+    private val savedStateHandle : SavedStateHandle,
 ) : ViewModel() {
+    private val _eventChannel = Channel<UiEvent>(Channel.UNLIMITED)
+    val eventFlow = _eventChannel.receiveAsFlow()
+
     private val _uiState = MutableStateFlow(BookDetailUiState())
     val uiState : StateFlow<BookDetailUiState> = _uiState.asStateFlow()
 
@@ -72,6 +91,23 @@ class BookDetailViewModel @Inject constructor(
         val searchQuery: String? = savedStateHandle["searchQuery"] ?: ""
         loadBooksAndSetPage(filterType, searchQuery)
         collectMemos() // 메모 수집 시작
+    }
+
+    // screen 에서 일어나는 모든 이벤트를 관리.
+    fun handleEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.HandleReadButton,
+            is UiEvent.HandleDeleteButton,
+            is UiEvent.ShowDeleteSuccess,
+            is UiEvent.ShowError -> {
+                sendEvent(event)
+            }
+            else -> { /* 추가 이벤트 처리 */ }
+        }
+    }
+
+    private fun sendEvent(event: UiEvent) {
+        viewModelScope.launch { _eventChannel.send(event) }
     }
 
     private fun loadBooksAndSetPage(
@@ -172,7 +208,7 @@ class BookDetailViewModel @Inject constructor(
                     updateBookUseCase.invoke(updatedBook)
                 }
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
+                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
             }
         }
     }
@@ -196,14 +232,6 @@ class BookDetailViewModel @Inject constructor(
         _uiState.update { it.copy(isEditViewShowing = false) }
     }
 
-//    fun showMemoListView() {
-//        _uiState.update {it.copy(isMemoViewShowing = true)}
-//    }
-//
-//    fun hideMemoListView() {
-//        _uiState.update {it.copy(isMemoViewShowing = false)}
-//    }
-
     // ViewModel
     fun showMemoListView() {
         _uiState.update { it.copy(isMemoListShowing = true) }
@@ -219,6 +247,23 @@ class BookDetailViewModel @Inject constructor(
 
     fun updateCurrentPageCnt(value: String) {
         _currentPageCnt.value = value
+    }
+
+    fun deleteMemoById(memoId: Int) {
+        viewModelScope.launch {
+            try {
+                when (val result = deleteMemoUseCase(memoId)) {
+                    is DeleteMemoResult.Success -> {
+                        handleEvent(UiEvent.ShowDeleteSuccess)
+                    }
+                    is DeleteMemoResult.Error -> {
+                        handleEvent(UiEvent.ShowError(result.meesage))
+                    }
+                }
+            } catch (e: Exception) {
+                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
+            }
+        }
     }
 
     fun saveChanges() {
@@ -240,17 +285,9 @@ class BookDetailViewModel @Inject constructor(
                 
                 hideEditView() // UI 상태 변경은 작업 완료 후
             } catch (e: Exception) {
-                _uiState.update { it.copy(errorMessage = e.message) }
+                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
             }
         }
     }
 
 }
-
-data class BookDetailUiState(
-    val isLoading: Boolean = false,
-    val isEditViewShowing: Boolean = false,
-    val isMemoListShowing: Boolean = false,
-    val isMemoViewShowing: Boolean = false,
-    val errorMessage: String? = null
-)

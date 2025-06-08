@@ -1,6 +1,7 @@
 package com.sy.odokcompose.feature.mylibrary
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -20,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -42,6 +44,7 @@ fun BookDetailScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     onReadBtnClicked: (itemId: Int) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel(),
+    handleEvent: (UiEvent) -> Unit = viewModel::handleEvent
 ) {
     val bookList by viewModel.bookList.collectAsState()
     val currentPage by viewModel.currentPage.collectAsState()
@@ -50,7 +53,6 @@ fun BookDetailScreen(
     val finishedReadCnt by viewModel.finishedReadCnt.collectAsState()
     val currentPageCnt by viewModel.currentPageCnt.collectAsState()
     val memoList by viewModel.memoList.collectAsState()
-
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val memoSheetState = rememberModalBottomSheetState()
@@ -69,6 +71,22 @@ fun BookDetailScreen(
             savedStateHandle["lastReadPage"] = null
             savedStateHandle["elapsedTimeSeconds"] = null
             savedStateHandle["isBookReadingCompleted"] = null
+        }
+    }
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                is UiEvent.ShowDeleteSuccess -> {
+                    Toast.makeText(context, "메모가 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                }
+                is UiEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is UiEvent.HandleDeleteButton -> viewModel.deleteMemoById(event.memoId)
+                is UiEvent.HandleReadButton -> onReadBtnClicked(event.itemId)
+            }
         }
     }
 
@@ -110,7 +128,8 @@ fun BookDetailScreen(
 
                     BookActionButtons(
                         onReadBtnClicked= {
-                            onReadBtnClicked(currentBook?.itemId ?: 0)
+                            handleEvent(UiEvent.HandleReadButton(currentBook?.itemId ?: 0))
+//                            onReadBtnClicked(currentBook?.itemId ?: 0)
                         }
                     )
 
@@ -141,7 +160,7 @@ fun BookDetailScreen(
                         memoList = memoList,
                         onDismissRequest = {viewModel.hideMemoListView()},
                         onEditClick = {},
-                        onDeleteClick = {}
+                        onDeleteClick = { momoId -> handleEvent(UiEvent.HandleDeleteButton(momoId))}
                     )
                 }
             }

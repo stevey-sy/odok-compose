@@ -25,7 +25,7 @@ class MemoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteMemoById(memoId: Int) {
-        TODO("Not yet implemented")
+        memoLocalDataSource.deleteMemoById(memoId)
     }
 
     override suspend fun updateMemo(memoEntity: MemoEntity) {

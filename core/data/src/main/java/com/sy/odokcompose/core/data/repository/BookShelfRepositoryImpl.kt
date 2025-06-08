@@ -1,6 +1,7 @@
 package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSource
+import com.sy.odokcompose.core.database.entity.BookEntity
 import com.sy.odokcompose.core.database.entity.mapper.BookEntityMapper
 import com.sy.odokcompose.model.BookUiModel
 import com.sy.odokcompose.model.type.ShelfFilterType
@@ -40,6 +41,10 @@ class BookShelfRepositoryImpl @Inject constructor(
         elapsedTime: Int
     ) {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun updateBook(bookEntity: BookEntity) {
+        bookLocalDataSource.update(bookEntity)
     }
 
 }
