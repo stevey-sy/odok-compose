@@ -5,11 +5,13 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -108,36 +110,74 @@ fun BookDetailScreen(
                         currentPage = currentPage,
                         onPageChanged = viewModel::onPageChanged,
                         sharedTransitionScope = sharedTransitionScope,
-                        animatedVisibilityScope = animatedVisibilityScope
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        modifier = Modifier.weight(1f) // <= 이 부분이 핵심
                     )
 
-                    BookInfo(
-                        title = currentBook?.getTitleText() ?: "",
-                        author = currentBook?.author ?: ""
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f), // 동일한 가중치로 나머지 50%
+                        verticalArrangement = Arrangement.SpaceEvenly // 균형 있게 배치
+                    ) {
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        BookInfo(
+                            title = currentBook?.getTitleText() ?: "",
+                            author = currentBook?.author ?: ""
+                        )
 
-                    BookProgress(
-                        progressPercentage = currentBook?.progressPercentage ?: 0,
-                        progressText = currentBook?.progressText ?: ""
-                    )
+//                        Spacer(modifier = Modifier.height(8.dp))
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                        BookProgress(
+                            progressPercentage = currentBook?.progressPercentage ?: 0,
+                            progressText = currentBook?.progressText ?: ""
+                        )
 
-                    BookActionButtons(
-                        onReadBtnClicked= {
-                            handleEvent(BookDetailEvent.HandleReadButton(currentBook?.itemId ?: 0))
-                        }
-                    )
+//                        Spacer(modifier = Modifier.height(12.dp))
 
-                    CommentSection(
-                        onCommentsClick = {
+                        BookActionButtons(
+                            onReadBtnClicked= {
+                                handleEvent(BookDetailEvent.HandleReadButton(currentBook?.itemId ?: 0))
+                            }
+                        )
+
+                        CommentSection(
+                            onCommentsClick = {
 //                            viewModel.showMemoListView()
-                            handleEvent(BookDetailEvent.HandleCommentButton(currentBook?.itemId ?: 0))
-                                          },
-                        commentCount = memoList.size
-                    )
+                                handleEvent(BookDetailEvent.HandleCommentButton(currentBook?.itemId ?: 0))
+                            },
+                            commentCount = memoList.size
+                        )
+
+                    }
+//
+//                    BookInfo(
+//                        title = currentBook?.getTitleText() ?: "",
+//                        author = currentBook?.author ?: ""
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(8.dp))
+//
+//                    BookProgress(
+//                        progressPercentage = currentBook?.progressPercentage ?: 0,
+//                        progressText = currentBook?.progressText ?: ""
+//                    )
+//
+//                    Spacer(modifier = Modifier.height(12.dp))
+//
+//                    BookActionButtons(
+//                        onReadBtnClicked= {
+//                            handleEvent(BookDetailEvent.HandleReadButton(currentBook?.itemId ?: 0))
+//                        }
+//                    )
+//
+//                    CommentSection(
+//                        onCommentsClick = {
+////                            viewModel.showMemoListView()
+//                            handleEvent(BookDetailEvent.HandleCommentButton(currentBook?.itemId ?: 0))
+//                                          },
+//                        commentCount = memoList.size
+//                    )
                 }
 
                 if (uiState.isEditViewShowing) {

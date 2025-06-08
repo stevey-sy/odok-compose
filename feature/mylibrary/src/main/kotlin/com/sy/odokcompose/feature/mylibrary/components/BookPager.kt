@@ -25,7 +25,8 @@ fun BookPager(
     currentPage: Int,
     onPageChanged: (Int) -> Unit,
     sharedTransitionScope: SharedTransitionScope,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    modifier: Modifier
 ) {
     val pagerState = if (bookList.isNotEmpty()) {
         rememberPagerState(
@@ -52,10 +53,11 @@ fun BookPager(
 
     HorizontalPager(
         state = pagerState,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top= 20.dp)
-            .height(280.dp),
+        modifier = modifier,
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(top= 20.dp)
+//            .height(280.dp),
         contentPadding = PaddingValues(horizontal = horizontalPadding),
     ) { page ->
         val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
