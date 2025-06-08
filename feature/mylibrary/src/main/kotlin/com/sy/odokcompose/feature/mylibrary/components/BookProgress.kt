@@ -5,15 +5,10 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,52 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.sy.odokcompose.core.designsystem.OdokColors
-import com.sy.odokcompose.core.designsystem.R
-
-@Composable
-fun BookProgress(
-    progress: Float,
-    currentPage: Int,
-    totalPages: Int
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-                .background(
-                    color = Color.LightGray,
-                    shape = RoundedCornerShape(4.dp)
-                )
-        ) {
-            LinearProgressIndicator(
-                progress = progress,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp),
-                color = Color.Black,
-                trackColor = Color.Transparent
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "$currentPage / $totalPages",
-            fontSize = 12.sp,
-            color = Color.Gray
-        )
-    }
-}
 
 @Composable
 fun BookProgress(
@@ -120,7 +70,7 @@ fun BookProgress(
                         .height(8.dp)
                         .fillMaxWidth(animatedProgress.coerceAtLeast(0.001f))
                         .background(
-                            color = Color.Black,
+                            color = if (progressPercentage == 0) Color.Transparent else Color.Black,
                             shape = RoundedCornerShape(4.dp)
                         )
                         .align(Alignment.BottomStart)

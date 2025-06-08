@@ -42,11 +42,12 @@ fun SimpleSpeechBubble(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .offset(x = (boxWidth * animatedProgress + 20.dp))
+            .offset(x = (boxWidth * animatedProgress + 10.dp))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.width(IntrinsicSize.Min)
+//            modifier = Modifier.width(IntrinsicSize.Min)
+            modifier = Modifier.width(56.dp)
         ) {
             Box(
                 modifier = Modifier
