@@ -1,7 +1,6 @@
 package com.sy.odokcompose.feature.mylibrary
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -44,8 +43,9 @@ fun BookDetailScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onReadBtnClicked: (itemId: Int) -> Unit,
+    onMemoEditBtnClicked: (bookId:Int, memoId: Int) -> Unit,
     viewModel: BookDetailViewModel = hiltViewModel(),
-    handleEvent: (UiEvent) -> Unit = viewModel::handleEvent
+    handleEvent: (BookDetailEvent) -> Unit = viewModel::handleEvent
 ) {
     val bookList by viewModel.bookList.collectAsState()
     val currentPage by viewModel.currentPage.collectAsState()
@@ -79,10 +79,12 @@ fun BookDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.eventFlow.collect { event ->
             when (event) {
-                is UiEvent.ShowDeleteSuccess -> context.toast("메모가 삭제되었습니다.")
-                is UiEvent.ShowError -> context.toast(event.message)
-                is UiEvent.HandleDeleteButton -> viewModel.deleteMemoById(event.memoId)
-                is UiEvent.HandleReadButton -> onReadBtnClicked(event.itemId)
+                is BookDetailEvent.ShowDeleteSuccess -> context.toast("메모가 삭제되었습니다.")
+                is BookDetailEvent.ShowError -> context.toast(event.message)
+                is BookDetailEvent.HandleCommentButton -> viewModel.showMemoListView()
+                is BookDetailEvent.HandleMemoDeleteButton -> viewModel.deleteMemoById(event.memoId)
+                is BookDetailEvent.HandleReadButton -> onReadBtnClicked(event.itemId)
+                is BookDetailEvent.HandleMemoEditButton -> onMemoEditBtnClicked(event.bookId, event.memoId)
             }
         }
     }
@@ -125,14 +127,14 @@ fun BookDetailScreen(
 
                     BookActionButtons(
                         onReadBtnClicked= {
-                            handleEvent(UiEvent.HandleReadButton(currentBook?.itemId ?: 0))
-//                            onReadBtnClicked(currentBook?.itemId ?: 0)
+                            handleEvent(BookDetailEvent.HandleReadButton(currentBook?.itemId ?: 0))
                         }
                     )
 
                     CommentSection(
                         onCommentsClick = {
-                            viewModel.showMemoListView()
+//                            viewModel.showMemoListView()
+                            handleEvent(BookDetailEvent.HandleCommentButton(currentBook?.itemId ?: 0))
                                           },
                         commentCount = memoList.size
                     )
@@ -156,8 +158,8 @@ fun BookDetailScreen(
                         sheetState = memoSheetState,
                         memoList = memoList,
                         onDismissRequest = {viewModel.hideMemoListView()},
-                        onEditClick = {},
-                        onDeleteClick = { momoId -> handleEvent(UiEvent.HandleDeleteButton(momoId))}
+                        onEditClick = {momoId -> handleEvent(BookDetailEvent.HandleMemoEditButton(currentBook?.itemId ?: 0, momoId))},
+                        onDeleteClick = { momoId -> handleEvent(BookDetailEvent.HandleMemoDeleteButton(momoId))}
                     )
                 }
             }

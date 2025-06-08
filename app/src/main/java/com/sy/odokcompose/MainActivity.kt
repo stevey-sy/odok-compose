@@ -75,7 +75,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import com.sy.feature.memo.navigation.addMemoScreen
+import com.sy.feature.memo.navigation.editMemoScreen
 import com.sy.feature.memo.navigation.navigateToAddMemo
+import com.sy.feature.memo.navigation.navigateToEditMemo
 import com.sy.feature.timer.navigation.navigateToTimer
 import com.sy.feature.timer.navigation.timerScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
@@ -359,13 +361,18 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
             onReadBtnClicked = { itemId ->
                 navController.navigateToTimer(itemId)
             },
+            onMemoEditBtnClicked = {bookId, memoId ->
+                navController.navigateToEditMemo(bookId, memoId)
+            },
             sharedTransitionScope = sharedTransitionScope,
         )
 
+        editMemoScreen(
+            onClose = {navController.popBackStack()}
+        )
+
         addMemoScreen(
-            onClose = {
-                navController.popBackStack()
-            }
+            onClose = {navController.popBackStack()}
         )
 
         timerScreen(

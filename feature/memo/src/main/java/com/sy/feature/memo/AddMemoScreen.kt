@@ -74,6 +74,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import com.sy.odokcompose.model.MemoUiModel
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*

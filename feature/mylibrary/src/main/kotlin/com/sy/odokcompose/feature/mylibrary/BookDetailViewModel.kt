@@ -34,11 +34,13 @@ data class BookDetailUiState(
     val isMemoViewShowing: Boolean = false,
 )
 
-sealed class UiEvent {
-    data class HandleReadButton(val itemId: Int) : UiEvent()
-    data class HandleDeleteButton(val memoId: Int) : UiEvent()
-    data class ShowError(val message: String) : UiEvent()
-    object ShowDeleteSuccess : UiEvent()
+sealed class BookDetailEvent {
+    data class HandleReadButton(val itemId: Int) : BookDetailEvent()
+    data class HandleMemoDeleteButton(val memoId: Int) : BookDetailEvent()
+    data class HandleMemoEditButton(val bookId: Int, val memoId: Int): BookDetailEvent()
+    data class ShowError(val message: String) : BookDetailEvent()
+    data class HandleCommentButton(val itemId: Int): BookDetailEvent()
+    object ShowDeleteSuccess : BookDetailEvent()
 }
 
 @HiltViewModel
@@ -49,7 +51,7 @@ class BookDetailViewModel @Inject constructor(
     private val updateBookUseCase: UpdateBookUseCase,
     private val savedStateHandle : SavedStateHandle,
 ) : ViewModel() {
-    private val _eventChannel = Channel<UiEvent>(Channel.UNLIMITED)
+    private val _eventChannel = Channel<BookDetailEvent>(Channel.UNLIMITED)
     val eventFlow = _eventChannel.receiveAsFlow()
 
     private val _uiState = MutableStateFlow(BookDetailUiState())
@@ -94,19 +96,24 @@ class BookDetailViewModel @Inject constructor(
     }
 
     // screen 에서 일어나는 모든 이벤트를 관리.
-    fun handleEvent(event: UiEvent) {
+    fun handleEvent(event: BookDetailEvent) {
         when (event) {
-            is UiEvent.HandleReadButton,
-            is UiEvent.HandleDeleteButton,
-            is UiEvent.ShowDeleteSuccess,
-            is UiEvent.ShowError -> {
+            is BookDetailEvent.HandleReadButton,
+            is BookDetailEvent.HandleMemoDeleteButton,
+            is BookDetailEvent.ShowDeleteSuccess,
+            is BookDetailEvent.HandleCommentButton,
+            is BookDetailEvent.ShowError -> {
+                sendEvent(event)
+            }
+            is BookDetailEvent.HandleMemoEditButton -> {
+                hideMemoListView()
                 sendEvent(event)
             }
             else -> { /* 추가 이벤트 처리 */ }
         }
     }
 
-    private fun sendEvent(event: UiEvent) {
+    private fun sendEvent(event: BookDetailEvent) {
         viewModelScope.launch { _eventChannel.send(event) }
     }
 
@@ -208,7 +215,7 @@ class BookDetailViewModel @Inject constructor(
                     updateBookUseCase.invoke(updatedBook)
                 }
             } catch (e: Exception) {
-                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
+                handleEvent(BookDetailEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
             }
         }
     }
@@ -234,6 +241,7 @@ class BookDetailViewModel @Inject constructor(
 
     // ViewModel
     fun showMemoListView() {
+        if(_memoList.value.isEmpty()) return
         _uiState.update { it.copy(isMemoListShowing = true) }
     }
 
@@ -254,14 +262,14 @@ class BookDetailViewModel @Inject constructor(
             try {
                 when (val result = deleteMemoUseCase(memoId)) {
                     is DeleteMemoResult.Success -> {
-                        handleEvent(UiEvent.ShowDeleteSuccess)
+                        handleEvent(BookDetailEvent.ShowDeleteSuccess)
                     }
                     is DeleteMemoResult.Error -> {
-                        handleEvent(UiEvent.ShowError(result.meesage))
+                        handleEvent(BookDetailEvent.ShowError(result.meesage))
                     }
                 }
             } catch (e: Exception) {
-                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
+                handleEvent(BookDetailEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
             }
         }
     }
@@ -285,7 +293,7 @@ class BookDetailViewModel @Inject constructor(
                 
                 hideEditView() // UI 상태 변경은 작업 완료 후
             } catch (e: Exception) {
-                handleEvent(UiEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
+                handleEvent(BookDetailEvent.ShowError(e.message ?: "알 수 없는 에러가 발생했습니다."))
             }
         }
     }
