@@ -15,7 +15,7 @@ interface MemoRepository {
      *  memoId 로 메모 데이터를 가져옵니다.
      *  @param memoId 메모 id
      */
-    suspend fun getMemoById(memoId: Int): Flow<MemoUiModel>
+    suspend fun getMemoById(memoId: Int): MemoUiModel?
 
     /**
      *  memoId 로 메모 데이터를 삭제합니다.

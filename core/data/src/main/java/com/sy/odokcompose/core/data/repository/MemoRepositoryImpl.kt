@@ -2,6 +2,7 @@ package com.sy.odokcompose.core.data.repository
 
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSource
 import com.sy.odokcompose.core.database.entity.MemoEntity
+import com.sy.odokcompose.core.database.entity.mapper.BookEntityMapper
 import com.sy.odokcompose.core.database.entity.mapper.MemoEntityMapper
 import com.sy.odokcompose.model.MemoUiModel
 import kotlinx.coroutines.flow.map
@@ -20,8 +21,9 @@ class MemoRepositoryImpl @Inject constructor(
             }
     }
 
-    override suspend fun getMemoById(memoId: Int): Flow<MemoUiModel> {
-        TODO("Not yet implemented")
+    override suspend fun getMemoById(memoId: Int): MemoUiModel? {
+        val entity = memoLocalDataSource.getMemoById(memoId)
+        return entity?.let { MemoEntityMapper.entityToModel(it) }
     }
 
     override suspend fun deleteMemoById(memoId: Int) {
