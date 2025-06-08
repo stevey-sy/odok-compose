@@ -32,7 +32,7 @@ class BookShelfRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteBookById(itemId: Int) {
-        TODO("Not yet implemented")
+        bookLocalDataSource.deleteBookById(itemId)
     }
 
     override suspend fun updateReadingProgress(
