@@ -46,6 +46,7 @@ dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:timer"))
     implementation(project(":feature:memo"))
+    implementation(project(":feature:profile"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
 

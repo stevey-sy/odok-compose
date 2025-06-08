@@ -48,7 +48,6 @@ import com.sy.odokcompose.feature.mylibrary.navigation.MY_LIBRARY_ROUTE
 import com.sy.odokcompose.feature.mylibrary.navigation.myLibraryScreen
 import com.sy.odokcompose.feature.search.navigation.SEARCH_ROUTE
 import com.sy.odokcompose.feature.search.navigation.navigateToSearch
-import com.sy.odokcompose.navigation.BottomNavItem
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.sp
@@ -82,6 +81,8 @@ import com.sy.feature.timer.navigation.navigateToTimer
 import com.sy.feature.timer.navigation.timerScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
 import com.sy.odokcompose.feature.mylibrary.MyLibraryViewModel
+import com.sy.odokcompose.feature.profile.navigation.PROFILE_ROUTE
+import com.sy.odokcompose.feature.profile.navigation.profileScreen
 import com.sy.odokcompose.model.type.ShelfFilterType
 
 @AndroidEntryPoint
@@ -156,17 +157,7 @@ fun MainScreen(
             icon = Icons.Default.Home
         ),
         BottomNavigationItem(
-            route = BottomNavItem.Home.route,
-            title = "홈",
-            icon = Icons.Default.Home
-        ),
-        BottomNavigationItem(
-            route = BottomNavItem.Library.route,
-            title = "서재",
-            icon = Icons.Default.Home
-        ),
-        BottomNavigationItem(
-            route = BottomNavItem.Profile.route,
+            route = PROFILE_ROUTE,
             title = "프로필",
             icon = Icons.Default.Person
         )
@@ -222,6 +213,11 @@ fun MainScreen(
                                 fontFamily = FontFamily.Default,
                                 fontSize = 22.sp,
                                 onBackClick = { navController.popBackStack() }
+                            )
+                        }
+                        currentRoute == PROFILE_ROUTE -> {
+                            OdokTopAppBar(
+                                title = "오독오독",
                             )
                         }
                         currentRoute == MY_LIBRARY_ROUTE -> {
@@ -325,7 +321,11 @@ fun MainScreen(
                     // 현재 경로가 검색 화면이 아닐 때만 바텀 네비게이션 표시
                     if (currentRoute == MY_LIBRARY_ROUTE) {
                         OdokBottomNavigationBar(navController = navController, items = navigationItems)
-                    } else if (currentRoute?.contains(BOOK_DETAIL_ROUTE) == true) {
+                    }
+//                    else if (currentRoute?.contains(BOOK_DETAIL_ROUTE) == true) {
+//                        OdokBottomNavigationBar(navController = navController, items = navigationItems)
+//                    }
+                    else if (currentRoute == PROFILE_ROUTE) {
                         OdokBottomNavigationBar(navController = navController, items = navigationItems)
                     }
                 },
@@ -366,6 +366,8 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
             },
             sharedTransitionScope = sharedTransitionScope,
         )
+
+        profileScreen()
 
         editMemoScreen(
             onClose = {navController.popBackStack()}
