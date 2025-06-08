@@ -35,7 +35,7 @@ interface BookDao {
     @Query("SELECT * FROM books WHERE currentPageCnt < totalPageCnt ORDER BY itemId DESC")
     fun getReadingBooks(): Flow<List<BookEntity>>
 
-    @Query("SELECT * FROM books WHERE currentPageCnt = totalPageCnt ORDER BY itemId DESC")
+    @Query("SELECT * FROM books WHERE currentPageCnt = totalPageCnt OR finishedReadCnt > 0 ORDER BY itemId DESC")
     fun getFinishedBooks(): Flow<List<BookEntity>>
 
     @Query("""
