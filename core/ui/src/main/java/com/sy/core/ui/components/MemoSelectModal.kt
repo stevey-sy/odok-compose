@@ -16,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.OdokColors
 import com.sy.odokcompose.core.designsystem.icon.OdokIcons
 
@@ -36,9 +39,17 @@ fun MemoSelectModal(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 32.dp),
+                .padding(horizontal = 24.dp,),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(
+                text = "책 속의 텍스트를\n가져올 방법을 선택해주세요.",
+                fontSize = 16.sp,
+                maxLines = 2,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 10.dp, bottom = 30.dp)
+            )
             Button(
                 onClick = {onMicroPhoneBtnClick() },
                 modifier = Modifier
