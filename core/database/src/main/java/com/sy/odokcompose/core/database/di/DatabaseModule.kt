@@ -7,6 +7,7 @@ import com.sy.odokcompose.core.database.MemoDao
 import com.sy.odokcompose.core.database.OdokDatabase
 import com.sy.odokcompose.core.database.export.BookJsonExporter
 import com.sy.odokcompose.core.database.export.DatabaseExporter
+import com.sy.odokcompose.core.database.export.MemoJsonExporter
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,11 +49,19 @@ object DatabaseModule {
     
     @Provides
     @Singleton
+    fun provideMemoJsonExporter(): MemoJsonExporter {
+        return MemoJsonExporter()
+    }
+    
+    @Provides
+    @Singleton
     fun provideDatabaseExporter(
         @ApplicationContext context: Context,
         bookDao: BookDao,
-        bookJsonExporter: BookJsonExporter
+        memoDao: MemoDao,
+        bookJsonExporter: BookJsonExporter,
+        memoJsonExporter: MemoJsonExporter
     ): DatabaseExporter {
-        return DatabaseExporter(context, bookDao, bookJsonExporter)
+        return DatabaseExporter(context, bookDao, memoDao, bookJsonExporter, memoJsonExporter)
     }
 } 

@@ -3,6 +3,7 @@ package com.sy.odokcompose.core.database.export
 import android.content.Context
 import android.util.Log
 import com.sy.odokcompose.core.database.BookDao
+import com.sy.odokcompose.core.database.MemoDao
 import kotlinx.coroutines.flow.first
 import java.io.File
 import javax.inject.Inject
@@ -12,46 +13,55 @@ import javax.inject.Singleton
 class DatabaseExporter @Inject constructor(
     private val context: Context,
     private val bookDao: BookDao,
-    private val bookJsonExporter: BookJsonExporter
+    private val memoDao: MemoDao,
+    private val bookJsonExporter: BookJsonExporter,
+    private val memoJsonExporter: MemoJsonExporter
 ) {
-    suspend fun exportBooks(): Result<File> {
+    suspend fun exportDatabase(): Result<File> {
         return try {
             Log.d("DatabaseExporter", "Starting export process...")
             val books = bookDao.getAllBooks().first()
-            Log.d("DatabaseExporter", "Retrieved ${books.size} books from database")
+            val memos = memoDao.getAllMemos().first()
+            Log.d("DatabaseExporter", "Retrieved ${books.size} books and ${memos.size} memos from database")
             
             val exportDir = File(context.filesDir, "exports")
             val dirCreated = exportDir.mkdirs()
             Log.d("DatabaseExporter", "Export directory created: $dirCreated at ${exportDir.absolutePath}")
             
             val timestamp = System.currentTimeMillis()
-            val outputFile = File(exportDir, "books_$timestamp.json")
-            Log.d("DatabaseExporter", "Output file path: ${outputFile.absolutePath}")
+            val booksFile = File(exportDir, "books_$timestamp.json")
+            val memosFile = File(exportDir, "memos_$timestamp.json")
             
-            bookJsonExporter.exportBooks(books, outputFile)
+            bookJsonExporter.exportBooks(books, booksFile)
+            memoJsonExporter.exportMemos(memos, memosFile)
             
             // 파일 생성 여부 확인
-            if (outputFile.exists()) {
-                Log.d("DatabaseExporter", "File exists: ${outputFile.absolutePath}")
-                Log.d("DatabaseExporter", "File size: ${outputFile.length()} bytes")
-                Log.d("DatabaseExporter", "File content preview: ${outputFile.readText().take(100)}")
+            if (booksFile.exists() && memosFile.exists()) {
+                Log.d("DatabaseExporter", "Files exist: ${booksFile.absolutePath}, ${memosFile.absolutePath}")
+                Log.d("DatabaseExporter", "Books file size: ${booksFile.length()} bytes")
+                Log.d("DatabaseExporter", "Memos file size: ${memosFile.length()} bytes")
             } else {
-                Log.e("DatabaseExporter", "File does not exist: ${outputFile.absolutePath}")
+                Log.e("DatabaseExporter", "Some files do not exist")
             }
             
             Log.d("DatabaseExporter", "Export completed successfully")
-            Result.success(outputFile)
+            Result.success(exportDir)
         } catch (e: Exception) {
             Log.e("DatabaseExporter", "Export failed", e)
             Result.failure(e)
         }
     }
     
-    suspend fun importBooks(inputFile: File): Result<Unit> {
+    suspend fun importDatabase(booksFile: File, memosFile: File): Result<Unit> {
         return try {
-            val books = bookJsonExporter.importBooks(inputFile).getOrThrow()
+            val books = bookJsonExporter.importBooks(booksFile).getOrThrow()
+            val memos = memoJsonExporter.importMemos(memosFile).getOrThrow()
+            
             books.forEach { book ->
                 bookDao.insertBook(book)
+            }
+            memos.forEach { memo ->
+                memoDao.insertMemo(memo)
             }
             Result.success(Unit)
         } catch (e: Exception) {
@@ -61,17 +71,26 @@ class DatabaseExporter @Inject constructor(
 
     suspend fun importDummyData(): Result<Unit> {
         return try {
-            val dummyFile = File(context.filesDir, "books_dummy.json")
-            if (!dummyFile.exists()) {
-                // assets에서 더미 데이터 파일을 복사
+            val booksFile = File(context.filesDir, "books_dummy.json")
+            val memosFile = File(context.filesDir, "memos_dummy.json")
+            
+            if (!booksFile.exists()) {
                 context.assets.open("books_dummy.json").use { input ->
-                    dummyFile.outputStream().use { output ->
+                    booksFile.outputStream().use { output ->
                         input.copyTo(output)
                     }
                 }
             }
             
-            importBooks(dummyFile)
+            if (!memosFile.exists()) {
+                context.assets.open("memos_dummy.json").use { input ->
+                    memosFile.outputStream().use { output ->
+                        input.copyTo(output)
+                    }
+                }
+            }
+            
+            importDatabase(booksFile, memosFile)
         } catch (e: Exception) {
             Log.e("DatabaseExporter", "Failed to import dummy data", e)
             Result.failure(e)

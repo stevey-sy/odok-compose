@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.sy.odokcompose.core.database.entity.BookEntity
 import com.sy.odokcompose.core.database.entity.MemoEntity
 import com.sy.odokcompose.core.database.entity.MemoTagCrossRef
 import com.sy.odokcompose.core.database.entity.TagEntity
@@ -48,4 +49,7 @@ interface MemoDao {
     @Transaction
     @Query("SELECT * FROM memos WHERE memoId IN (SELECT memoId FROM memo_tags WHERE tagId = :tagId)")
     fun getMemosByTagId(tagId: Long): Flow<List<MemoEntity>>
+
+    @Query("SELECT * FROM memos ORDER BY memoId DESC")
+    fun getAllMemos(): Flow<List<MemoEntity>>
 }

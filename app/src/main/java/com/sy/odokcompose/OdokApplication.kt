@@ -27,16 +27,16 @@ class OdokApplication : Application() {
         super.onCreate()
         
         applicationScope.launch {
-            val isFirstRun = dataStore.data.first()[IS_FIRST_RUN] ?: true
-            if (isFirstRun) {
-                // 더미 데이터 가져오기
-                databaseExporter.importDummyData()
-                
-                // 최초 실행 플래그 업데이트
-                dataStore.edit { preferences ->
-                    preferences[IS_FIRST_RUN] = false
-                }
-            }
+//            val isFirstRun = dataStore.data.first()[IS_FIRST_RUN] ?: true
+//            if (isFirstRun) {
+//                // 더미 데이터 가져오기
+//                databaseExporter.importDummyData()
+//
+//                // 최초 실행 플래그 업데이트
+//                dataStore.edit { preferences ->
+//                    preferences[IS_FIRST_RUN] = false
+//                }
+//            }
         }
     }
     

@@ -20,7 +20,7 @@ class ProfileViewModel @Inject constructor(
     fun exportDatabase() {
         viewModelScope.launch {
             _exportState.value = ExportState.Exporting
-            databaseExporter.exportBooks()
+            databaseExporter.exportDatabase()
                 .onSuccess { file ->
                     _exportState.value = ExportState.Success(file)
                 }
