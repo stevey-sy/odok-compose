@@ -27,7 +27,6 @@ object SearchBookItemMapper : EntityMapper<BookEntity, SearchBookUiModel> {
             totalPageCnt = model.page,
             description = model.description,
             rate = model.rate,
-            currentPageCnt = model.page,
         )
     }
 } 
