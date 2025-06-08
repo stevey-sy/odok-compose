@@ -62,6 +62,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
     implementation(project(":core:model"))
+    implementation(project(":core:ui"))
 
     // lottie 애니메이션
     implementation (libs.lottie.compose)
