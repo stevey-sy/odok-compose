@@ -80,7 +80,8 @@ class MyLibraryViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isSearchViewShowing = show)
         if (!show) {
             _searchQuery.value = ""
-            _filteredItems.value = _shelfItems.value
+//            _filteredItems.value = _shelfItems.value
+            filterItems()
         }
     }
 

@@ -14,14 +14,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -35,6 +38,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.Scaffold
@@ -67,6 +71,9 @@ import com.sy.core.ui.components.SearchTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.platform.LocalConfiguration
+import com.sy.odokcompose.core.designsystem.OdokColors
+import com.sy.odokcompose.model.type.ShelfFilterType
+
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -77,17 +84,12 @@ fun MyLibraryScreen(
     onBookItemClicked: (itemId: Int, filterType: Int, searchQuery: String) -> Unit,
     viewModel: MyLibraryViewModel = hiltViewModel()
 ) {
-    val shelfItems by viewModel.shelfItems.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
     val searchQuery by viewModel.searchQuery.collectAsState()
     val filteredItems by viewModel.filteredItems.collectAsState()
     val currentFilter by viewModel.currentFilter.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-//    val configuration = LocalConfiguration.current
-//    val screenWidth = configuration.screenWidthDp.dp
-//    val screenHeight = configuration.screenHeightDp.dp
 
     // SnackBar 메시지 처리
     LaunchedEffect(uiState.snackBarMessage) {
@@ -154,6 +156,25 @@ fun MyLibraryScreen(
                 Column(
                     modifier = Modifier.animateContentSize()
                 ) {
+                    AnimatedVisibility(
+                        visible = currentFilter != ShelfFilterType.NONE,
+                        enter = expandVertically(
+                            animationSpec = tween(300)
+                        ) + fadeIn(
+                            animationSpec = tween(300)
+                        ),
+                        exit = shrinkVertically(
+                            animationSpec = tween(300)
+                        ) + fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    ) {
+                        FilterStatusView(
+                            filterType = currentFilter,
+                            onClearFilter = { viewModel.updateFilter(ShelfFilterType.NONE) }
+                        )
+                    }
+
                     AnimatedVisibility(
                         visible = uiState.isSearchViewShowing,
                         enter = expandVertically(
@@ -417,6 +438,50 @@ private fun NoMatchingBooksView(
                 ) {
                     Text("검색어 지우기")
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FilterStatusView(
+    filterType: ShelfFilterType,
+    onClearFilter: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(
+                color = OdokColors.Black,
+                shape = MaterialTheme.shapes.small
+            )
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = when (filterType) {
+                    ShelfFilterType.READING -> "읽고 있는 책만 보여요."
+                    ShelfFilterType.FINISHED -> "완독한 책만 보여요."
+                    else -> ""
+                },
+                style = typography.bodyMedium,
+                color = OdokColors.White
+            )
+            IconButton(
+                onClick = onClearFilter,
+                modifier = Modifier.size(24.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "필터 해제",
+                    tint = OdokColors.White
+                )
             }
         }
     }
