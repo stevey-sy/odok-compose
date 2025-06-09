@@ -9,6 +9,10 @@
 > 
 > XML 버전은 [오독오독 - XML](https://github.com/stevey-sy/bookchibakchi) 에서 확인 가능합니다.
 
+<p align="center">
+<img src="/previews/intro.png"/>
+</p>
+
 <h3>Tech stack</h3>
 
 - Minimum SDK level 24.
