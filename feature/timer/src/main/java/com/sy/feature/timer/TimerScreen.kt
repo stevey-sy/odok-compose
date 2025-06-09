@@ -77,6 +77,15 @@ fun TimerScreen(
 
     val shouldLpRotate = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        viewModel.eventFlow.collect { event ->
+            when (event) {
+                is TimerEvent.ShowMessage -> context.toast(event.message)
+            }
+        }
+    }
+
     LaunchedEffect(uiState) {
         if (uiState == TimerUiState.Reading) {
             shouldLpRotate.value = false

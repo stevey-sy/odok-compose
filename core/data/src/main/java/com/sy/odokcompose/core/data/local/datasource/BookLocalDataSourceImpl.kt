@@ -15,6 +15,7 @@ class BookLocalDataSourceImpl @Inject constructor(
             ShelfFilterType.READING -> bookDao.getReadingBooks()
             ShelfFilterType.FINISHED -> bookDao.getFinishedBooks()
             ShelfFilterType.NONE -> bookDao.getAllBooks()
+            else -> bookDao.getAllBooks()
         }
     }
 

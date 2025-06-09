@@ -9,11 +9,14 @@ import com.sy.odokcompose.core.domain.UpdateBookUseCase
 import com.sy.odokcompose.model.BookUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.Timer
 import javax.inject.Inject
 
 sealed interface TimerUiState {
@@ -36,6 +39,9 @@ class TimerViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow<TimerUiState>(TimerUiState.BeforeReading)
     val uiState: StateFlow<TimerUiState> = _uiState.asStateFlow()
+
+    private val _eventChannel = Channel<TimerEvent>(Channel.UNLIMITED)
+    val eventFlow = _eventChannel.receiveAsFlow()
 
     private val _timerText = MutableStateFlow("00:00:00")
     val timerText: StateFlow<String> = _timerText.asStateFlow()
@@ -67,6 +73,17 @@ class TimerViewModel @Inject constructor(
 
     private val _lastReadPageInput = MutableStateFlow("")
     val lastReadPageInput: StateFlow<String> = _lastReadPageInput.asStateFlow()
+
+    // screen 에서 일어나는 모든 이벤트를 관리.
+    fun handleEvent(event: TimerEvent) {
+        when (event) {
+            is TimerEvent.ShowMessage -> sendEvent(event)
+        }
+    }
+
+    private fun sendEvent(event: TimerEvent) {
+        viewModelScope.launch { _eventChannel.send(event) }
+    }
 
     fun onPlayButtonClick() {
         when (_uiState.value) {
@@ -151,7 +168,7 @@ class TimerViewModel @Inject constructor(
     fun saveLastReadPageAndDismiss() {
         if (_lastReadPageInput.value.isNotBlank()) {
             if(_lastReadPageInput.value.toInt() > _book.value.totalPageCnt) {
-
+                handleEvent(TimerEvent.ShowMessage("입력된 페이지가 총 페이지 수를 초과하였습니다."))
                 return
             }
         }
