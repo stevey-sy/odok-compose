@@ -30,19 +30,20 @@ fun ProfileScreen(
                     .padding(innerPadding)
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.Center // 👈 화면 중앙 정렬
+//                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Text(
-                    text = "프로필",
-                    style = MaterialTheme.typography.headlineMedium
+                    text = "Coming Soon",
+                    style = MaterialTheme.typography.headlineMedium,
                 )
 
-                Button(
-                    onClick = { viewModel.exportDatabase() },
-                    enabled = exportState !is ExportState.Exporting
-                ) {
-                    Text("데이터 내보내기")
-                }
+//                Button(
+//                    onClick = { viewModel.exportDatabase() },
+//                    enabled = exportState !is ExportState.Exporting
+//                ) {
+//                    Text("데이터 내보내기")
+//                }
 
                 when (exportState) {
                     is ExportState.Exporting -> {
