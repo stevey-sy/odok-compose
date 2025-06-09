@@ -19,7 +19,7 @@
   - Room: SQLite를 추상화하여 간편하게 데이터베이스를 구축하고 접근할 수 있도록 도와줍니다.
   - [Hilt](https://dagger.dev/hilt/): 의존성 주입을 간편하게 구성할 수 있도록 지원하는 라이브러리입니다.
 
-- 아키텍처 구성:
+- Architecture:
   - **MVVM 아키텍처** (View - ViewModel - Model): 관심사의 분리를 통해 유지보수성과 확장성을 높입니다.
   - **Repository 패턴**: 다양한 데이터 소스와 비즈니스 로직 사이의 중간 계층 역할을 수행합니다.
   - **멀티 모듈 구조(Multi-Module Architecture)**: 기능별로 모듈을 분리하여 빌드 효율성, 의존성 관리, 코드 재사용성, 테스트 용이성을 극대화하였습니다.
@@ -32,7 +32,7 @@
 <h3>Tech stack</h3>
 
 - Minimum SDK level 24.
-- [Kotlin](https://kotlinlang.org/) based, utilizing [Coroutines](https://github.com/Kotlin/kotlinx.coroutines) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/) for asynchronous operations.
+- [Kotlin](https://kotlinlang.org/) 기반으로 개발되었으며, 비동기 처리를 위해 [Coroutines](https://github.com/Kotlin/kotlinx.coroutines) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/) 를 활용하였습니다.
 - Jetpack Libraries:
   - Jetpack Compose: Android’s modern toolkit for declarative UI development.
   - Lifecycle: Observes Android lifecycles and manages UI states upon lifecycle changes.
