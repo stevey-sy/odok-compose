@@ -2,6 +2,8 @@ package com.sy.odokcompose.feature.mylibrary
 
 import MemoSelectModal
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -34,7 +36,9 @@ import com.sy.odokcompose.feature.mylibrary.components.BookPager
 import com.sy.odokcompose.feature.mylibrary.components.BookProgress
 import com.sy.odokcompose.feature.mylibrary.components.CommentSection
 import com.sy.odokcompose.feature.mylibrary.components.MemoListBottomSheet
+import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.O)
 @SuppressLint("ConfigurationScreenWidthHeight")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -166,7 +170,11 @@ fun BookDetailScreen(
                         totalPageCnt = currentBook?.totalPageCnt ?: 0,
                         onFinishedReadCntChange = viewModel::updateFinishedReadCnt,
                         onCurrentPageCntChange = viewModel::updateCurrentPageCnt,
-                        onSaveClick = viewModel::saveChanges
+                        onSaveClick = viewModel::saveChanges,
+                        onStartDateChange = {},
+                        onEndDateChange = {},
+                        startDate = LocalDate.now().minusDays(1),
+                        endDate = LocalDate.now(),
                     )
                 }
 

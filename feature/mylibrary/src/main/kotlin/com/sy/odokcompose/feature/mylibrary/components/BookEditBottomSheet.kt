@@ -1,5 +1,7 @@
 package com.sy.odokcompose.feature.mylibrary.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -18,7 +20,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sy.odokcompose.core.designsystem.OdokColors
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookEditBottomSheet(
@@ -27,10 +32,19 @@ fun BookEditBottomSheet(
     finishedReadCnt: String,
     currentPageCnt: String,
     totalPageCnt: Int,
+    startDate: LocalDate,
+    endDate: LocalDate?,
     onFinishedReadCntChange: (String) -> Unit,
     onCurrentPageCntChange: (String) -> Unit,
+    onStartDateChange: (LocalDate) -> Unit,
+    onEndDateChange: (LocalDate?) -> Unit,
     onSaveClick: () -> Unit
 ) {
+    var showStartDatePicker by remember { mutableStateOf(false) }
+    var showEndDatePicker by remember { mutableStateOf(false) }
+    
+    val dateFormatter = remember { DateTimeFormatter.ofPattern("yyyy.MM.dd") }
+
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
@@ -51,6 +65,61 @@ fun BookEditBottomSheet(
             )
             
             Spacer(modifier = Modifier.height(24.dp))
+            
+            // 시작일 수정
+            Text(
+                text = "시작일",
+                fontSize = 16.sp,
+                color = OdokColors.Black
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            OutlinedTextField(
+                value = startDate.format(dateFormatter),
+                onValueChange = { },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            showStartDatePicker = true
+                        }
+                    },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+                singleLine = true
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // 종료일 수정
+            Text(
+                text = "종료일",
+                fontSize = 16.sp,
+                color = OdokColors.Black
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            
+            OutlinedTextField(
+                value = endDate?.format(dateFormatter) ?: "",
+                onValueChange = { },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .onFocusChanged { focusState ->
+                        if (focusState.isFocused) {
+                            showEndDatePicker = true
+                        }
+                    },
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+                singleLine = true,
+                placeholder = { Text("미정") }
+            )
+            
+            Spacer(modifier = Modifier.height(16.dp))
             
             // 완독 횟수 수정
             Text(
@@ -138,6 +207,46 @@ fun BookEditBottomSheet(
                 Text("저장")
             }
             Spacer(modifier = Modifier.windowInsetsBottomHeight(WindowInsets.ime))
+        }
+    }
+    
+    if (showStartDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showStartDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = { showStartDatePicker = false }) {
+                    Text("확인")
+                }
+            }
+        ) {
+            DatePicker(
+                state = rememberDatePickerState(
+                    initialSelectedDateMillis = startDate.toEpochDay() * 24 * 60 * 60 * 1000
+                ),
+                title = { Text("시작일 선택") },
+                headline = { Text("시작일을 선택해주세요") },
+                showModeToggle = false
+            )
+        }
+    }
+    
+    if (showEndDatePicker) {
+        DatePickerDialog(
+            onDismissRequest = { showEndDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = { showEndDatePicker = false }) {
+                    Text("확인")
+                }
+            }
+        ) {
+            DatePicker(
+                state = rememberDatePickerState(
+                    initialSelectedDateMillis = endDate?.toEpochDay()?.times(24 * 60 * 60 * 1000)
+                ),
+                title = { Text("종료일 선택") },
+                headline = { Text("종료일을 선택해주세요") },
+                showModeToggle = false
+            )
         }
     }
 } 
