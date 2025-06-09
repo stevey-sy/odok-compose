@@ -12,7 +12,7 @@
 <h3>Tech stack</h3>
 
 - Minimum SDK level 24.
-- [Kotlin](https://kotlinlang.org/) 기반으로 개발되었으며, 비동기 처리를 위해 [Coroutines](https://github.com/Kotlin/kotlinx.coroutines) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/) 를 활용하였습니다.
+- [Kotlin](https://kotlinlang.org/) / [Coroutines](https://github.com/Kotlin/kotlinx.coroutines) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/)
 - Jetpack Libraries:
   - Jetpack Compose
   - Lifecycle
