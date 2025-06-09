@@ -5,7 +5,7 @@
 </p>
 
 > [!TIP]
-> 오독오독의 XML version 은, [OdokOdok](https://github.com/stevey-sy/odok-compose) 에서 확인 가능합니다.
+> 오독오독의 XML version 은, [오독오독 - XML](https://github.com/stevey-sy/bookchibakchi) 에서 확인 가능합니다.
 
 
 <h3>Tech stack</h3>
