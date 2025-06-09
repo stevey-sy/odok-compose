@@ -68,9 +68,10 @@ fun BookProgress(
                 Box(
                     modifier = Modifier
                         .height(8.dp)
-                        .fillMaxWidth(animatedProgress.coerceAtLeast(0.001f))
+                        .fillMaxWidth(animatedProgress)
                         .background(
-                            color = if (progressPercentage == 0) Color.Transparent else Color.Black,
+//                            color = if (progressPercentage == 0) Color.Transparent else Color.Black,
+                            color = Color.Black,
                             shape = RoundedCornerShape(4.dp)
                         )
                         .align(Alignment.BottomStart)
