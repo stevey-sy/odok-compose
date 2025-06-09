@@ -83,27 +83,40 @@ class DatabaseExporter @Inject constructor(
             
             // assets에서 더미 데이터 파일 읽기
             val booksJson = context.assets.open("books_dummy.json").bufferedReader().use { it.readText() }
+            val memosJson = context.assets.open("memos_dummy.json").bufferedReader().use { it.readText() }
             Log.d("DatabaseExporter", "Read books_dummy.json: ${booksJson.length} bytes")
+            Log.d("DatabaseExporter", "Read memos_dummy.json: ${memosJson.length} bytes")
             
             // 임시 파일에 저장
             val tempBooksFile = File(context.filesDir, "temp_books_dummy.json")
+            val tempMemosFile = File(context.filesDir, "temp_memos_dummy.json")
             tempBooksFile.writeText(booksJson)
+            tempMemosFile.writeText(memosJson)
             
             // 데이터 임포트
             val books = bookJsonExporter.importBooks(tempBooksFile).getOrThrow()
+            val memos = memoJsonExporter.importMemos(tempMemosFile).getOrThrow()
             Log.d("DatabaseExporter", "Imported ${books.size} books")
+            Log.d("DatabaseExporter", "Imported ${memos.size} memos")
             
             // 데이터베이스에 저장
             books.forEach { book ->
                 bookDao.insertBook(book)
             }
             
+            memos.forEach { memo ->
+                memoDao.insertMemo(memo)
+            }
+            
             // 임시 파일 삭제
             tempBooksFile.delete()
+            tempMemosFile.delete()
             
             // 저장된 데이터 확인
             val savedBooks = bookDao.getAllBooks().first()
+            val savedMemos = memoDao.getAllMemos().first()
             Log.d("DatabaseExporter", "Successfully saved ${savedBooks.size} books")
+            Log.d("DatabaseExporter", "Successfully saved ${savedMemos.size} memos")
             
             Log.d("DatabaseExporter", "Dummy data import completed successfully")
             Result.success(Unit)
