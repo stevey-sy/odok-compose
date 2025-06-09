@@ -289,6 +289,10 @@ class BookDetailViewModel @Inject constructor(
     }
 
     fun saveChanges() {
+        if(_currentPageCnt.value.toInt() > currentBook.value!!.totalPageCnt) {
+            handleEvent(BookDetailEvent.ShowError("읽은 페이지가 전체 페이지 수를 초과할 수 없습니다."))
+            return
+        }
         viewModelScope.launch {
             try {
                 val finishedReadCntValue = _finishedReadCnt.value.toIntOrNull() ?: 0

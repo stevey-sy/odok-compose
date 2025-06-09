@@ -65,32 +65,48 @@ class DatabaseExporter @Inject constructor(
             }
             Result.success(Unit)
         } catch (e: Exception) {
+            Log.e("DatabaseExporter", "Import failed", e)
             Result.failure(e)
         }
     }
 
     suspend fun importDummyData(): Result<Unit> {
         return try {
-            val booksFile = File(context.filesDir, "books_dummy.json")
-            val memosFile = File(context.filesDir, "memos_dummy.json")
+            Log.d("DatabaseExporter", "Starting dummy data import...")
             
-            if (!booksFile.exists()) {
-                context.assets.open("books_dummy.json").use { input ->
-                    booksFile.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
+            // 기존 데이터 삭제
+            val existingBooks = bookDao.getAllBooks().first()
+            existingBooks.forEach { book ->
+                bookDao.deleteBook(book)
+            }
+            Log.d("DatabaseExporter", "Deleted ${existingBooks.size} existing books")
+            
+            // assets에서 더미 데이터 파일 읽기
+            val booksJson = context.assets.open("books_dummy.json").bufferedReader().use { it.readText() }
+            Log.d("DatabaseExporter", "Read books_dummy.json: ${booksJson.length} bytes")
+            
+            // 임시 파일에 저장
+            val tempBooksFile = File(context.filesDir, "temp_books_dummy.json")
+            tempBooksFile.writeText(booksJson)
+            
+            // 데이터 임포트
+            val books = bookJsonExporter.importBooks(tempBooksFile).getOrThrow()
+            Log.d("DatabaseExporter", "Imported ${books.size} books")
+            
+            // 데이터베이스에 저장
+            books.forEach { book ->
+                bookDao.insertBook(book)
             }
             
-            if (!memosFile.exists()) {
-                context.assets.open("memos_dummy.json").use { input ->
-                    memosFile.outputStream().use { output ->
-                        input.copyTo(output)
-                    }
-                }
-            }
+            // 임시 파일 삭제
+            tempBooksFile.delete()
             
-            importDatabase(booksFile, memosFile)
+            // 저장된 데이터 확인
+            val savedBooks = bookDao.getAllBooks().first()
+            Log.d("DatabaseExporter", "Successfully saved ${savedBooks.size} books")
+            
+            Log.d("DatabaseExporter", "Dummy data import completed successfully")
+            Result.success(Unit)
         } catch (e: Exception) {
             Log.e("DatabaseExporter", "Failed to import dummy data", e)
             Result.failure(e)

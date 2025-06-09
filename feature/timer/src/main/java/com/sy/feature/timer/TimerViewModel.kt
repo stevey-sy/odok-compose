@@ -23,6 +23,10 @@ sealed interface TimerUiState {
     data object Completed : TimerUiState
 }
 
+sealed class TimerEvent {
+    data class ShowMessage(val message: String) : TimerEvent()
+}
+
 @HiltViewModel
 class TimerViewModel @Inject constructor(
     private val getBookDetailUseCase: GetBookDetailUseCase,
@@ -145,6 +149,12 @@ class TimerViewModel @Inject constructor(
     }
 
     fun saveLastReadPageAndDismiss() {
+        if (_lastReadPageInput.value.isNotBlank()) {
+            if(_lastReadPageInput.value.toInt() > _book.value.totalPageCnt) {
+
+                return
+            }
+        }
         viewModelScope.launch {
             // 입력값이 유효한 경우에만 Completed 상태로 변경
             if (_lastReadPageInput.value.isNotBlank()) {
