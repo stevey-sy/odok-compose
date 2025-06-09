@@ -192,7 +192,7 @@ fun MainScreen(
                                     TextButton(
                                         onClick = { bookDetailViewModel.showEditView() }
                                     ) {
-                                        Text("더보기")
+                                        Text("수정")
                                     }
                                 }
                             )
