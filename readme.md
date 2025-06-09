@@ -5,7 +5,8 @@
 </p>
 
 > [!TIP]
-> 오독오독의 XML version 은, [오독오독 - XML](https://github.com/stevey-sy/bookchibakchi) 에서 확인 가능합니다.
+> 오독오독 프로젝트는 연구개발의 목적으로 [Kotlin & XML] / [Kotlin & Compose] 버전으로 각각 개발되었습니다. 
+> XML 버전은 [오독오독 - XML](https://github.com/stevey-sy/bookchibakchi) 에서 확인 가능합니다.
 
 
 <h3>Tech stack</h3>
