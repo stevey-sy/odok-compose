@@ -22,27 +22,19 @@
 - Architecture:
   - **MVVM Architecture** (View - ViewModel - Model)
   - **Repository Pattern**
-  - **멀티 모듈 구조(Multi-Module Architecture)**
+  - **Multi-Module Architecture**
 
 <h3>Open-source libraries</h3>  
 
-- [Material-Components](https://github.com/material-components/material-components-android)
-- [Retrofit2 & OkHttp3](https://github.com/square/retrofit)
-- [moshi](https://github.com/kyutai-labs/moshi)
-- [Coil](https://github.com/coil-kt/coil)
-- [Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization)
-- [ksp](https://github.com/google/ksp)
-- [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview?hl=ko)
-- [Turbine](https://github.com/cashapp/turbine)
-- [Lottie](https://github.com/airbnb/lottie-android)
-
-<h3>Open-source libraries</h3>
-
 - [Material-Components](https://github.com/material-components/material-components-android): 구글의 공식 디자인 시스템을 기반으로 모던하고 일관된 UI 컴포넌트를 구현하기 위해 사용했습니다.
 - [Retrofit2 & OkHttp3](https://github.com/square/retrofit): REST API 통신을 효율적으로 처리하고, 네트워크 요청의 로깅 및 커스터마이징을 위해 사용했습니다.
+- [moshi](https://github.com/kyutai-labs/moshi): JSON을 Kotlin/Java 객체로 변환해주는 직렬화 라이브러리입니다.
 - [Coil](https://github.com/coil-kt/coil): 이미지의 비동기 로딩, 캐싱, 리사이징 등을 최적화하여 UI 성능을 향상시키기 위해 활용했습니다.
-- [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview?hl=ko): 도서 검색 시 출력할 데이터를 효율적으로 로드하고 UI에서 매끄럽게 표시하기 위해 Paging 아키텍처를 적용했습니다.
-- [Lottie](https://github.com/airbnb/lottie-android): JSON 기반의 벡터 애니메이션을 간편하게 재생하여 인터랙티브한 UI를 구성했습니다.
+- [Kotlin Serialization](https://github.com/Kotlin/kotlinx.serialization): Kotlin 공식 직렬화 라이브러리로, 다양한 포맷을 지원합니다.
+- [ksp](https://github.com/google/ksp): Kotlin 코드 생성을 위한 심볼 프로세싱 API입니다.
+- [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview?hl=ko): 대용량 데이터를 페이징 처리하며 효율적으로 로딩할 수 있도록 도와줍니다.
+- [Turbine](https://github.com/cashapp/turbine): Flow 테스트를 간편하게 작성할 수 있는 경량 테스트 유틸리티입니다.
+- [Lottie](https://github.com/airbnb/lottie-android)>: 애니메이션을 앱에서 부드럽게 재생할 수 있도록 해주는 라이브러리입니다.
 
 <h3>Open API</h3>
 
