@@ -199,7 +199,7 @@ fun MainScreen(
                         }
                         currentRoute == SEARCH_ROUTE -> {
                             OdokTopAppBar(
-                                title = "도서검색",
+                                title = "도서추가",
                                 showBackButton = true,
                                 fontFamily = FontFamily.Default,
                                 fontSize = 22.sp,
