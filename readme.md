@@ -15,8 +15,8 @@
 
 <img src="/previews/preview.gif" align="right" width="240"/>
 
-## Download
-**오독오독** 의 데모버전을 받아보실 수 있습니다. [Releases](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)
+<h3>Download</h3>
+**오독오독** 의 [데모버전](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)을 받아보실 수 있습니다.
 
 <h3>Tech stack</h3>
 
@@ -44,7 +44,7 @@
 - [ksp](https://github.com/google/ksp): Kotlin 코드 생성을 위한 심볼 프로세싱 API입니다.
 - [Paging 3](https://developer.android.com/topic/libraries/architecture/paging/v3-overview?hl=ko): 대용량 데이터를 페이징 처리하며 효율적으로 로딩할 수 있도록 도와줍니다.
 - [Turbine](https://github.com/cashapp/turbine): Flow 테스트를 간편하게 작성할 수 있는 경량 테스트 유틸리티입니다.
-- [Lottie](https://github.com/airbnb/lottie-android)>: 애니메이션을 앱에서 부드럽게 재생할 수 있도록 해주는 라이브러리입니다.
+- [Lottie](https://github.com/airbnb/lottie-android): 애니메이션을 앱에서 부드럽게 재생할 수 있도록 해주는 라이브러리입니다.
 
 <h3>Open API</h3>
 
