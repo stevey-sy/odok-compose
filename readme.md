@@ -54,7 +54,24 @@
 
 **오독오독** 은 도서 정보 검색 기능을 위해 [알라딘 OpenAPI](https://blog.aladin.co.kr/openapi)를 사용하고 있습니다.
 
-<h3>App Modularization</h3>
+## Architecture
+
+<p align="center">
+<img src="/previews/architecture.png"/>
+</p>
+
+**오독오독** 은 UI, Domain, Data 계층으로 구성된 Clean Architecture를 따릅니다.
+
+각 계층은 역할에 따라 책임이 분리되어 있으며, 단방향 의존성을 통해 유지보수성과 테스트 용이성을 확보하였습니다.
+
+- UI Layer: 사용자 인터페이스와 ViewModel을 포함하며, 화면 상태와 사용자 이벤트를 처리합니다.
+- Domain Layer: 앱의 비즈니스 로직을 담당하는 계층으로, UseCase를 통해 로직을 수행합니다.
+- Data Layer: 실제 데이터의 저장소로, Repository와 DataSource를 통해 로컬 또는 네트워크 데이터를 제공합니다.
+
+모든 데이터 흐름은 UI → Domain → Data 방향으로 진행되며,
+**"단방향 의존성(unidirectional dependency)"** 을 지향합니다.
+
+## App Modularization
 
 **오독오독** 은 기능별 Feature Module과 공통 Core Module을 분리한 Clean Multi-Module Architecture로 구성되어 있으며, 각 모듈은 단방향 의존성을 기반으로 설계되어 있습니다.
 app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사용되는 ui 관리, 비즈니스 로직과 데이터 처리를 담당합니다.
