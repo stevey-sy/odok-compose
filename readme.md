@@ -16,7 +16,7 @@
 <img src="/previews/preview.gif" align="right" width="240"/>
 
 <h3>Download</h3>
-- **오독오독** 의 [DEMO](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0) 을 받아보실 수 있습니다.
+- **오독오독** 의 [DEMO](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0) 을 받아보실 수 있습니다. [Coroutines](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)
 
 <h3>Tech stack</h3>
 
