@@ -54,6 +54,53 @@
 
 **오독오독** 은 도서 정보 검색 기능을 위해 [알라딘 OpenAPI](https://blog.aladin.co.kr/openapi)를 사용하고 있습니다.
 
+## 📘 데이터 관계 모델
+- 애플리케이션의 핵심 데이터 모델은 다음과 같은 관계형 구조로 설계되었습니다
+
+- Book ↔ Memo : 1:N (일대다 관계)
+  하나의 책(Book)은 여러 개의 메모(Memo)를 가질 수 있도록 설계되어, 사용자별 독서 기록을 구조적으로 관리할 수 있습니다.
+
+- Memo ↔ Tag : N:M (다대다 관계)
+  하나의 메모는 여러 태그(Tag)를 가질 수 있고, 하나의 태그는 여러 메모에 중복될 수 있도록 설계되어, 태그 기반 분류 및 필터링 기능을 유연하게 지원합니다.
+  이 관계는 Room에서 중간 조인 테이블(MemoTagCrossRef)을 통해 구현되었습니다.
+
+## 주요 기능
+<h3>도서 검색 기능</h3>
+<table>
+  <tr>
+   <td valign="top" width="600">
+       - 검색어를 입력하여 책을 검색할 수 있음<br>
+       - 도서 정보 출력을 위해  알라딘 OPEN API 를 사용<br>
+       - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br>
+       - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
+       - ListAdapter를 적용, DiffUtil을 활용한 데이터 변경 감지로 불필요한 View 바인딩을 줄임<br>
+       - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
+       <br><br><br>
+    </td>
+    <td>
+      <img src="previews/add_book.gif" width="240"/>
+    </td>
+  </tr>
+</table>
+
+<h3>Filter 기능</h3>
+<table>
+  <tr>
+   <td valign="top" width="600">
+       - 검색어를 입력하여 책을 검색할 수 있음<br>
+       - 도서 정보 출력을 위해  알라딘 OPEN API 를 사용<br>
+       - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br>
+       - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
+       - ListAdapter를 적용, DiffUtil을 활용한 데이터 변경 감지로 불필요한 View 바인딩을 줄임<br>
+       - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
+       <br><br><br>
+    </td>
+    <td>
+      <img src="previews/filer_shelf.gif" width="240"/>
+    </td>
+  </tr>
+</table>
+
 ## License
 ```xml
 Designed and developed by 2025 stevey-sy (Seyoung Shin)
