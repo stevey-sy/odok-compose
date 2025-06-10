@@ -68,10 +68,10 @@
 **"단방향 의존성(unidirectional dependency)"** 을 지향합니다.
 
 <p align="center">
-<img src="/previews/architecture.png"/>
+<img src="/previews/architecture_example_.png"/>
 </p>
 
-> 아래 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
+> 위 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
 
 **UI Layer**
 BookDetailScreen은 BookDetailViewModel을 통해 화면 상태를 관리하고, 유저의 인터랙션에 따라 데이터를 요청합니다.
@@ -85,9 +85,6 @@ BookRepository(추상화된 인터페이스)의 실제 구현체인 BookReposito
 Room DB에서 데이터를 조회합니다.
 인터페이스와 구현을 분리함으로써 도메인 계층은 구현 세부사항에 의존하지 않고 유연하게 작동할 수 있습니다.
 
-<p align="center">
-<img src="/previews/architecture_example_.png"/>
-</p>
 
 ## App Modularization
 
