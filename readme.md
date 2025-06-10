@@ -18,7 +18,7 @@
 <h3>Download</h3>
 
 **오독오독** 의 핵심 기능을 직접 확인하실 수 있도록 DEMO 버전을 제공하고 있습니다.<br>
-[APK 다운로드](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)
+- [APK 다운로드](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)
 
 <h3>Tech stack</h3>
 
