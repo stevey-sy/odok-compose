@@ -36,6 +36,7 @@
   - **MVVM Architecture** (View - ViewModel - Model)
   - **Repository Pattern**
   - **Multi-Module Architecture**
+  - **Single Activity Architecture**
 
 <h3>Open-source libraries</h3>  
 
