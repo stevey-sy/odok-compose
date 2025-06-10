@@ -71,7 +71,7 @@
 <img src="/previews/architecture.png"/>
 </p>
 
-아래 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
+> 아래 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
 
 **UI Layer**
 BookDetailScreen은 BookDetailViewModel을 통해 화면 상태를 관리하고, 유저의 인터랙션에 따라 데이터를 요청합니다.
@@ -83,9 +83,7 @@ GetBookDetailUseCase는 화면에서 필요한 책 정보를 가져오는 비즈
 **Data Layer**
 BookRepository(추상화된 인터페이스)의 실제 구현체인 BookRepositoryImpl은 로컬 데이터소스(BookLocalDataSourceImpl)를 통해
 Room DB에서 데이터를 조회합니다.
-이처럼 인터페이스와 구현을 분리함으로써 도메인 계층은 구현 세부사항에 의존하지 않고 유연하게 작동할 수 있습니다.
-<br>
-> 전반적으로 계층 간 역할이 명확히 분리되어 있으며, 모든 의존성은 UI → Domain → Data 방향으로 단방향으로 흐릅니다.
+인터페이스와 구현을 분리함으로써 도메인 계층은 구현 세부사항에 의존하지 않고 유연하게 작동할 수 있습니다.
 
 <p align="center">
 <img src="/previews/architecture_example_.png"/>
