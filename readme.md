@@ -122,6 +122,24 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
   </tr>
 </table>
 
+<h3>책장 조회 기능</h3>
+<table>
+  <tr>
+   <td valign="top" width="600">
+       - 검색어를 입력하여 책을 검색할 수 있음<br>
+       - 도서 정보 출력을 위해  알라딘 OPEN API 를 사용<br>
+       - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br>
+       - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
+       - ListAdapter를 적용, DiffUtil을 활용한 데이터 변경 감지로 불필요한 View 바인딩을 줄임<br>
+       - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
+       <br><br><br>
+    </td>
+    <td>
+      <img src="previews/book_shelf.gif" width="240"/>
+    </td>
+  </tr>
+</table>
+
 <h3>Filter 기능</h3>
 <table>
   <tr>
@@ -136,6 +154,42 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
     </td>
     <td>
       <img src="previews/filer_shelf.gif" width="240"/>
+    </td>
+  </tr>
+</table>
+
+<h3>독서 시간 기록</h3>
+<table>
+  <tr>
+   <td valign="top" width="600">
+       - 검색어를 입력하여 책을 검색할 수 있음<br>
+       - 도서 정보 출력을 위해  알라딘 OPEN API 를 사용<br>
+       - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br>
+       - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
+       - ListAdapter를 적용, DiffUtil을 활용한 데이터 변경 감지로 불필요한 View 바인딩을 줄임<br>
+       - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
+       <br><br><br>
+    </td>
+    <td>
+      <img src="previews/reading.gif" width="240"/>
+    </td>
+  </tr>
+</table>
+
+<h3>메모 기록</h3>
+<table>
+  <tr>
+   <td valign="top" width="600">
+       - 검색어를 입력하여 책을 검색할 수 있음<br>
+       - 도서 정보 출력을 위해  알라딘 OPEN API 를 사용<br>
+       - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br>
+       - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
+       - ListAdapter를 적용, DiffUtil을 활용한 데이터 변경 감지로 불필요한 View 바인딩을 줄임<br>
+       - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
+       <br><br><br>
+    </td>
+    <td>
+      <img src="previews/add_memo.gif" width="240"/>
     </td>
   </tr>
 </table>
