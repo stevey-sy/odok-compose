@@ -58,8 +58,6 @@
 
 **오독오독** 은 UI, Domain, Data 계층으로 구성된 Clean Architecture를 따릅니다.
 
-각 계층은 역할에 따라 책임이 분리되어 있으며, 단방향 의존성을 통해 유지보수성과 테스트 용이성을 확보하였습니다.
-
 - UI Layer: 사용자 인터페이스와 ViewModel을 포함하며, 화면 상태와 사용자 이벤트를 처리합니다.
 - Domain Layer: 앱의 비즈니스 로직을 담당하는 계층으로, UseCase를 통해 로직을 수행합니다.
 - Data Layer: 실제 데이터의 저장소로, Repository와 DataSource를 통해 로컬 또는 네트워크 데이터를 제공합니다.
@@ -68,7 +66,7 @@
 **"단방향 의존성(unidirectional dependency)"** 을 지향합니다.
 
 <p align="center">
-<img src="/previews/architecture_example_.png"/>
+<img src="/previews/architecture_example_2.png"/>
 </p>
 
 > 위 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
