@@ -66,7 +66,7 @@
 **"단방향 의존성(unidirectional dependency)"** 을 지향합니다.
 
 <p align="center">
-<img src="/previews/architecture_example_2.png"/>
+<img src="/previews/architecture_example_3.png"/>
 </p>
 
 > 위 이미지는 오독오독 앱의 책 상세 화면(BookDetailScreen) 이 렌더링되는 과정을 아키텍처 계층별로 시각화한 것입니다.
