@@ -13,6 +13,8 @@
 <img src="/previews/intro.png"/>
 </p>
 
+<img src="/previews/preview.gif" align="right" width="240"/>
+
 ## Download
 **오독오독** 의 데모버전을 받아보실 수 있습니다. [Releases](https://github.com/stevey-sy/odok-compose/releases/tag/1.0.0)
 
