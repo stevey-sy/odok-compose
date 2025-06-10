@@ -54,6 +54,15 @@
 
 **오독오독** 은 도서 정보 검색 기능을 위해 [알라딘 OpenAPI](https://blog.aladin.co.kr/openapi)를 사용하고 있습니다.
 
+<h3>App Modularization</h3>
+
+**오독오독** 은 기능별 Feature Module과 공통 Core Module을 분리한 Clean Multi-Module Architecture로 구성되어 있으며, 각 모듈은 단방향 의존성을 기반으로 설계되어 있습니다.
+app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 비즈니스 로직과 데이터 처리를 담당합니다.
+
+<p align="center">
+<img src="/previews/multi-modules.png"/>
+</p>
+
 ## 📘 데이터 관계 모델
 - 애플리케이션의 핵심 데이터 모델은 다음과 같은 관계형 구조로 설계되었습니다
 
