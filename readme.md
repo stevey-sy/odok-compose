@@ -88,7 +88,7 @@ Room DB에서 데이터를 조회합니다.
 > 전반적으로 계층 간 역할이 명확히 분리되어 있으며, 모든 의존성은 UI → Domain → Data 방향으로 단방향으로 흐릅니다.
 
 <p align="center">
-<img src="/previews/architecture_example.png"/>
+<img src="/previews/architecture_example_.png"/>
 </p>
 
 ## App Modularization
