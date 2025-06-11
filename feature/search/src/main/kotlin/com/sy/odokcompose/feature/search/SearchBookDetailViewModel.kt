@@ -3,6 +3,7 @@ package com.sy.odokcompose.feature.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sy.odokcompose.core.domain.GetSearchBookDetailUseCase
+import com.sy.odokcompose.core.domain.GetSearchedBooksUseCase
 import com.sy.odokcompose.core.domain.SaveBookUseCase
 import com.sy.odokcompose.core.domain.SaveBookResult
 import com.sy.odokcompose.model.SearchBookUiModel
@@ -28,6 +29,7 @@ data class SearchDetailUiState(
 @HiltViewModel
 class SearchDetailViewModel @Inject constructor(
     private val getBookDetailUseCase: GetSearchBookDetailUseCase,
+    private val getSearchedBooksUseCase: GetSearchedBooksUseCase,
     private val saveBookUseCase: SaveBookUseCase
 ) : ViewModel() {
     
