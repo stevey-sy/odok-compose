@@ -124,7 +124,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
 <h3>책장 조회 기능</h3>
 <table>
   <tr>
-   < valign="top" width="600">
+   <td valign="top" width="600">
       - 나의 서재에 저장된 책을 조회, 수정, 삭제 가능.<br>
       - LazyColumn, HorizontalPager 화면 이동 간 Shared Elements Transition 애니메이션 적용<br>
        <br><br><br>
