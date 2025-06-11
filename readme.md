@@ -115,7 +115,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
        - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
        <br><br><br>
        <p align="center">
-       <img src="previews/architecture_search.png" />
+       <img src="previews/architecture_search_2.png" />
        </p>
     </td>
     <td>
