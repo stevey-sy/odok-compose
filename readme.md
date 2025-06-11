@@ -133,7 +133,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
       - 읽고 있는 책, 다 읽은 책 구분 가능하도록 Filtering 기능 제공<br>
       - 서재 내에서 책 검색 기능 제공<br>
       - 책장에서 책을 선택하면 상세 정보 조회 가능
-       <br><br><br>
+       <br><br><br><br><br><br><br><br>
        <img src="previews/arch_mylibrary.png" />
     </td>
     <td>
@@ -151,6 +151,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
       - 마지막으로 읽은 페이지를 입력하여 현재 진행도를 백분율로 측정<br>
       - 책을 완독 시 벡터 기반의 애니메이션(Lottie)을 추가, 앱의 생동감, 시각적 완성도를 향상<br>
        <br><br><br>
+      <img src="previews/arch_timer.png" />
     </td>
     <td>
       <img src="previews/reading.gif" width="240"/>
@@ -166,6 +167,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
       - 메모 공간을 카드처럼 구현하여 배경 선택 가능<br>
       - 메모 컨텐츠의 길이에 맞춰 펼치기, 접기 가능<br>
        <br><br><br>
+       <img src="previews/arch_memo.png" />
     </td>
     <td>
       <img src="previews/add_memo.gif" width="240"/>
