@@ -33,4 +33,8 @@ class MemoRepositoryImpl @Inject constructor(
     override suspend fun updateMemo(memoEntity: MemoEntity) {
         TODO("Not yet implemented")
     }
+
+    override suspend fun insertMemo(memoEntity: MemoEntity) {
+        memoLocalDataSource.insert(memoEntity)
+    }
 }

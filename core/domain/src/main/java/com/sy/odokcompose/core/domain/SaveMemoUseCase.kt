@@ -1,6 +1,7 @@
 package com.sy.odokcompose.core.domain
 
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSource
+import com.sy.odokcompose.core.data.repository.MemoRepository
 import com.sy.odokcompose.core.database.entity.MemoEntity
 import javax.inject.Inject
 
@@ -10,7 +11,7 @@ sealed class SaveMemoResult {
     data class Error(val message: String) : SaveMemoResult()
 }
 class SaveMemoUseCase @Inject constructor(
-    private val memoLocalDataSource: MemoLocalDataSource
+    private val memoRepository: MemoRepository
 ) {
     suspend operator fun invoke(bookId: Int, page:Int, content:String, backgroundId:String): SaveMemoResult {
         return try {
@@ -21,7 +22,7 @@ class SaveMemoUseCase @Inject constructor(
                 backgroundId = backgroundId,
                 createdAt = System.currentTimeMillis()
             )
-            memoLocalDataSource.insert(memo)
+            memoRepository.insertMemo(memo)
             SaveMemoResult.Success
         } catch (e: Exception) {
             SaveMemoResult.Error(e.message ?: "알 수 없는 오류가 발생했습니다.")

@@ -28,4 +28,10 @@ interface MemoRepository {
      *  @param memoEntity 업데이트할 객체
      */
     suspend fun updateMemo(memoEntity: MemoEntity)
+
+    /**
+     *  memoId 로 메모 데이터를 추가 합니다.
+     *  @param memoEntity 추가 할 객체
+     */
+    suspend fun insertMemo(memoEntity: MemoEntity)
 }
