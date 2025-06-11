@@ -115,7 +115,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
        - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
        <br><br><br>
        <p align="center">
-       <img src="previews/architecture_search_2.png" />
+       <img src="previews/arch_search.png" />
        </p>
     </td>
     <td>
@@ -134,6 +134,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
       - 서재 내에서 책 검색 기능 제공<br>
       - 책장에서 책을 선택하면 상세 정보 조회 가능
        <br><br><br>
+       <img src="previews/arch_mylibrary.png" />
     </td>
     <td>
       <img src="previews/book_shelf.gif" width="240"/>
