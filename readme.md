@@ -113,7 +113,7 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
        - 대량의 도서 데이터를 효율적으로 불러오기 위해 Paging 라이브러리를 도입<br><br>
        - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br><br>
        - 검색된 책의 상세 정보를 확인하고 저장 가능.<br><br>
-       <br><br><br>
+       <br>
        <p align="center">
        <img src="previews/arch_search.png" />
        </p>
@@ -128,10 +128,10 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
 <table>
   <tr>
    <td valign="top" width="600">
-      - 나의 서재에 저장된 책을 조회, 수정, 삭제 가능.<br>
-      - LazyColumn, HorizontalPager 화면 이동 간 Shared Elements Transition 애니메이션 적용<br>
-      - 읽고 있는 책, 다 읽은 책 구분 가능하도록 Filtering 기능 제공<br>
-      - 서재 내에서 책 검색 기능 제공<br>
+      - 나의 서재에 저장된 책을 조회, 수정, 삭제 가능.<br><br>
+      - LazyColumn, HorizontalPager 화면 이동 간 Shared Elements Transition 애니메이션 적용<br><br>
+      - 읽고 있는 책, 다 읽은 책 구분 가능하도록 Filtering 기능 제공<br><br>
+      - 서재 내에서 책 검색 기능 제공<br><br>
       - 책장에서 책을 선택하면 상세 정보 조회 가능
        <br><br><br><br><br><br><br><br>
        <img src="previews/arch_mylibrary.png" />
@@ -163,10 +163,10 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
 <table>
   <tr>
    <td valign="top" width="600">
-      - 독서 중 기억에 남는 문구를 메모하는 기능<br>
-      - 메모 공간을 카드처럼 구현하여 배경 선택 가능<br>
-      - 메모 컨텐츠의 길이에 맞춰 펼치기, 접기 가능<br>
-       <br><br><br>
+      - 독서 중 기억에 남는 문구를 메모하는 기능<br><br>
+      - 메모 공간을 카드처럼 구현하여 배경 선택 가능<br><br>
+      - 메모 컨텐츠의 길이에 맞춰 펼치기, 접기 가능<br><br>
+       <br>
        <img src="previews/arch_memo.png" />
     </td>
     <td>
