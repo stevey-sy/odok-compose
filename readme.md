@@ -114,7 +114,9 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
        - 사용자의 스크롤에 따라 데이터를 점진적으로 로드<br>
        - 검색된 책의 상세 정보를 확인하고 저장 가능.<br>
        <br><br><br>
-       <img src="previews/architecture_search_screen.png" width="400" height="250"/>
+       <p align="center">
+       <img src="previews/architecture_search_screen.png" />
+       </p>
     </td>
     <td>
       <img src="previews/add_book.gif" width="240"/>
