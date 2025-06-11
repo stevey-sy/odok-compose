@@ -127,23 +127,13 @@ app 모듈은 각 Feature를 조합하는 진입점이며, Core 모듈은 재사
    <td valign="top" width="600">
       - 나의 서재에 저장된 책을 조회, 수정, 삭제 가능.<br>
       - LazyColumn, HorizontalPager 화면 이동 간 Shared Elements Transition 애니메이션 적용<br>
+      - 읽고 있는 책, 다 읽은 책 구분 가능하도록 Filtering 기능 제공<br>
+      - 서재 내에서 책 검색 기능 제공<br>
+      - 책장에서 책을 선택하면 상세 정보 조회 가능
        <br><br><br>
     </td>
     <td>
       <img src="previews/book_shelf.gif" width="240"/>
-    </td>
-  </tr>
-</table>
-
-<h3>Filter 기능</h3>
-<table>
-  <tr>
-   <td valign="top" width="600">
-      - 읽고 있는 책, 다 읽은 책 구분 가능하도록 Filtering 기능 제공<br>
-      - 서재 내에서 책 검색 기능 제공<br>
-       <br><br><br>
-    </td>
-    <td>
       <img src="previews/filer_shelf.gif" width="240"/>
     </td>
   </tr>
