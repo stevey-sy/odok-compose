@@ -11,7 +11,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 26
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -68,7 +68,7 @@ dependencies {
     // Google login
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
-    implementation(libs.firebase.bom.v33160)
+    implementation(platform(libs.firebase.bom.v33160))
     implementation(libs.google.firebase.analytics)
     implementation("com.google.firebase:firebase-auth") // ✅ 이거 추가
 }
