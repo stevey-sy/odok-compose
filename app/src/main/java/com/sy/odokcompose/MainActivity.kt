@@ -2,6 +2,7 @@ package com.sy.odokcompose
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -79,6 +80,7 @@ import com.sy.feature.memo.navigation.navigateToAddMemo
 import com.sy.feature.memo.navigation.navigateToEditMemo
 import com.sy.feature.timer.navigation.navigateToTimer
 import com.sy.feature.timer.navigation.timerScreen
+import com.sy.odokcompose.feature.login.LoginScreen
 import com.sy.odokcompose.feature.mylibrary.BookDetailViewModel
 import com.sy.odokcompose.feature.mylibrary.MyLibraryViewModel
 import com.sy.odokcompose.feature.profile.navigation.PROFILE_ROUTE
@@ -98,7 +100,12 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             OdokTheme {
-                MainScreen()
+//                MainScreen()
+                LoginScreen(
+                    onLoginSuccess = { user ->
+                        Log.d("Login", "로그인 성공! 이메일: ${user.email}")},
+                    onError = {}
+                )
                 StatusBarProtection()
             }
         }

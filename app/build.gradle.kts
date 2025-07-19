@@ -47,6 +47,7 @@ dependencies {
     implementation(project(":feature:search"))
     implementation(project(":feature:timer"))
     implementation(project(":feature:memo"))
+    implementation(project(":feature:login"))
     implementation(project(":feature:profile"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:model"))
@@ -83,6 +84,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(libs.firebase.bom)
-    implementation(libs.firebase.analytics)
+//    implementation(libs.firebase.bom)
+//    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.bom.v33160)
+    implementation(libs.google.firebase.analytics)
+    implementation("com.google.firebase:firebase-auth") // ✅ 이거 추가
 }
