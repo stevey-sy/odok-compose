@@ -44,6 +44,7 @@ dependencies {
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(libs.firebase.auth.ktx)
     ksp(libs.hilt.compiler)
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${libs.versions.coroutines.get()}")

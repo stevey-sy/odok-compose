@@ -88,5 +88,5 @@ dependencies {
 //    implementation(libs.firebase.analytics)
     implementation(libs.firebase.bom.v33160)
     implementation(libs.google.firebase.analytics)
-    implementation("com.google.firebase:firebase-auth") // ✅ 이거 추가
+    implementation(libs.firebase.auth) // ✅ 이거 추가
 }

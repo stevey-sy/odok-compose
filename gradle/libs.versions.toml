@@ -37,6 +37,7 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom-v33160 = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 google-firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 google-gms-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "googleSignIn" }

@@ -11,9 +11,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -23,9 +25,11 @@ import com.google.firebase.auth.GoogleAuthProvider
 
 @Composable
 fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
     onLoginSuccess: (FirebaseUser) -> Unit,
     onError: (Exception) -> Unit
 ) {
+    val state = viewModel.loginUiState
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -33,17 +37,17 @@ fun LoginScreen(
         val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
         try {
             val account = task.getResult(ApiException::class.java)
-            val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-            FirebaseAuth.getInstance().signInWithCredential(credential)
-                .addOnCompleteListener { authResult ->
-                    if (authResult.isSuccessful) {
-                        onLoginSuccess(authResult.result?.user!!)
-                    } else {
-                        onError(authResult.exception ?: Exception("Unknown error"))
-                    }
-                }
+            account.idToken?.let { idToken ->
+                viewModel.signIn(idToken)
+            }
         } catch (e: Exception) {
-            onError(e)
+            viewModel.loginUiState = LoginUiState.Error(e)
+        }
+    }
+
+    LaunchedEffect(state) {
+        if (state is LoginUiState.Success) {
+            onLoginSuccess(state.user)
         }
     }
 
@@ -66,6 +70,10 @@ fun LoginScreen(
             }) {
                 Text("Google 로그인")
             }
+        }
+
+        if (state is LoginUiState.Error) {
+            Text("로그인 실패: ${state.exception.message}")
         }
     }
 }

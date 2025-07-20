@@ -8,6 +8,8 @@ import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSource
 import com.sy.odokcompose.core.data.local.datasource.BookLocalDataSourceImpl
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSource
 import com.sy.odokcompose.core.data.local.datasource.MemoLocalDataSourceImpl
+import com.sy.odokcompose.core.data.repository.AuthRepository
+import com.sy.odokcompose.core.data.repository.AuthRepositoryImpl
 import com.sy.odokcompose.core.data.repository.MemoRepository
 import com.sy.odokcompose.core.data.repository.MemoRepositoryImpl
 import dagger.Binds
@@ -18,7 +20,12 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 interface DataModule {
-    
+
+    @Binds
+    fun bindAuthRepository(
+        authRepositoryImpl: AuthRepositoryImpl
+    ): AuthRepository
+
     @Binds
     fun bindSearchBookRepository(
         searchBookRepositoryImpl: SearchBookRepositoryImpl
