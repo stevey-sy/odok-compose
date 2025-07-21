@@ -17,7 +17,7 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     var loginUiState by mutableStateOf<LoginUiState>(LoginUiState.Idle)
-        internal set
+        private set
 
     fun signIn(idToken: String) {
         viewModelScope.launch{
@@ -29,5 +29,9 @@ class LoginViewModel @Inject constructor(
                 loginUiState = LoginUiState.Error(e)
             }
         }
+    }
+
+    fun handleError(exception: Exception) {
+        loginUiState = LoginUiState.Error(exception)
     }
 }

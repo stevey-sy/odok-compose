@@ -12,10 +12,13 @@ import com.sy.odokcompose.core.data.repository.AuthRepository
 import com.sy.odokcompose.core.data.repository.AuthRepositoryImpl
 import com.sy.odokcompose.core.data.repository.MemoRepository
 import com.sy.odokcompose.core.data.repository.MemoRepositoryImpl
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -50,4 +53,12 @@ interface DataModule {
     fun bindMemoRepository(
         memoRepositoryImpl: MemoRepositoryImpl
     ): MemoRepository
+
+    companion object {
+        @Provides
+        @Singleton
+        fun provideFirebaseAuth(): FirebaseAuth {
+            return FirebaseAuth.getInstance()
+        }
+    }
 } 

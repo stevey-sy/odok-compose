@@ -73,4 +73,10 @@ object OdokIcons {
     @DrawableRes
     val HorizontalDots = R.drawable.ic_horizontal_dots
 
+    @DrawableRes
+    val AppLogo = R.drawable.ic_app_logo
+
+    @DrawableRes
+    val GLogo = R.drawable.ic_g_logo
+    
 }

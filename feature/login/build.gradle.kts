@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -17,8 +19,16 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "GOOGLE_LOGIN_API_CLIENT_ID", gradleLocalProperties(rootDir, providers).getProperty("GOOGLE_LOGIN_API_CLIENT_ID"))
+        }
         release {
+            buildConfigField("String", "GOOGLE_LOGIN_API_CLIENT_ID", gradleLocalProperties(rootDir, providers).getProperty("GOOGLE_LOGIN_API_CLIENT_ID"))
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -26,6 +36,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
