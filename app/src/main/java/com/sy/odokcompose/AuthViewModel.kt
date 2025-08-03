@@ -21,7 +21,19 @@ class AuthViewModel @Inject constructor(
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     init {
+        checkInitialAuthState()
         observeFirebaseAuthState()
+    }
+
+    private fun checkInitialAuthState() {
+        viewModelScope.launch {
+            val currentUser = firebaseAuth.currentUser
+            if (currentUser != null) {
+                _authState.value = AuthState.Authenticated(currentUser)
+            } else {
+                _authState.value = AuthState.NotAuthenticated
+            }
+        }
     }
 
     private fun observeFirebaseAuthState() {

@@ -13,6 +13,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -23,11 +24,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -65,7 +69,6 @@ import com.sy.odokcompose.feature.mylibrary.navigation.bookDetailScreen
 import com.sy.odokcompose.feature.mylibrary.navigation.navigateToBookDetail
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableStateOf
@@ -100,12 +103,7 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             OdokTheme {
-//                MainScreen()
-                LoginScreen(
-                    onLoginSuccess = { user ->
-                        Log.d("Login", "로그인 성공! 이메일: ${user.email}")},
-                    onError = {}
-                )
+                AppContent()
                 StatusBarProtection()
             }
         }
@@ -148,7 +146,8 @@ fun calculateGradientHeight(): () -> Float {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    authViewModel: AuthViewModel? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -419,5 +418,72 @@ fun NavigationGraph(navController: NavHostController, sharedTransitionScope: Sha
                 }
             }
         )
+    }
+}
+
+@Composable
+fun AppContent(
+    authViewModel: AuthViewModel = hiltViewModel()
+) {
+    val authState by authViewModel.authState.collectAsState()
+    
+    when (authState) {
+        is AuthState.Loading -> {
+            // 초기 인증 상태 확인 중
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+                Text(
+                    text = "로딩 중...",
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
+        }
+        is AuthState.NotAuthenticated -> {
+            LoginScreen(
+                onLoginSuccess = { user ->
+                    // AuthViewModel이 Firebase Auth State Listener를 통해 자동으로 상태 업데이트함
+                    Log.d("Login", "로그인 성공! 이메일: ${user.email}")
+                },
+                onError = { exception ->
+                    Log.e("Login", "로그인 실패", exception)
+                    authViewModel.clearError()
+                }
+            )
+        }
+        is AuthState.Authenticated -> {
+            MainScreen(authViewModel = authViewModel)
+        }
+        is AuthState.Error -> {
+            // 에러 상태 - 에러 메시지 표시 후 로그인 화면으로
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "인증 오류가 발생했습니다",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                    Text(
+                        text = (authState as AuthState.Error).exception.message ?: "알 수 없는 오류",
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                    Button(
+                        onClick = { authViewModel.clearError() }
+                    ) {
+                        Text("다시 시도")
+                    }
+                }
+            }
+        }
     }
 }
