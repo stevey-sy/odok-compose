@@ -1,5 +1,7 @@
 <h1 align="center">오독오독 - Compose</h1>
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/stevey-sy/odok-compose)
+
 <p align="center">
 오독오독은 읽었던 책, 읽고 있는 책, 앞으로 읽을 책을<br>
 자신의 서재에 보관하고 관리할 수 있는 [독서 기록 다이어리 App] 입니다.
