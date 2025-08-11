@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "tags")
 data class TagEntity(
     @PrimaryKey(autoGenerate = true) val tagId: Long = 0,
+    val userId: String, // Supabase user ID
     val name: String,
     val backgroundColor: String,
     val textColor: String,
