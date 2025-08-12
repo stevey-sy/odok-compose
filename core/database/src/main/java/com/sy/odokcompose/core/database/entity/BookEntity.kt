@@ -2,10 +2,11 @@ package com.sy.odokcompose.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "books")
 data class BookEntity(
-    @PrimaryKey(autoGenerate = true) val itemId: Int = 0, // 자동 생성되는 ID
+    @PrimaryKey val itemId: String = UUID.randomUUID().toString(), // UUID로 변경
     val userId: String, // Supabase user ID
     val title: String,
     val author: String,
@@ -23,4 +24,6 @@ data class BookEntity(
     val description: String = "",
     val rate: Float = 0f,
     val finishedReadCnt: Int = 0,
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = System.currentTimeMillis()
 )

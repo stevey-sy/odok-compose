@@ -2,10 +2,11 @@ package com.sy.odokcompose.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "tags")
 data class TagEntity(
-    @PrimaryKey(autoGenerate = true) val tagId: Long = 0,
+    @PrimaryKey val tagId: String = UUID.randomUUID().toString(), // UUID로 변경
     val userId: String, // Supabase user ID
     val name: String,
     val backgroundColor: String,

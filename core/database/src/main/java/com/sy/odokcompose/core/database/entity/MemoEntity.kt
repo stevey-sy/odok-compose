@@ -3,6 +3,7 @@ package com.sy.odokcompose.core.database.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(
     tableName = "memos",
@@ -16,9 +17,9 @@ import androidx.room.PrimaryKey
     ]
 )
 data class MemoEntity(
-    @PrimaryKey(autoGenerate = true) val memoId: Int = 0,
+    @PrimaryKey val memoId: String = UUID.randomUUID().toString(), // UUID로 변경
     val userId: String, // Supabase user ID
-    val bookId: Int,
+    val bookId: String, // BookEntity의 UUID 참조
     val content: String,
     val pageNumber: Int,
     val backgroundId: String = "",
