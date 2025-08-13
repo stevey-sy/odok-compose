@@ -1,9 +1,18 @@
 package com.sy.odokcompose.core.database.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "users")
+@Entity(
+    tableName = "users",
+    indices = [
+        Index(value = ["email"], unique = true),
+        Index(value = ["isActive"]),
+        Index(value = ["createdAt"]),
+        Index(value = ["lastSyncAt"])
+    ]
+)
 data class UserEntity(
     @PrimaryKey val userId: String, // Supabase UUID
     val email: String,

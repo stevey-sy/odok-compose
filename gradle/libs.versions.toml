@@ -29,6 +29,8 @@ ksp = "2.1.20-1.0.31"
 glide = "4.16.0"
 paging = "3.3.0"
 firebaseAuthKtx = "23.2.1"
+supabaseKt = "3.1.0"
+ktorClient = "3.1.0"
 
 [libraries]
 accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanistPlaceholderMaterial" }
@@ -69,6 +71,14 @@ androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", 
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+
+# Supabase
+supabase-kt = { module = "io.github.jan-tennert.supabase:supabase-kt", version.ref = "supabaseKt" }
+supabase-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt", version.ref = "supabaseKt" }
+supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "supabaseKt" }
+supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt", version.ref = "supabaseKt" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClient" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClient" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
