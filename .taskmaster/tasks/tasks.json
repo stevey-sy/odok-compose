@@ -1,0 +1,179 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Design Complete Database Schema and ERD",
+        "description": "Create comprehensive ERD diagram for extended database schema including user goals, reading sessions, ratings, statistics, bookmarks, and challenges",
+        "details": "Design ERD including: UserEntity, BookEntity (existing), MemoEntity (existing), TagEntity (existing), ReadingGoalEntity, ReadingSessionEntity, BookRatingEntity, ReadingStatisticsEntity, BookmarkEntity, ReadingChallengeEntity, UserChallengeEntity. Define all relationships: User 1:N Goals, User 1:N Sessions, User 1:N Ratings, Book 1:N Sessions, Book 1:N Bookmarks, etc. Include proper normalization and foreign key relationships.\n<info added on 2025-08-11T14:27:03.146Z>\nPartially completed: Created UserEntity with Supabase integration fields (userId UUID, email, OAuth provider info, sync timestamps). Analyzed existing entities (BookEntity, MemoEntity, TagEntity) and generated initial ERD showing relationships between these 4 core entities. Created comprehensive ERD documentation in .taskmaster/docs/database-erd.md. Identified required modifications: BookEntity, MemoEntity, TagEntity need userId foreign key fields for user ownership. Still pending: Design remaining entities (ReadingGoalEntity, ReadingSessionEntity, BookRatingEntity, ReadingStatisticsEntity, BookmarkEntity, ReadingChallengeEntity, UserChallengeEntity) and complete relationship definitions for full schema.\n</info added on 2025-08-11T14:27:03.146Z>\n<info added on 2025-08-11T14:55:52.598Z>\nPRD scope reduced to focus on core reading diary functionality with Supabase integration. Task now simplified to: 1) Complete core 4-entity ERD (User, Book, Memo, Tag) - already done, 2) Design Supabase database schema that mirrors Room entities for cloud sync, 3) Define data synchronization architecture between local Room database and Supabase backend. Advanced features (reading goals, sessions, ratings, statistics, bookmarks, challenges) removed from current scope and deferred for future iterations.\n</info added on 2025-08-11T14:55:52.598Z>",
+        "testStrategy": "Validate ERD completeness, check all relationships are properly defined, ensure no circular dependencies, verify all entities support required features",
+        "priority": "high",
+        "dependencies": [],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Core User and Authentication Entities",
+        "description": "Create UserEntity with Supabase integration fields and authentication-related Room entities",
+        "details": "Create UserEntity with fields: id (UUID), email, displayName, profileImageUrl, supabaseUserId, createdAt, updatedAt. Include proper Room annotations (@Entity, @PrimaryKey, @ColumnInfo). Add indexes for email and supabaseUserId. Create UserDao interface with CRUD operations and Supabase sync methods.",
+        "testStrategy": "Unit tests for UserEntity validation, test Room database operations, verify Supabase user ID mapping, test authentication token handling",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Extend Book and Memo Entities for Enhanced Features",
+        "description": "Update existing BookEntity and MemoEntity to support new features like ratings, detailed metadata, and improved relationships",
+        "details": "Extend BookEntity with: userId (FK), isbn, publisher, publishedDate, pageCount, language, coverImageUrl, averageRating, totalRatings, addedDate. Update MemoEntity with: userId (FK), sessionId (FK), isPublic, createdAt, updatedAt. Maintain existing Book-Memo 1:N relationship while adding user ownership.",
+        "testStrategy": "Test entity relationships, verify foreign key constraints, test data integrity, validate existing data compatibility",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Implement Reading Goals and Statistics Entities",
+        "description": "Create entities for user reading goals and comprehensive reading statistics tracking",
+        "details": "Create ReadingGoalEntity: id, userId (FK), goalType (MONTHLY/YEARLY), targetType (BOOKS/PAGES), targetValue, currentValue, startDate, endDate, isActive. Create ReadingStatisticsEntity: id, userId (FK), date, booksRead, pagesRead, readingTimeMinutes, averageSessionTime, genreBreakdown (JSON), createdAt. Include proper indexes and constraints.",
+        "testStrategy": "Test goal calculation logic, verify statistics aggregation, test time-based queries, validate goal progress tracking",
+        "priority": "medium",
+        "dependencies": [
+          2
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Create Reading Session and Timer Entities",
+        "description": "Implement detailed reading session tracking with timer functionality and focus metrics",
+        "details": "Create ReadingSessionEntity: id, userId (FK), bookId (FK), startTime, endTime, durationMinutes, pagesRead, startPage, endPage, focusScore (1-10), notes, sessionType (FOCUSED/CASUAL), createdAt. Create SessionBreakEntity for pause tracking: id, sessionId (FK), breakStart, breakEnd, reason. Include proper indexing for time-based queries.",
+        "testStrategy": "Test timer accuracy, validate session duration calculations, test focus score algorithms, verify pause/resume functionality",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Implement Book Rating and Review System",
+        "description": "Create comprehensive rating and review entities with support for multiple review types",
+        "details": "Create BookRatingEntity: id, userId (FK), bookId (FK), rating (1-5), oneLineReview, detailedReview, isPublic, helpfulVotes, createdAt, updatedAt. Create RatingCategoryEntity for detailed ratings: id, ratingId (FK), category (PLOT/CHARACTER/WRITING/PACING), score. Include proper constraints and indexes for efficient querying.",
+        "testStrategy": "Test rating constraints (1-5 range), validate review text length limits, test aggregation queries for book average ratings, verify user can only rate once per book",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Create Bookmark and Highlight Entities",
+        "description": "Implement page-based bookmarks and text highlighting functionality",
+        "details": "Create BookmarkEntity: id, userId (FK), bookId (FK), pageNumber, chapterName, bookmarkType (BOOKMARK/HIGHLIGHT), highlightedText, notes, colorTag, createdAt. Create BookmarkTagEntity for categorization: id, bookmarkId (FK), tagName, color. Include full-text search indexes for highlighted text and notes.",
+        "testStrategy": "Test bookmark retrieval by page/chapter, validate highlight text storage, test search functionality, verify bookmark organization features",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Implement Reading Challenge System",
+        "description": "Create entities for individual and group reading challenges with progress tracking",
+        "details": "Create ReadingChallengeEntity: id, title, description, challengeType (PERSONAL/GROUP), targetValue, targetUnit (BOOKS/PAGES/MINUTES), startDate, endDate, isActive, createdBy. Create UserChallengeEntity: id, userId (FK), challengeId (FK), joinedAt, currentProgress, isCompleted, completedAt. Create ChallengeParticipantEntity for group challenges.",
+        "testStrategy": "Test challenge creation and joining, validate progress calculation, test completion detection, verify group challenge mechanics",
+        "priority": "low",
+        "dependencies": [
+          2,
+          4
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Create Database Migration Strategy and Implementation",
+        "description": "Implement Room database migrations from current schema to new extended schema with data preservation",
+        "details": "Create migration classes for Room database: Migration_1_2 through Migration_1_N covering all new tables and relationships. Ensure existing BookEntity, MemoEntity, TagEntity data is preserved. Add proper foreign key constraints and indexes. Create fallback migration strategy for data corruption scenarios. Include database version management.",
+        "testStrategy": "Test migrations with existing data, verify data integrity post-migration, test rollback scenarios, validate all constraints and indexes are properly created",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "status": "pending",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Implement DAO Interfaces and Core Query Operations",
+        "description": "Create comprehensive DAO interfaces for all entities with optimized queries for common operations",
+        "details": "Create DAO interfaces: UserDao, ExtendedBookDao, ExtendedMemoDao, ReadingGoalDao, ReadingSessionDao, BookRatingDao, BookmarkDao, ReadingChallengeDao. Include complex queries: getUserReadingStatistics(), getBookWithRatingsAndSessions(), getReadingGoalProgress(), searchBookmarksAndHighlights(). Implement proper error handling and transaction management.",
+        "testStrategy": "Unit tests for all DAO methods, test complex join queries, validate query performance with large datasets, test transaction rollback scenarios",
+        "priority": "high",
+        "dependencies": [
+          9
+        ],
+        "status": "in-progress",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "Setup Supabase Integration and Sync Architecture",
+        "description": "Implement Supabase backend integration with Google OAuth authentication and data synchronization",
+        "details": "Setup Supabase project with RLS policies for user data isolation. Implement Google OAuth integration with Supabase Auth. Create sync service classes: SupabaseAuthService, SupabaseSyncService. Implement bidirectional sync between Room DB and Supabase with conflict resolution. Handle offline-first architecture with sync queuing.",
+        "testStrategy": "Test Google login integration, verify token handling, test data sync scenarios (create, update, delete), validate offline mode functionality, test conflict resolution",
+        "priority": "high",
+        "dependencies": [
+          2,
+          10
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "Implement Performance Optimization and Indexing Strategy",
+        "description": "Add comprehensive database indexes, query optimization, and performance monitoring for the extended schema",
+        "details": "Create strategic database indexes: composite indexes for (userId, createdAt), (bookId, userId), (sessionId, startTime). Implement query optimization for statistics calculation, reading goal progress, and search functionality. Add database performance monitoring and query execution time tracking. Implement pagination for large result sets.",
+        "testStrategy": "Performance tests with large datasets, measure query execution times, test pagination efficiency, validate index usage in query plans, benchmark sync operations",
+        "priority": "medium",
+        "dependencies": [
+          10,
+          11
+        ],
+        "status": "pending",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-10T14:52:17.385Z",
+      "updated": "2025-08-13T13:58:37.606Z",
+      "description": "Tasks for master context"
+    }
+  }
+}

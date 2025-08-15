@@ -1,0 +1,30 @@
+현재 프로젝트의 안드로이드 앱의 entity구조에 맞춰서 SUPABASE 를 사용하여 Backend 를 구현해야합니다.
+오독오독 독서 다이어리 앱의 데이터베이스 테이블을 확장 설계해주세요. 
+
+앱에서 google 로그인 후, SUPABASE 의 USER 테이블에 사용자가 추가되고 token 을 내려서 SUPABASE 와 통신이 가능해야 한다.
+로그인한 사용자는 SUPBASE 로 부터 자신이 저장했던 독서 데이터를 불러와서 ROOM DB를 갱신한다.
+
+갱신 한 후, 메인화면으로 진입한다.
+
+**현재 상황:**
+- Room DB 사용, Clean Architecture
+- 기존: BookEntity(책 정보), MemoEntity(독서 메모), TagEntity(태그)
+- Book-Memo 1:N, Memo-Tag N:M 관계
+
+**기술 요구사항:**
+- Room Entity 클래스로 구현
+- 적절한 인덱스 설정
+- 외래키 제약조건 포함
+- 마이그레이션 전략 제시
+- 성능 최적화 고려
+- 각 Entity 를 참고해서 SUPABASE 에 데이터베이스를 설계한다.
+- 앱 기동시 로그인 후 SUPABASE 를 통해 사용자의 독서 데이터를 로딩 후 RoomDB 에 동기화한다.
+
+**결과물:**
+1. 완전한 ERD 다이어그램
+2. 각 테이블별 Kotlin Entity 클래스 코드
+3. DAO 인터페이스 예시
+4. 마이그레이션 코드
+5. 주요 쿼리 예시
+6. SUPABASE 를 연동한다.
+7. SUPABASE 에 각 ENTITY 를 참고한 데이터베이스가 설계되어 있다.
