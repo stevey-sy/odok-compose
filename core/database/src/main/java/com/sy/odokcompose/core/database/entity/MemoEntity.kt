@@ -2,6 +2,7 @@ package com.sy.odokcompose.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
@@ -14,6 +15,10 @@ import java.util.UUID
             childColumns = ["bookId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["bookId"]),  // bookId에 인덱스 추가
+        Index(value = ["userId"])   // userId도 자주 조회되므로 인덱스 추가
     ]
 )
 data class MemoEntity(

@@ -6,6 +6,7 @@ import com.sy.odokcompose.model.MemoUiModel
 object MemoEntityMapper : EntityMapper<MemoEntity, MemoUiModel> {
     override fun entityToModel(entity: MemoEntity, ): MemoUiModel {
         return MemoUiModel(
+            userId = entity.userId,
             memoId = entity.memoId,
             bookId = entity.bookId,
             content = entity.content,
@@ -19,6 +20,7 @@ object MemoEntityMapper : EntityMapper<MemoEntity, MemoUiModel> {
 
     override fun modelToEntity(model: MemoUiModel): MemoEntity {
         return MemoEntity(
+            userId = model.userId,
             memoId = model.memoId,
             bookId = model.bookId,
             content = model.content,

@@ -2,11 +2,10 @@ package com.sy.odokcompose.core.supabase.repository
 
 import android.util.Log
 import com.sy.odokcompose.core.supabase.client.SupabaseClientWrapper
-import com.sy.odokcompose.core.supabase.mapper.BookMapper
 import com.sy.odokcompose.core.supabase.model.SupabaseBook
 import com.sy.odokcompose.core.supabase.model.SupabaseResponse
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,12 +37,14 @@ class SupabaseBookRepository @Inject constructor(
             val books = supabaseClient.postgrest
                 .from(TABLE_NAME)
                 .select()
-                .eq("user_id", userId)
-                .order("created_at", ascending = false)
                 .decodeList<SupabaseBook>()
             
-            Log.d(TAG, "책 목록 조회 성공: ${books.size}개")
-            SupabaseResponse.Success(books)
+            // 클라이언트 사이드에서 필터링 (RLS가 서버에서 처리함)
+            val userBooks = books.filter { it.userId == userId }
+                .sortedByDescending { it.createdAt }
+            
+            Log.d(TAG, "책 목록 조회 성공: ${userBooks.size}개")
+            SupabaseResponse.Success(userBooks)
             
         } catch (e: Exception) {
             Log.e(TAG, "책 목록 조회 실패", e)
@@ -68,12 +69,9 @@ class SupabaseBookRepository @Inject constructor(
             val books = supabaseClient.postgrest
                 .from(TABLE_NAME)
                 .select()
-                .eq("item_id", itemId)
-                .eq("user_id", userId)
-                .limit(1)
                 .decodeList<SupabaseBook>()
             
-            val book = books.firstOrNull()
+            val book = books.find { it.itemId == itemId && it.userId == userId }
             Log.d(TAG, "책 조회 완료: ${book?.title ?: "없음"}")
             
             SupabaseResponse.Success(book)
@@ -128,9 +126,11 @@ class SupabaseBookRepository @Inject constructor(
             
             val updatedBooks = supabaseClient.postgrest
                 .from(TABLE_NAME)
-                .update(book)
-                .eq("item_id", book.itemId)
-                .eq("user_id", book.userId)
+                .update(book) {
+                    filter {
+                        eq("item_id", book.itemId)
+                    }
+                }
                 .decodeList<SupabaseBook>()
             
             val updatedBook = updatedBooks.first()
@@ -160,9 +160,11 @@ class SupabaseBookRepository @Inject constructor(
             
             supabaseClient.postgrest
                 .from(TABLE_NAME)
-                .delete()
-                .eq("item_id", itemId)
-                .eq("user_id", userId)
+                .delete {
+                    filter {
+                        eq("item_id", itemId)
+                    }
+                }
             
             Log.d(TAG, "책 삭제 성공: $itemId")
             SupabaseResponse.Success(Unit)
@@ -207,12 +209,12 @@ class SupabaseBookRepository @Inject constructor(
      * 특정 시간 이후 업데이트된 책 목록 조회 (동기화용)
      * 
      * @param userId 사용자 ID
-     * @param lastSyncTime 마지막 동기화 시간 (ISO 8601 format)
+     * @param lastSyncTime 마지막 동기화 시간 (밀리초 타임스탬프)
      * @return 업데이트된 책 목록
      */
     suspend fun getBooksUpdatedSince(
         userId: String,
-        lastSyncTime: String
+        lastSyncTime: Long
     ): SupabaseResponse<List<SupabaseBook>> {
         return try {
             Log.d(TAG, "업데이트된 책 목록 조회: $lastSyncTime 이후")
@@ -220,13 +222,15 @@ class SupabaseBookRepository @Inject constructor(
             val books = supabaseClient.postgrest
                 .from(TABLE_NAME)
                 .select()
-                .eq("user_id", userId)
-                .gt("updated_at", lastSyncTime)
-                .order("updated_at", ascending = true)
                 .decodeList<SupabaseBook>()
             
-            Log.d(TAG, "업데이트된 책 조회 성공: ${books.size}개")
-            SupabaseResponse.Success(books)
+            // 클라이언트 사이드에서 필터링
+            val filteredBooks = books.filter { book ->
+                book.userId == userId && book.updatedAt > lastSyncTime.toString()
+            }.sortedBy { it.updatedAt }
+            
+            Log.d(TAG, "업데이트된 책 조회 성공: ${filteredBooks.size}개")
+            SupabaseResponse.Success(filteredBooks)
             
         } catch (e: Exception) {
             Log.e(TAG, "업데이트된 책 조회 실패", e)
@@ -247,14 +251,14 @@ class SupabaseBookRepository @Inject constructor(
         return try {
             Log.d(TAG, "사용자 책 개수 조회: $userId")
             
-            val count = supabaseClient.postgrest
+            val books = supabaseClient.postgrest
                 .from(TABLE_NAME)
-                .select(columns = Columns.list("*"))
-                .eq("user_id", userId)
-                .count()
+                .select()
+                .decodeList<SupabaseBook>()
             
+            val count = books.count { it.userId == userId }
             Log.d(TAG, "책 개수 조회 성공: ${count}개")
-            SupabaseResponse.Success(count.toInt())
+            SupabaseResponse.Success(count)
             
         } catch (e: Exception) {
             Log.e(TAG, "책 개수 조회 실패", e)

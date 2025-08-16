@@ -1,8 +1,10 @@
 package com.sy.odokcompose.model
 
 data class BookUiModel(
-    val itemId: Int = 0,
+    val itemId: String,
+    val userId: String,
     val title: String = "",
+    val category: String = "",
     var author: String = "",
     val publisher: String = "",
     val isbn: String = "",

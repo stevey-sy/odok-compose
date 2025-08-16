@@ -2,6 +2,7 @@ package com.sy.odokcompose.core.database.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 
 @Entity(
     tableName = "memo_tags",
@@ -19,9 +20,13 @@ import androidx.room.ForeignKey
             childColumns = ["tagId"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index(value = ["memoId"]),  // memoId 외래키 인덱스
+        Index(value = ["tagId"])    // tagId 외래키 인덱스
     ]
 )
 data class MemoTagCrossRef(
-    val memoId: Long,
-    val tagId: Long
+    val memoId: String, // MemoEntity의 UUID 참조
+    val tagId: String   // TagEntity의 UUID 참조
 )

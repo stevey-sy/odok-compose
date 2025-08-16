@@ -8,6 +8,7 @@ object BookEntityMapper : EntityMapper<BookEntity, BookUiModel> {
         return BookUiModel(
             itemId = entity.itemId,
             title = entity.title,
+            userId = entity.userId,
             author = entity.author,
             publisher = entity.publisher,
             isbn = entity.isbn,
@@ -32,6 +33,8 @@ object BookEntityMapper : EntityMapper<BookEntity, BookUiModel> {
     override fun modelToEntity(model: BookUiModel): BookEntity {
         return BookEntity(
             itemId = model.itemId,
+            userId = model.userId,
+            category = model.category,
             title = model.title,
             author = model.author,
             publisher = model.publisher,

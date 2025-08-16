@@ -5,8 +5,9 @@ import java.util.Date
 import java.util.Locale
 
 data class MemoUiModel(
-    val memoId: Int = 0,
-    val bookId: Int,
+    val userId: String,
+    val memoId: String,
+    val bookId: String,
     val content: String,
     val pageNumber: Int,
     val backgroundId: String = "",

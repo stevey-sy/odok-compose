@@ -10,6 +10,7 @@ data class SearchBookUiModel(
     val page: Int = 0,
     val description: String = "",
     val rate: Float = 0f,
+    val category: String = "test",
 ) {
     fun getAuthorText(): String {
         val authorText = if (author.contains("(지은이)")) {

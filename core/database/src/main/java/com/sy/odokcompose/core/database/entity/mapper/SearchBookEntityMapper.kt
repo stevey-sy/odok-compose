@@ -23,6 +23,7 @@ object SearchBookEntityMapper : EntityMapper<List<BookEntity>, List<SearchBookUi
         return model.map { uiModel ->
             BookEntity(
                 title = uiModel.title,
+                category = uiModel.category,
                 author = uiModel.author,
                 publisher = uiModel.publisher,
                 isbn = uiModel.isbn,
