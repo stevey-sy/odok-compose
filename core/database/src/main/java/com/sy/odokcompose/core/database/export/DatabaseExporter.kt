@@ -17,10 +17,11 @@ class DatabaseExporter @Inject constructor(
     private val bookJsonExporter: BookJsonExporter,
     private val memoJsonExporter: MemoJsonExporter
 ) {
-    suspend fun exportDatabase(): Result<File> {
+    suspend fun exportDatabase(userId: String): Result<File> {
         return try {
-            Log.d("DatabaseExporter", "Starting export process...")
-            val books = bookDao.getAllBooks().first()
+            Log.d("DatabaseExporter", "Starting export process for user: $userId")
+            
+            val books = bookDao.getAllBooks(userId).first()
             val memos = memoDao.getAllMemos().first()
             Log.d("DatabaseExporter", "Retrieved ${books.size} books and ${memos.size} memos from database")
             
@@ -70,12 +71,12 @@ class DatabaseExporter @Inject constructor(
         }
     }
 
-    suspend fun importDummyData(): Result<Unit> {
+    suspend fun importDummyData(userId: String): Result<Unit> {
         return try {
-            Log.d("DatabaseExporter", "Starting dummy data import...")
+            Log.d("DatabaseExporter", "Starting dummy data import for user: $userId")
             
             // 기존 데이터 삭제
-            val existingBooks = bookDao.getAllBooks().first()
+            val existingBooks = bookDao.getAllBooks(userId).first()
             existingBooks.forEach { book ->
                 bookDao.deleteBook(book)
             }
@@ -113,7 +114,7 @@ class DatabaseExporter @Inject constructor(
             tempMemosFile.delete()
             
             // 저장된 데이터 확인
-            val savedBooks = bookDao.getAllBooks().first()
+            val savedBooks = bookDao.getAllBooks(userId).first()
             val savedMemos = memoDao.getAllMemos().first()
             Log.d("DatabaseExporter", "Successfully saved ${savedBooks.size} books")
             Log.d("DatabaseExporter", "Successfully saved ${savedMemos.size} memos")

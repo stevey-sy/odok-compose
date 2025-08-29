@@ -29,8 +29,8 @@ ksp = "2.1.20-1.0.31"
 glide = "4.16.0"
 paging = "3.3.0"
 firebaseAuthKtx = "23.2.1"
-supabaseKt = "3.1.0"
-ktorClient = "3.1.0"
+supabaseKt = "3.2.2"
+ktorClient = "3.0.0"
 
 [libraries]
 accompanist-placeholder-material = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanistPlaceholderMaterial" }
@@ -73,10 +73,11 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 
 # Supabase
-supabase-kt = { module = "io.github.jan-tennert.supabase:supabase-kt", version.ref = "supabaseKt" }
-supabase-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt", version.ref = "supabaseKt" }
-supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt", version.ref = "supabaseKt" }
-supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt", version.ref = "supabaseKt" }
+supabase-bom = { module = "io.github.jan-tennert.supabase:bom", version.ref = "supabaseKt" }
+supabase-kt = { module = "io.github.jan-tennert.supabase:supabase-kt" }
+supabase-gotrue-kt = { module = "io.github.jan-tennert.supabase:gotrue-kt" }
+supabase-postgrest-kt = { module = "io.github.jan-tennert.supabase:postgrest-kt" }
+supabase-realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClient" }
 ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorClient" }
 

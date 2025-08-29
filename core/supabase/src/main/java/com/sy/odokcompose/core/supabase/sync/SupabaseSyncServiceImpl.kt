@@ -169,7 +169,7 @@ class SupabaseSyncServiceImpl @Inject constructor(
         return try {
             Log.d(TAG, "사용자 프로필 동기화: $userId")
             
-            val user = userDao.getUserByIdSync(userId)
+            val user = userDao.getById(userId)
             if (user != null) {
                 // 로컬 사용자 정보가 있으면 성공으로 처리
                 // 실제로는 원격과 비교해서 동기화해야 함
@@ -207,7 +207,7 @@ class SupabaseSyncServiceImpl @Inject constructor(
     
     override suspend fun getLastSyncTime(userId: String): Long {
         return try {
-            val user = userDao.getUserByIdSync(userId)
+            val user = userDao.getById(userId)
             user?.lastSyncAt ?: 0L
         } catch (e: Exception) {
             Log.e(TAG, "마지막 동기화 시간 조회 실패", e)
@@ -298,7 +298,7 @@ class SupabaseSyncServiceImpl @Inject constructor(
             val lastSyncTime = getLastSyncTime(userId)
             val lastSyncTimeIso = timestampToIsoString(lastSyncTime)
             
-            val result = supabaseBookRepository.getBooksUpdatedSince(userId, lastSyncTimeIso)
+            val result = supabaseBookRepository.getBooksUpdatedSince(userId, lastSyncTime)
             
             if (result.isError) {
                 return SyncResult.Error(
@@ -386,13 +386,13 @@ class SupabaseSyncServiceImpl @Inject constructor(
     private suspend fun updateLastSyncTime(userId: String) {
         try {
             val currentTime = System.currentTimeMillis()
-            val user = userDao.getUserByIdSync(userId)
+            val user = userDao.getById(userId)
             user?.let {
                 val updatedUser = it.copy(
                     lastSyncAt = currentTime,
                     updatedAt = currentTime
                 )
-                userDao.updateUser(updatedUser)
+                userDao.update(updatedUser)
             }
         } catch (e: Exception) {
             Log.e(TAG, "동기화 시간 업데이트 실패", e)

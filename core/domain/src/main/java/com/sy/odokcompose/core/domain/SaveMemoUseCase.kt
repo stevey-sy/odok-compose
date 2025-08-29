@@ -13,14 +13,18 @@ sealed class SaveMemoResult {
 class SaveMemoUseCase @Inject constructor(
     private val memoRepository: MemoRepository
 ) {
-    suspend operator fun invoke(bookId: Int, page:Int, content:String, backgroundId:String): SaveMemoResult {
+    suspend operator fun invoke(bookId: String, page:Int, content:String, backgroundId:String): SaveMemoResult {
         return try {
             val memo = MemoEntity(
                 bookId = bookId,
                 content = content,
                 pageNumber = page,
                 backgroundId = backgroundId,
-                createdAt = System.currentTimeMillis()
+                createdAt = System.currentTimeMillis(),
+                memoId = TODO(),
+                userId = TODO(),
+                imgUrl = TODO(),
+                updatedAt = TODO()
             )
             memoRepository.insertMemo(memo)
             SaveMemoResult.Success

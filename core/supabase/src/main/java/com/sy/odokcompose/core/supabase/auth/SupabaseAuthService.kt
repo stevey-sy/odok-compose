@@ -67,5 +67,5 @@ interface SupabaseAuthService {
      * 
      * @return 삭제 결과
      */
-    suspend fun deleteAccount(): AuthResult<Unit>
+//    suspend fun deleteAccount(): AuthResult<Unit>
 }
