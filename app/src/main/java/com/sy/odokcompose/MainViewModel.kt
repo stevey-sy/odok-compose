@@ -2,11 +2,13 @@ package com.sy.odokcompose
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sy.odokcompose.core.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -14,29 +16,47 @@ import javax.inject.Inject
  * 메인 화면의 ViewModel
  */
 @HiltViewModel
-class MainViewModel @Inject constructor() : ViewModel() {
+class MainViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
     
-    private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val _isDataLoading = MutableStateFlow(true)
+    
+    val uiState: StateFlow<MainUiState> = combine(
+        authRepository.getLoginStatusFlow(),
+        _isDataLoading
+    ) { isLoggedIn, isLoading ->
+        when {
+            isLoading -> MainUiState.Loading
+            !isLoggedIn -> MainUiState.NotLoggedIn
+            else -> MainUiState.Success
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = MainUiState.Loading
+    )
     
     init {
-        loadInitialData()
+        checkLoginStatus()
     }
     
-    private fun loadInitialData() {
+    private fun checkLoginStatus() {
         viewModelScope.launch {
-            _uiState.value = MainUiState.Loading
-            
-            // 실제 데이터 로딩 로직이 여기에 들어갑니다
-            // 예제를 위해 2초 지연을 추가합니다
-//            delay(2000)
-            
-            _uiState.value = MainUiState.Success
+            _isDataLoading.value = true
+            // 초기 로딩 로직이 필요하다면 여기에 추가
+            _isDataLoading.value = false
         }
     }
     
     fun refreshData() {
-        loadInitialData()
+        checkLoginStatus()
+    }
+    
+    fun onLoginSuccess() {
+        viewModelScope.launch {
+            authRepository.setUserLoggedIn(true)
+        }
     }
 }
 
@@ -47,6 +67,9 @@ sealed class MainUiState {
     // 로딩 중인 상태
     object Loading : MainUiState()
     
-    // 데이터 로드 성공 상태
+    // 로그인되지 않은 상태
+    object NotLoggedIn : MainUiState()
+    
+    // 데이터 로드 성공 상태 (로그인 완료)
     object Success : MainUiState()
 } 

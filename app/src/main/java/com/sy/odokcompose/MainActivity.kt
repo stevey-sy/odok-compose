@@ -100,12 +100,7 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             OdokTheme {
-//                MainScreen()
-                LoginScreen(
-                    onLoginSuccess = { user ->
-                        Log.d("Login", "로그인 성공! 이메일: ${user.email}")},
-                    onError = {}
-                )
+                MainScreen()
                 StatusBarProtection()
             }
         }
@@ -179,6 +174,18 @@ fun MainScreen(
             ) {
                 CircularProgressIndicator()
             }
+        }
+        is MainUiState.NotLoggedIn -> {
+            // 로그인되지 않은 상태일 때 로그인 화면 표시
+            LoginScreen(
+                onLoginSuccess = { user ->
+                    Log.d("Login", "로그인 성공! 이메일: ${user.email}")
+                    viewModel.onLoginSuccess()
+                },
+                onError = { error ->
+                    Log.e("Login", "로그인 실패: ${error.message}")
+                }
+            )
         }
         is MainUiState.Success -> {
             // 로딩 완료 후 메인 UI 표시

@@ -13,11 +13,17 @@ import com.sy.odokcompose.core.data.repository.AuthRepositoryImpl
 import com.sy.odokcompose.core.data.repository.MemoRepository
 import com.sy.odokcompose.core.data.repository.MemoRepositoryImpl
 import com.google.firebase.auth.FirebaseAuth
+import com.sy.odokcompose.core.data.BuildConfig
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
+import io.github.jan.supabase.auth.status.SessionSource.Storage
+import io.github.jan.supabase.createSupabaseClient
+import io.github.jan.supabase.postgrest.Postgrest
 import javax.inject.Singleton
 
 @Module
@@ -60,5 +66,19 @@ interface DataModule {
         fun provideFirebaseAuth(): FirebaseAuth {
             return FirebaseAuth.getInstance()
         }
+
+        @Provides
+        @Singleton
+        fun provideSupabaseClient(): SupabaseClient {
+            return createSupabaseClient(
+                supabaseUrl = BuildConfig.SUPABASE_URL,
+                supabaseKey = BuildConfig.SUPABASE_ANON_KEY
+            ) {
+                install(Postgrest)
+                install(Auth)
+//                install(Storage)
+            }
+        }
     }
+
 } 

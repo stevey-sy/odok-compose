@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -16,8 +18,19 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     buildTypes {
+        debug {
+            buildConfigField("String", "SUPABASE_URL", gradleLocalProperties(rootDir, providers).getProperty("SUPABASE_URL"))
+            buildConfigField("String", "SUPABASE_ANON_KEY", gradleLocalProperties(rootDir, providers).getProperty("SUPABASE_ANON_KEY"))
+        }
+
         release {
+            buildConfigField("String", "SUPABASE_URL", gradleLocalProperties(rootDir, providers).getProperty("SUPABASE_URL"))
+            buildConfigField("String", "SUPABASE_ANON_KEY", gradleLocalProperties(rootDir, providers).getProperty("SUPABASE_ANON_KEY"))
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -56,6 +69,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Supabase 추가
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.2.2"))
+    implementation("io.github.jan-tennert.supabase:postgrest-kt")
+    implementation("io.github.jan-tennert.supabase:auth-kt")
+    implementation("io.github.jan-tennert.supabase:realtime-kt")
 
     // Paging
     implementation(libs.androidx.paging.runtime)
